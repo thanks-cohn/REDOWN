@@ -9,9 +9,9 @@ import {resolveHistoryTarget} from './beta/history-target.mjs';
 import {createDragBridge} from './chute-drag.mjs';
 
 export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage=chrome.storage.local,document=host.ownerDocument}={}){
-  host.innerHTML=`<div class="mini-toolbar"><button data-action="back" aria-label="Back">‹</button><button data-action="forward" aria-label="Forward">›</button><button data-action="up" aria-label="Parent folder">↑</button><button data-action="roots" aria-label="Cloud roots">⌂</button><button data-action="refresh" aria-label="Refresh">↻</button><nav class="mini-crumbs" aria-label="Folder path"></nav><button data-action="grid" aria-label="Toggle grid" aria-pressed="false">▦</button></div>
-  <div class="mini-filter"><input type="search" placeholder="Filter loaded files" aria-label="Filter loaded files"><select aria-label="Sort loaded files"><option value="name">Name</option><option value="type">Type</option><option value="date">Date</option><option value="size">Size</option></select></div>
-  <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns" aria-orientation="vertical" aria-valuemin="15" aria-valuemax="75" aria-valuenow="50"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
+  host.innerHTML=`<div class="mini-toolbar"><button data-action="back" aria-label="Back">‹</button><button data-action="forward" aria-label="Forward">›</button><button data-action="up" aria-label="Parent folder">↑</button><button data-action="roots" aria-label="Cloud roots">⌂</button><button data-action="refresh" aria-label="Refresh">↻</button><nav class="mini-crumbs" aria-label="Folder path"></nav></div>
+  <div class="mini-filter"><input type="search" placeholder="Filter loaded files" aria-label="Filter loaded files"><select aria-label="Sort loaded files"><option value="name">Name</option><option value="type">Type</option><option value="date">Date</option><option value="size">Size</option></select><button data-action="grid" aria-label="Large Images" aria-pressed="true" title="Switch between Detailed and Large Images">Large Images</button><button data-action="reset-split" aria-label="Reset columns to 50/50" title="Reset columns to 50/50">½</button></div>
+  <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns; double-click to reset to 50/50" title="Drag or use arrow keys; Home/End collapse; double-click for 50/50" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
   <div class="mini-actions" hidden><button data-action="download" disabled>Download</button><button data-action="rename" disabled>Rename</button><button data-action="delete" disabled>Delete</button><button data-action="copy" disabled>Copy</button><button data-action="move" disabled>Move</button><button data-action="paste" disabled>Paste here</button><button data-action="folder">New folder</button></div>
   <p class="mini-status" role="status" aria-live="polite"></p><p class="mini-drag-status" role="status" aria-live="polite"></p>
   <section class="mini-preview" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
@@ -39,12 +39,23 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     finally{if(pending)URL.revokeObjectURL(pending);}
   }
   // Adapted from Chutey setFolderWidth, positionPreview and ex-resize.
-  function setFolderWidth(value){folderWidth=Math.max(15,Math.min(75,Math.round(Number(value)||50)));$('.mini-workspace').style.setProperty('--mini-folder-width',folderWidth+'%');$('.mini-column-resize').setAttribute('aria-valuenow',folderWidth);}
+  function setFolderWidth(value){
+    const number=Number(value);folderWidth=Number.isFinite(number)?Math.max(0,Math.min(100,number)):50;
+    const workspace=$('.mini-workspace');
+    workspace.style.gridTemplateColumns=`minmax(0,${folderWidth}fr) 8px minmax(0,${100-folderWidth}fr)`;
+    workspace.dataset.collapsed=folderWidth===0?'folders':folderWidth===100?'files':'';
+    $('.mini-rail').inert=folderWidth===0;$('.mini-content').inert=folderWidth===100;
+    $('.mini-column-resize').setAttribute('aria-valuenow',String(Math.round(folderWidth)));
+    $('.mini-column-resize').setAttribute('aria-valuetext',folderWidth===0?'Folders collapsed; files full width':folderWidth===100?'Files collapsed; folders full width':`${Math.round(folderWidth)} percent folders`);
+  }
   const grip=$('.mini-column-resize');
-  grip.onpointerdown=e=>{if(e.button!==0)return;grip.setPointerCapture(e.pointerId);e.preventDefault();};
-  grip.onpointermove=e=>{if(grip.hasPointerCapture(e.pointerId)){const b=$('.mini-workspace').getBoundingClientRect();setFolderWidth((e.clientX-b.left)/b.width*100);renderRows();}};
-  grip.onpointerup=grip.onpointercancel=grip.onlostpointercapture=()=>persist();
-  grip.onkeydown=e=>{const delta=e.key==='ArrowLeft'?-5:e.key==='ArrowRight'?5:0;if(delta||['Home','End'].includes(e.key)){e.preventDefault();setFolderWidth(e.key==='Home'?15:e.key==='End'?75:folderWidth+delta);renderRows();persist();}};
+  grip.onpointerdown=e=>{if(e.button!==0||dragging)return;grip.setPointerCapture(e.pointerId);e.preventDefault();};
+  grip.onpointermove=e=>{if(grip.hasPointerCapture(e.pointerId)){const b=$('.mini-workspace').getBoundingClientRect();if(b.width>8){setFolderWidth((e.clientX-b.left-4)/(b.width-8)*100);scheduleRows();}}};
+  const releaseGrip=e=>{if(e?.pointerId!==undefined&&grip.hasPointerCapture(e.pointerId))grip.releasePointerCapture(e.pointerId);persist();};
+  grip.onpointerup=grip.onpointercancel=grip.onlostpointercapture=releaseGrip;
+  function resetSplit(){setFolderWidth(50);scheduleRows();persist();}
+  grip.ondblclick=resetSplit;button('reset-split').onclick=resetSplit;
+  grip.onkeydown=e=>{const delta=e.key==='ArrowLeft'?-5:e.key==='ArrowRight'?5:0;if(delta||['Home','End'].includes(e.key)){e.preventDefault();setFolderWidth(e.key==='Home'?0:e.key==='End'?100:folderWidth+delta);scheduleRows();persist();}};
   const resize=$('.mini-resize');
   function resizePreview(height){const value=Math.max(Math.min(96,host.clientHeight*.25),Math.min(host.clientHeight*.55,height));$('.mini-preview').style.height=value+'px';resize.setAttribute('aria-valuenow',Math.round(value/host.clientHeight*100));}
   resize.onpointerdown=e=>{if(e.button===0){resize.setPointerCapture(e.pointerId);e.preventDefault();}};
@@ -71,7 +82,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   }
   let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0;const aspects=new Map();
   function renderRows(){
-    if(dragging||host.hidden||!activeView)return;
+    if(dragging||host.hidden||!activeView||folderWidth===100)return;
     const query=$('.mini-filter input').value.toLocaleLowerCase(),sort=$('.mini-filter select').value;
     const focused=rows.contains(document.activeElement)?document.activeElement.dataset.index:null;
     if(sortedEntries!==model.state.entries||sortedKey!==query+'|'+sort){
@@ -79,7 +90,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
       visible=model.state.entries.filter(e=>(e.displayName||e.key).toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?String(b.uploaded||'').localeCompare(String(a.uploaded||'')):sort==='type'?String(a.key.split('.').pop()).localeCompare(String(b.key.split('.').pop())):0)||(a.displayName||a.key).localeCompare(b.displayName||b.key));
     }
     // A permanent logical canvas never shrinks while the visible slice changes.
-    const width=Math.max(32,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
+    const width=Math.max(1,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
     if(layoutEntries!==visible||layoutKey!==key){
       const same=layoutEntries===visible,old=offsetRange(offsets,list.scrollTop,0),fraction=(list.scrollTop-offsets[old.first])/(offsets[old.first+1]-offsets[old.first]||1);
       const next=[0];for(const entry of visible){const image=!entry.folder&&previewType(entry.key)?.startsWith('image/');next.push(next.at(-1)+(grid?(image?width*(aspects.get(entry.key)||1)+16:80)+8:48));}
@@ -220,7 +231,8 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     saved={source:model.state.source};await discover();say('Operation confirmed by the File API. Folder listings refreshed.');
   }
   button('roots').onclick=safe(()=>{saved={};return discover();});
-  button('grid').onclick=()=>{grid=!grid;button('grid').setAttribute('aria-pressed',String(grid));list.scrollTop=0;renderRows();persist();};
+  function paintViewMode(){button('grid').setAttribute('aria-pressed',String(grid));button('grid').setAttribute('aria-label',grid?'Large Images; switch to Detailed':'Detailed; switch to Large Images');button('grid').textContent=grid?'Large Images':'Detailed';}
+  button('grid').onclick=()=>{grid=!grid;paintViewMode();renderRows();persist();};
   button('back').onclick=safe(async()=>{closeSide();preview.close();clearThumbs();await bridge.cancel();selectedEntry=null;await model.travel(-1);persist();});
   button('forward').onclick=safe(async()=>{closeSide();preview.close();clearThumbs();await bridge.cancel();selectedEntry=null;await model.travel(1);persist();});
   button('up').onclick=safe(()=>navigate({...model.state.source,prefix:model.state.source.prefix.replace(/[^/]+\/$/,'')}));
@@ -261,7 +273,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     setFolderWidth(50);
     if(initialized){const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
     initialization=(async()=>{
-    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(50);grid=saved.grid!==false;button('grid').setAttribute('aria-pressed',String(grid));for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
+    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(50);grid=saved.grid!==false;paintViewMode();for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
     await discover();
     })();await initialization;
   }

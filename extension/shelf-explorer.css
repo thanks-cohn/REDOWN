@@ -144,3 +144,13 @@ body:has(#explorer-view:not([hidden])) #status {margin:0;flex-shrink:0;}
 #explorer-view .mini-preview header {min-height:28px;flex-shrink:0;}
 
 #explorer-view .mini-grid .mini-row:not(.mini-image) .mini-icon {width:32px;height:32px;}
+
+/* Full travel leaves the real 8px gutter reachable at both edges. */
+#explorer-view .mini-workspace {grid-template-columns:minmax(0,1fr) 8px minmax(0,1fr);}
+#explorer-view .mini-workspace[data-collapsed=folders] .mini-rail,
+#explorer-view .mini-workspace[data-collapsed=files] .mini-content {visibility:hidden;overflow:hidden;padding:0;}
+#explorer-view .mini-filter {flex-shrink:0;gap:4px;padding:6px;min-width:0;}
+#explorer-view .mini-filter [data-action=grid] {white-space:nowrap;font-size:11px;min-width:80px;}
+#explorer-view .mini-filter [data-action=reset-split] {padding:3px;}
+#explorer-view .mini-row small {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+#explorer-view .mini-content {overflow:hidden;}
