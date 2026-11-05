@@ -257,3 +257,26 @@ test('variable-aspect offset windows reach the final image at every folder size 
   }
  }
 });
+
+test('P0 bundled local adapter lists exact originals, serves bytes, delegates clouds and rejects all writes',async()=>{
+ const {withLocalDemo,demoSource,demoAssets}=await import('../extension/local-demo.mjs');
+ const {readFile}=await import('node:fs/promises');const calls=[];
+ const remote={capabilities:[],run:async(...args)=>{calls.push(args);return {state:'completed',data:{accounts:[]}};}};
+ const api=withLocalDemo(remote,{fetchAsset:async path=>new Response(await readFile('extension/'+path))});
+ const list=await api.run('list',{source:demoSource});assert.equal(list.state,'completed');assert.deepEqual(list.data.entries.map(e=>e.displayName),['REDOWN.svg','Chutey.png']);
+ assert.deepEqual(await readFile('extension/assets/demo/chutey.png'),await readFile('chute-reference/extension/icons/icon128.png'));
+ for(const asset of demoAssets){const entry=list.data.entries.find(e=>e.key===asset.key),chunks=[];
+ const result=await api.run('readStream',{source:demoSource,key:entry.key},{onChunk:c=>chunks.push(c)});assert.equal(result.state,'completed');assert.deepEqual(Buffer.concat(chunks),await readFile('extension/'+asset.path));
+ const preview=await api.run('preview',{source:demoSource,entry});assert.equal(preview.state,'completed');assert.equal((await fetch(preview.data.url)).headers.get('content-type'),asset.type);URL.revokeObjectURL(preview.data.url);
+ for(const operation of ['upload','delete','rename','move','copy','mkdir'])assert.equal((await api.run(operation,{source:demoSource,entry})).state,'failed');
+ }
+ assert.equal(calls.length,0);await api.run('accounts');assert.equal(calls.length,1);
+});
+
+test('P0 provider projection requires current provider verification, never a cached connected label',async()=>{
+ const {verifiedOtherProvider}=await import('../extension/local-demo.mjs');
+ const storage={get:async()=>({googleDriveState:{phase:'connected'},'dropbox:auth':{}})};
+ assert.equal(await verifiedOtherProvider(storage,{RedownGoogleDriveStream:{create:()=>({connect:async interactive=>{assert.equal(interactive,false);throw Error('expired');}})}}),null);
+ assert.equal(await verifiedOtherProvider(storage,{RedownDropboxAuth:{create:()=>({ready:async(expected,force)=>{assert.equal(force,true);return {phase:'connected',rootReady:true};}})}}),'Dropbox');
+ assert.equal(await verifiedOtherProvider({get:async()=>({})},{RedownDropboxAuth:{create(){throw Error('No absent-account checks');}}}),null);
+});
