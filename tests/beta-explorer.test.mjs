@@ -13,7 +13,7 @@ import vm from 'node:vm';
 import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
 import {createProviderRouter} from '../extension/beta/provider-router.mjs';
-import {createS3Adapter} from '../extension/beta/s3-adapter.mjs';
+import {createS3Adapter,chooseMegaTransferMode,MEGA_TRANSFER_CAPABILITIES} from '../extension/beta/s3-adapter.mjs';
 import {createR2Adapter,previewType} from '../extension/beta/r2-adapter.mjs';
 import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
 import {normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent} from '../extension/beta/archive-browser.mjs';
@@ -97,6 +97,7 @@ async function uiFixture({archivePreference=null,deletePreferences=null,inlineFo
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded]),.window-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
   Object.assign(w,{previewDirection,watchPreviewAxis});
   w.createProviderRouter=createProviderRouter;
+  w.chooseMegaTransferMode=chooseMegaTransferMode;w.MEGA_TRANSFER_CAPABILITIES=MEGA_TRANSFER_CAPABILITIES;
   w.createS3Adapter=()=>{const adapter=createS3Adapter({parseXML:t=>new w.DOMParser().parseFromString(t,'application/xml'),fetch:async req=>new Response(new URL(req.url).pathname==='/'?'<ListAllMyBucketsResult><Buckets><Bucket><Name>test</Name></Bucket></Buckets></ListAllMyBucketsResult>':'<ListBucketResult><Contents><Key>mega.txt</Key><Size>3</Size></Contents><IsTruncated>false</IsTruncated></ListBucketResult>')});return Object.fromEntries(Object.entries(adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}return value(input,options);}:value]));};
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
