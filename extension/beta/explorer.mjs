@@ -10,7 +10,7 @@ import {installTestIt} from './test-it.mjs';
 import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
 import {createProviderRouter} from './provider-router.mjs';
-import {createS3Adapter} from './s3-adapter.mjs';
+import {createS3Adapter,chooseMegaTransferMode,MEGA_TRANSFER_CAPABILITIES} from './s3-adapter.mjs';
 import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
 import {normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent} from './archive-browser.mjs';
@@ -1176,12 +1176,47 @@ $('provider-r2').onclick=()=>switchProvider('r2').catch(failure);
 $('provider-mega').onclick=async()=>{await switchProvider('mega-s4');if(activeProvider==='mega-s4'&&!accounts.length)$('mega-dialog').showModal();};
 $('mega-manage').onclick=()=>$('mega-dialog').showModal();
 $('mega-disconnect').onclick=async()=>{if(busy)return;await megaApi.run('disconnect');lastLocation=null;await loadMega();};
+// Region pills are convenience presets, not a replacement for the user's exact signed settings.
+// Only signing values backed by established mappings are preset. Newer regions remain editable.
+const megaPresets=[...document.querySelectorAll('#mega-region-pills [data-mega-location]')];
+let megaLocation='eu-amsterdam';
+const megaModeSwitch=$('mega-true-remote');
+function paintMegaTransferMode(){
+ const choice=chooseMegaTransferMode({requestTrueRemote:megaModeSwitch.checked});
+ megaModeSwitch.checked=choice.mode==='true-remote';
+ megaModeSwitch.disabled=choice.locked;
+ megaModeSwitch.setAttribute('aria-checked',String(megaModeSwitch.checked));
+ $('mega-mode-info').textContent=choice.canUseTrueRemote
+  ?choice.canUseBrowserBytes?'ON: Worker-direct. OFF: browser bytes to cloud.':'TRUE REMOTE is required; browser-byte transfer is unavailable.'
+  :'Browser bytes to cloud is active. TRUE REMOTE is unavailable until a verified MEGA Worker route exists.';
+ return choice.mode;
+}
+megaModeSwitch.checked=MEGA_TRANSFER_CAPABILITIES.trueRemote;
+megaModeSwitch.addEventListener('change',paintMegaTransferMode);
+paintMegaTransferMode();
+function paintMegaEndpoint(){
+ const zone=$('mega-zone').value.trim();
+ if(zone&&!/^[12]$/.test(zone))return;
+ $('mega-endpoint').value='https://s3.'+megaLocation+'-'+(zone||'1')+'.megas4.com';
+}
+for(const pill of megaPresets)pill.addEventListener('click',()=>{
+ megaLocation=pill.dataset.megaLocation;
+ $('mega-region').value=pill.dataset.megaSigning||'';
+ $('mega-region').placeholder=pill.dataset.megaSigning?'Signing region':'Enter MEGA-provided signing region';
+ megaPresets.forEach(item=>item.setAttribute('aria-pressed',String(item===pill)));
+ paintMegaEndpoint();$('mega-error').textContent='';
+});
+$('mega-zone').addEventListener('input',paintMegaEndpoint);
 $('mega-cancel').onclick=()=>{$('mega-key').value='';$('mega-secret').value='';$('mega-dialog').close();};
-$('mega-reveal').onclick=()=>{$('mega-secret').type=$('mega-secret').type==='password'?'text':'password';};
+$('mega-reveal').onclick=()=>{
+ const input=$('mega-secret'),show=input.type==='password';
+ input.type=show?'text':'password';$('mega-reveal').textContent=show?'Hide':'Show';
+};
 $('mega-form').onsubmit=async event=>{
  event.preventDefault();$('mega-submit').disabled=true;$('mega-error').textContent='';
- const input={endpoint:$('mega-endpoint').value.trim(),accessKeyId:$('mega-key').value,secretAccessKey:$('mega-secret').value};$('mega-key').value='';$('mega-secret').value='';
+ const input={endpoint:$('mega-endpoint').value.trim(),region:$('mega-region').value.trim(),transferMode:paintMegaTransferMode(),accessKeyId:$('mega-key').value,secretAccessKey:$('mega-secret').value};
+ $('mega-key').value='';$('mega-secret').value='';
  try{megaController=new AbortController();const result=await megaApi.run('connect',input,{signal:megaController.signal});if(result.state!=='completed')throw Error(result.error);lastLocation=null;current=null;clipboard=null;history=[];historyIndex=-1;$('mega-dialog').close();await loadMega();}
  catch(e){$('mega-error').textContent=e.message;}finally{input.accessKeyId='';input.secretAccessKey='';megaController=null;$('mega-submit').disabled=false;}
 };
-$('mega-dialog').addEventListener('close',()=>{megaController?.abort();$('mega-key').value='';$('mega-secret').value='';$('mega-secret').type='password';});
+$('mega-dialog').addEventListener('close',()=>{megaController?.abort();$('mega-key').value='';$('mega-secret').value='';$('mega-secret').type='password';$('mega-reveal').textContent='Show';});
