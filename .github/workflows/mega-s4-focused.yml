@@ -1,0 +1,26 @@
+name: MEGA S4 focused verification
+on:
+  pull_request:
+    paths:
+      - "extension/beta/explorer.html"
+      - "extension/beta/explorer.mjs"
+      - "extension/beta/explorer.css"
+      - "extension/beta/s3-adapter.mjs"
+      - "tests/mega-s4.test.mjs"
+      - "tests/beta-explorer.test.mjs"
+      - ".github/workflows/mega-s4-focused.yml"
+permissions:
+  contents: read
+jobs:
+  mega-s4-focused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: node scripts/check-syntax.mjs
+      - run: node --test --test-isolation=none tests/mega-s4.test.mjs
+      - run: node --test --test-isolation=none --test-name-pattern='MEGA popup' tests/beta-explorer.test.mjs

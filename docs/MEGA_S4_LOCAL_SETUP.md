@@ -6,10 +6,30 @@ Explorer remains available in its own tab. MEGA does not require Cloudflare logi
 Create dedicated, restricted S4 keys in MEGA Object Storage → Keys. Copy your
 actual S3 endpoint from MEGA's account UI (the verified endpoint family is
 `https://s3.<region>.megas4.com`). Ordinary MEGA Drive passwords do not work.
-The connection dialog requires endpoint, access key ID and secret access key.
-The current UI signs with `ca-west-1`, accepted by the configured development
-endpoint. Other endpoint/region combinations are not verified; the adapter's
-programmatic `connect` accepts an explicit `region`.
+The connection dialog contains an editable **Signing Region** input and seven
+clickable location pills: Amsterdam, Luxembourg, Paris, Barcelona, Montreal,
+Vancouver and Tokyo. Clicking a pill fills the MEGA endpoint URL. The signing
+region also fills automatically for mappings documented by established S4
+clients: Amsterdam (`eu-central-1`), Luxembourg (`eu-central-2`), Montreal
+(`ca-central-1`), Vancouver (`ca-west-1`). For Paris, Barcelona and Tokyo,
+the signer stays blank until the user supplies the exact region from their
+MEGA account or verified documentation; do not guess a signing region.
+Users may edit both fields freely.
+
+The **Zone number (optional)** accepts 1 or 2; blank chooses endpoint zone 1.
+It never changes the SigV4 signing region. Both numbered zone hosts per
+location appear in maintained S3-client preset lists; the successful historical
+development preflight only verified the supplied `ca-west-1` signer for the
+configured endpoint. Always honor user-entered exact endpoint overrides.
+
+The TRUE REMOTE control is capability-gated. The existing S4 adapter supports
+**browser bytes → cloud**, including a bounded HTTPS source fetch with CORS and
+permissions constraints; it does not support Worker-direct transfer. For this
+version TRUE REMOTE is visibly OFF and disabled, with an explanation. It must
+be enabled only after a verified MEGA Worker route exists, and default ON when
+both options are actually supported. If only TRUE REMOTE is supported, it is
+locked ON; if only browser bytes is supported, it is locked OFF. The API must
+reject unsupported mode requests instead of silently misrouting them.
 
 Keys stay in the trusted extension page's memory only. They are not stored in
 Chrome storage, a native vault, diagnostics, or source files. Reloading or closing

@@ -4,6 +4,12 @@ import {previewType} from './r2-adapter.mjs';
 import {providerDefaults,validatePreferences,resolveOptions} from './configuration.mjs';
 
 export const MEGA_MAX_BYTES=32*1024*1024;
+// Reflect verified transport support; do not advertise an unimplemented Worker route.
+export const MEGA_TRANSFER_CAPABILITIES=Object.freeze({browserBytes:true,trueRemote:false});
+export function chooseMegaTransferMode({browserBytes=MEGA_TRANSFER_CAPABILITIES.browserBytes,trueRemote=MEGA_TRANSFER_CAPABILITIES.trueRemote,requestTrueRemote=true}={}){
+ if(!browserBytes&&!trueRemote)throw Error('NO_VERIFIED_MEGA_TRANSFER_ROUTE');
+ return Object.freeze({mode:trueRemote&&(requestTrueRemote||!browserBytes)?'true-remote':'browser-bytes',locked:!browserBytes||!trueRemote,canUseBrowserBytes:browserBytes,canUseTrueRemote:trueRemote});
+}
 const fail=(code,uncertain=false)=>Object.assign(Error('MEGA S4: '+code+'.'),{code,uncertain});
 const encode=s=>encodeURIComponent(s).replace(/[!'()*]/g,c=>'%'+c.charCodeAt(0).toString(16).toUpperCase());
 export function megaEndpoint(value){
@@ -71,11 +77,12 @@ export function createS3Adapter({fetch:transport=globalThis.fetch,parseXML=text=
  }
  const api={
   configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
-  capabilityProfile:Object.freeze({provider:'mega-s4',maxBytes:MEGA_MAX_BYTES,remoteTransport:'browser-bounded-memory',workerDirect:'NOT_VERIFIED',multipart:false,copy:false,move:false}),
-  async connect({endpoint,accessKeyId,secretAccessKey,region='ca-west-1'},options={}){
+  capabilityProfile:Object.freeze({provider:'mega-s4',maxBytes:MEGA_MAX_BYTES,remoteTransport:'browser-bounded-memory',transferModes:['browser-bytes'],workerDirect:'NOT_VERIFIED',multipart:false,copy:false,move:false}),
+  async connect({endpoint,accessKeyId,secretAccessKey,region='ca-west-1',transferMode='browser-bytes'},options={}){
    const ticket=++connecting;
+   if(transferMode!=='browser-bytes'||!MEGA_TRANSFER_CAPABILITIES.browserBytes)throw fail('TRANSFER_MODE_NOT_AVAILABLE');
    if(!accessKeyId||!secretAccessKey||!/^[a-z0-9-]+$/.test(region))throw fail('INVALID_CREDENTIAL_SYNTAX');
-   const s={endpoint:megaEndpoint(endpoint),id:'mega-s4:'+crypto.randomUUID(),buckets:[],client:new AwsClient({accessKeyId,secretAccessKey,service:'s3',region,retries:0})};
+   const s={transferMode,endpoint:megaEndpoint(endpoint),id:'mega-s4:'+crypto.randomUUID(),buckets:[],client:new AwsClient({accessKeyId,secretAccessKey,service:'s3',region,retries:0})};
    const r=await request(s,'GET','','',{},undefined,{...options,preflight:true}),d=parse(new TextDecoder().decode(await bounded(r,8*1024*1024)));
    s.buckets=[...d.getElementsByTagName('Bucket')].map(n=>text(n,'Name'));if(!s.buckets.length)throw fail('NO_AUTHORIZED_BUCKETS');
    options.signal?.throwIfAborted();if(ticket!==connecting)throw fail('CONNECTION_CHANGED');session=s;history.length=0;return {ready:true};
@@ -83,15 +90,16 @@ export function createS3Adapter({fetch:transport=globalThis.fetch,parseXML=text=
   async disconnect(){connecting++;session=null;history.length=0;return {ready:false};},
   async accounts(){return {accounts:session?[{id:session.id,name:'MEGA S4'}]:[]};},
   async buckets({accountId}){const s=getSession();if(accountId!==s.id)throw fail('WRONG_CONNECTION');return {buckets:s.buckets.map(name=>({name}))};},
-  async connectionStatus({source}={}){getSession(source);return {ready:true};},
+  async connectionStatus({source}={}){const s=getSession(source);return {ready:true,transferMode:s.transferMode,browserBytesSupported:true,trueRemoteSupported:false};},
   list:page,listRaw:(i,o)=>page(i,o,true),stat,upload,
   async mkdir({source,name:n},o){return upload({source,key:prefix(source.prefix||'')+name(n)+'/',file:new Blob([]),conflict:'skip'},o);},
   async delete({source,entries},o){const s=getSession(source);if(entries.some(e=>e.folder))throw fail('RECURSIVE_DELETE_NOT_SUPPORTED');for(const e of entries)await request(s,'DELETE',source.bucketName,key(e.key),{},undefined,o);return {completed:entries.length};},
   async readStream({source,key:k},o={}){const r=await request(getSession(source),'GET',source.bucketName,key(k),{},undefined,o),reader=r.body.getReader();let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;await o.onChunk?.(value);}}finally{await reader.cancel();}return {size,status:r.status};},
   async preview({source,entry:e},o={}){const r=await request(getSession(source),'GET',source.bucketName,key(e.key),{},undefined,o),bytes=await bounded(r,Math.min(o.previewMaxBytes??MEGA_MAX_BYTES,MEGA_MAX_BYTES)),type=previewType(e.key)||'application/octet-stream';return {url:URL.createObjectURL(new Blob([bytes],{type})),type,size:bytes.length};},
   async download(i,o){const result=await api.preview(i,o),a=document.createElement('a');a.href=result.url;a.download=i.entry.displayName||i.entry.key.split('/').pop();a.click();setTimeout(()=>URL.revokeObjectURL(result.url),60000);return {state:'started',downloadState:'started'};},
-  async remoteIngest({destination,url,filename},o={}){
-   const s=getSession(destination),u=new URL(url);if(u.protocol!=='https:'||u.username||u.password||/^(localhost|127\.|10\.|192\.168\.|169\.254\.|\[)/.test(u.hostname))throw fail('SOURCE_URL_DENIED');
+  async remoteIngest({destination,url,filename,transferMode='browser-bytes'},o={}){
+   const s=getSession(destination);if(transferMode!=='browser-bytes'||s.transferMode!=='browser-bytes')throw fail('TRANSFER_MODE_NOT_AVAILABLE');
+   const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password||/^(localhost|127\.|10\.|192\.168\.|169\.254\.|\[)/.test(u.hostname))throw fail('SOURCE_URL_DENIED');
    let r;try{r=await transport(u,{redirect:'error',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.any([AbortSignal.timeout(30000),...(o.signal?[o.signal]:[])])});}catch{throw fail('SOURCE_FETCH_FAILED');}
    if(!r.ok){await r.body?.cancel();throw fail('SOURCE_HTTP_'+r.status);}
    const bytes=await bounded(r);if(session!==s)throw fail('CONNECTION_CHANGED');

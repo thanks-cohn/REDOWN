@@ -272,14 +272,37 @@
 <div class="archive-extract-controls"><label for="archive-prefix">Extract selected files into (empty means bucket root)</label><input id="archive-prefix" autocomplete="off"></div>
 <p id="archive-status" role="status"></p><div class="dialog-actions"><button id="archive-cancel" type="button" hidden>Cancel remaining</button><button id="archive-extract" type="button" class="primary" disabled>Extract selected</button></div>
 </dialog>
-<dialog id="mega-dialog" aria-labelledby="mega-title"><form id="mega-form">
-<h2 id="mega-title">Connect MEGA S4</h2><p>Keys stay in this trusted extension page's memory, not a vault. Reloading or closing this page disconnects MEGA. No Cloudflare account required.</p>
-<label for="mega-endpoint">S3 endpoint URL</label><input id="mega-endpoint" required autocomplete="off" placeholder="https://s3.region.megas4.com">
-<label for="mega-key">Access Key ID</label><input id="mega-key" type="password" required autocomplete="off">
-<label for="mega-secret">Secret Access Key</label><input id="mega-secret" type="password" required autocomplete="off"><button id="mega-reveal" type="button">Show / hide secret</button>
-<p>Signing region: ca-west-1 (verified by the development preflight). Transfers are limited to 32 MiB; no direct Worker route is enabled.</p>
-<p id="mega-error" role="alert"></p><div class="dialog-actions"><button id="mega-cancel" type="button">Cancel</button><button id="mega-submit" type="submit">Connect</button></div>
-</form></dialog>
+<dialog id="mega-dialog" aria-labelledby="mega-title">
+<form id="mega-form">
+ <div class="mega-dialog-head"><div class="mega-dialog-mark" aria-hidden="true">M</div><div><h2 id="mega-title">Connect MEGA S4</h2><p>Connect your S3-compatible storage to REDOWN.</p></div><span class="mega-api-label">S3 API</span></div>
+ <div class="mega-dialog-content">
+  <div class="mega-credential-grid">
+   <label for="mega-key">Access Key ID<input id="mega-key" type="password" required autocomplete="off" placeholder="Enter access key"></label>
+   <label for="mega-secret">Secret Access Key<span class="mega-secret-control"><input id="mega-secret" type="password" required autocomplete="off" placeholder="Enter secret key"><button id="mega-reveal" type="button" aria-label="Show or hide secret key">Show</button></span></label>
+  </div>
+  <label for="mega-endpoint">Endpoint URL<input id="mega-endpoint" type="url" required autocomplete="off" spellcheck="false" value="https://s3.eu-amsterdam-1.megas4.com"></label>
+  <section class="mega-region-panel" aria-label="MEGA signing region settings">
+   <label for="mega-region">Signing Region <small>— editable</small><input id="mega-region" type="text" required autocomplete="off" spellcheck="false" value="eu-central-1" pattern="[a-z0-9-]+" aria-describedby="mega-region-help"></label>
+   <div class="mega-region-label">Quick-select region</div>
+   <div id="mega-region-pills" role="group" aria-label="MEGA S4 region presets">
+    <button type="button" data-mega-location="eu-amsterdam" data-mega-signing="eu-central-1" aria-pressed="true">🇳🇱 Amsterdam</button>
+    <button type="button" data-mega-location="eu-luxembourg" data-mega-signing="eu-central-2" aria-pressed="false">🇱🇺 Luxembourg</button>
+    <button type="button" data-mega-location="eu-paris" data-mega-signing="" aria-pressed="false">🇫🇷 Paris</button>
+    <button type="button" data-mega-location="eu-barcelona" data-mega-signing="" aria-pressed="false">🇪🇸 Barcelona</button>
+    <button type="button" data-mega-location="ca-montreal" data-mega-signing="ca-central-1" aria-pressed="false">🇨🇦 Montreal</button>
+    <button type="button" data-mega-location="ca-vancouver" data-mega-signing="ca-west-1" aria-pressed="false">🇨🇦 Vancouver</button>
+    <button type="button" data-mega-location="ap-tokyo" data-mega-signing="" aria-pressed="false">🇯🇵 Tokyo</button>
+   </div>
+   <div class="mega-zone-row"><div><label for="mega-zone">Zone number <small>(optional)</small></label><p>Leave blank to use the default endpoint.</p></div><input id="mega-zone" type="text" inputmode="numeric" autocomplete="off" pattern="[12]" maxlength="1" placeholder="e.g. 2" aria-label="Optional MEGA endpoint zone number"></div>
+   <p id="mega-region-help" class="mega-small-note">Selecting a location fills its endpoint. Known signing regions are filled automatically; other locations need your MEGA-supplied signing region.</p>
+  </section>
+  <div class="mega-transport-row"><div><label for="mega-true-remote">TRUE REMOTE</label><p id="mega-mode-info">Checking supported transfer methods…</p></div><input id="mega-true-remote" type="checkbox" role="switch" aria-describedby="mega-mode-info"></div>
+  <p class="mega-privacy-note">Your keys stay in this trusted extension page's memory and are cleared on reload. Browser-byte transfers use no intentional local-disk download and currently have a 32 MiB limit.</p>
+  <p id="mega-error" role="alert"></p>
+ </div>
+ <div class="mega-dialog-footer"><small>No Cloudflare login required</small><div class="dialog-actions"><button id="mega-cancel" type="button">Cancel</button><button id="mega-submit" class="primary" type="submit">Connect &amp; Browse</button></div></div>
+</form>
+</dialog>
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>

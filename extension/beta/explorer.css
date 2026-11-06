@@ -1282,3 +1282,41 @@ html[data-activation-prerequisite="true"] #refresh.attention{animation:none!impo
   min-width:88px;min-height:36px;padding:7px 12px;
   font-size:12px;line-height:1.2;font-weight:750;white-space:nowrap;
 }
+
+/* MEGA S4 connection: scoped to avoid altering R2/V3 dialogs and controls. */
+#mega-dialog{width:min(620px,94vw);padding:0;max-height:90dvh;overflow:auto;border-radius:16px}
+#mega-dialog form{margin:0}
+#mega-dialog .mega-dialog-head{display:flex;align-items:center;gap:13px;padding:19px 22px;border-bottom:1px solid var(--line)}
+#mega-dialog .mega-dialog-mark{display:grid;place-items:center;background:#fbe8ee;color:#c82246;border-radius:11px;width:44px;height:44px;font-weight:850;font-size:24px;flex:none}
+#mega-dialog .mega-dialog-head h2{margin:0;font-size:19px}
+#mega-dialog .mega-dialog-head p{margin:4px 0 0;font-size:12px}
+#mega-dialog .mega-api-label{margin-left:auto;white-space:nowrap;font-size:10px;color:var(--muted)}
+#mega-dialog .mega-dialog-content{padding:21px 22px}
+#mega-dialog label{display:block;font-size:12px;font-weight:700;color:var(--text)}
+#mega-dialog label input{margin-top:7px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);min-width:0}
+#mega-dialog input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+#mega-dialog .mega-credential-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;margin-bottom:16px}
+#mega-dialog .mega-secret-control{display:flex;align-items:center;position:relative}
+#mega-dialog .mega-secret-control input{padding-right:56px}
+#mega-dialog #mega-reveal{position:absolute;right:7px;bottom:6px;background:transparent;border:0;font-size:11px;color:var(--muted);padding:6px}
+#mega-dialog .mega-region-panel{padding:16px;margin-top:17px;border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--panel) 88%,var(--accent) 12%)}
+#mega-dialog label small{font-weight:500;font-size:11px;color:var(--muted)}
+#mega-dialog .mega-region-label{font-size:12px;font-weight:750;margin:15px 0 9px}
+#mega-dialog #mega-region-pills{display:flex;flex-wrap:wrap;gap:7px}
+#mega-dialog #mega-region-pills button{background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:8px 11px;color:var(--text);font-size:12px;line-height:1.3}
+#mega-dialog #mega-region-pills button[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--panel) 83%,var(--accent) 17%);font-weight:750}
+#mega-dialog #mega-region-pills button:hover{border-color:var(--accent)}
+#mega-dialog .mega-zone-row{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+#mega-dialog .mega-zone-row p{font-size:11px;margin:4px 0 0}
+#mega-dialog .mega-zone-row input{width:92px;text-align:center;flex:none}
+#mega-dialog .mega-small-note{font-size:11px;line-height:1.6;margin:12px 0 0}
+#mega-dialog .mega-transport-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:18px 0 12px}
+#mega-dialog .mega-transport-row p{font-size:11px;line-height:1.55;margin:4px 0 0}
+#mega-dialog #mega-true-remote{width:40px;height:22px;accent-color:var(--accent);flex:none;margin:0}
+#mega-dialog #mega-true-remote:disabled{opacity:.5;cursor:not-allowed}
+#mega-dialog .mega-privacy-note{margin:7px 0 0;font-size:11px;line-height:1.65}
+#mega-dialog #mega-error{color:#cb3b45;font-size:12px;margin:8px 0 0}
+#mega-dialog .mega-dialog-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 22px;border-top:1px solid var(--line);flex-wrap:wrap}
+#mega-dialog .mega-dialog-footer small{color:var(--muted);font-size:11px}
+#mega-dialog .mega-dialog-footer .dialog-actions{margin:0 0 0 auto}
+@media(max-width:490px){#mega-dialog .mega-credential-grid{grid-template-columns:1fr}#mega-dialog .mega-dialog-content{padding:16px}#mega-dialog .mega-dialog-head{padding:16px}}
