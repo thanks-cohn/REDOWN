@@ -84,3 +84,22 @@ multipart, Worker-direct relay, source redirects, durable credentials/jobs/histo
 cross-cloud transfer, native-menu MEGA destinations and all-provider release
 certification remain outstanding. This is an initial usable vertical slice,
 not completion of every P0 acceptance gate.
+
+## Connection popup revision (November 6, 2026)
+
+The Beta Explorer connection form now provides an explicit editable signing region,
+seven location presets, and an optional numbered endpoint zone (blank = zone 1).
+Preset signing-region mappings are only filled when supported by established
+S4 region references. Paris, Barcelona and Tokyo require the user to provide
+a signing region until that mapping is independently verified. A clicked preset
+does not override subsequent user edits unless the user clicks another preset.
+
+MEGA's actual adapter exposes `browser-bytes` as the sole verified transport.
+The GUI locks TRUE REMOTE OFF with a clear explanation, and the Universal File
+API rejects `true-remote` requests without issuing network calls. The mode
+selector has a capability resolver for future verified modes: prefer TRUE REMOTE
+when it is implemented, allow OFF only when browser bytes is available, and
+lock TRUE REMOTE ON if browser bytes is unavailable. The existing bounded
+source-fetch/upload/readback path is unchanged, including its 32 MiB limit,
+CORS restrictions, no OS disk download, and provenance exclusion. There is
+no claim of live installed-Chrome verification or deployed Worker support.
