@@ -1115,7 +1115,17 @@ test('MEGA popup and independent tabs retain R2 navigation and clear credential 
  try{
   const oldBucket=d.querySelector('#heading').textContent;
   d.querySelector('#provider-mega').click();await settle(()=>d.querySelector('#mega-dialog').open);
-  d.querySelector('#mega-endpoint').value='https://s3.ca-vancouver-1.megas4.com';d.querySelector('#mega-key').value='synthetic-key';d.querySelector('#mega-secret').value='synthetic-secret';
+  const vancouver=d.querySelector('[data-mega-location="ca-vancouver"]');vancouver.click();
+  assert.equal(d.querySelector('#mega-region').value,'ca-west-1');
+  assert.equal(d.querySelector('#mega-endpoint').value,'https://s3.ca-vancouver-1.megas4.com');
+  assert.equal(d.querySelector('#mega-zone').value,'');
+  const zone=d.querySelector('#mega-zone');zone.value='2';zone.dispatchEvent(new w.Event('input',{bubbles:true}));
+  assert.equal(d.querySelector('#mega-endpoint').value,'https://s3.ca-vancouver-2.megas4.com');
+  zone.value='';zone.dispatchEvent(new w.Event('input',{bubbles:true}));
+  assert.equal(d.querySelector('#mega-endpoint').value,'https://s3.ca-vancouver-1.megas4.com');
+  assert.equal(d.querySelector('#mega-true-remote').checked,false);
+  assert.equal(d.querySelector('#mega-true-remote').disabled,true);
+  d.querySelector('#mega-key').value='synthetic-key';d.querySelector('#mega-secret').value='synthetic-secret';
   d.querySelector('#mega-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
   await settle(()=>Boolean(d.querySelector('[data-key="mega.txt"]')));
   assert.equal(d.querySelector('#mega-key').value,'');assert.equal(d.querySelector('#mega-secret').value,'');d.querySelector('[data-key="mega.txt"]').click();assert.equal(d.querySelector('#copy').disabled,true);assert.equal(d.querySelector('#rename').disabled,true);assert.equal(d.querySelector('#prepare').hidden,true);
