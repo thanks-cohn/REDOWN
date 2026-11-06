@@ -8,7 +8,7 @@ export const MEGA_MAX_BYTES=32*1024*1024;
 export const MEGA_TRANSFER_CAPABILITIES=Object.freeze({browserBytes:true,trueRemote:false});
 export function chooseMegaTransferMode({browserBytes=MEGA_TRANSFER_CAPABILITIES.browserBytes,trueRemote=MEGA_TRANSFER_CAPABILITIES.trueRemote,requestTrueRemote=true}={}){
  if(!browserBytes&&!trueRemote)throw Error('NO_VERIFIED_MEGA_TRANSFER_ROUTE');
- return Object.freeze({mode:trueRemote&&requestTrueRemote?'true-remote':'browser-bytes',locked:!browserBytes||!trueRemote,canUseBrowserBytes:browserBytes,canUseTrueRemote:trueRemote});
+ return Object.freeze({mode:trueRemote&&(requestTrueRemote||!browserBytes)?'true-remote':'browser-bytes',locked:!browserBytes||!trueRemote,canUseBrowserBytes:browserBytes,canUseTrueRemote:trueRemote});
 }
 const fail=(code,uncertain=false)=>Object.assign(Error('MEGA S4: '+code+'.'),{code,uncertain});
 const encode=s=>encodeURIComponent(s).replace(/[!'()*]/g,c=>'%'+c.charCodeAt(0).toString(16).toUpperCase());
