@@ -2,7 +2,7 @@ import test from 'node:test';
 import {createProviderRouter} from '../extension/beta/provider-router.mjs';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
-import {createS3Adapter,megaEndpoint,MEGA_MAX_BYTES} from '../extension/beta/s3-adapter.mjs';
+import {createS3Adapter,megaEndpoint,MEGA_MAX_BYTES,chooseMegaTransferMode,MEGA_TRANSFER_CAPABILITIES} from '../extension/beta/s3-adapter.mjs';
 import {createFileApi} from '../extension/beta/file-api.mjs';
 const dom=new JSDOM();
 function fixture(){
@@ -32,3 +32,26 @@ test('provider router fences explicit identities and batches before invoking eit
 
 
 test('remote acquisition uses the same conditional writer and byte verification without provenance headers',async()=>{const f=fixture(),source=await f.connect();const r=await f.api.run('remoteIngest',{destination:source,url:'https://source.example/file',filename:'remote.bin'});assert.equal(r.state,'completed');assert.equal(r.data.verified,true);assert.deepEqual([...f.objects.get('remote.bin')],[1,2,3]);const put=f.calls.find(r=>r.method==='PUT');assert(![...put.headers].some(([k,v])=>/referer|source|page/i.test(k)||v.includes('source.example')));});
+
+test('MEGA transport selection prefers verified TRUE REMOTE but never invents a route',()=>{
+ assert.deepEqual(MEGA_TRANSFER_CAPABILITIES,{browserBytes:true,trueRemote:false});
+ assert.deepEqual(chooseMegaTransferMode(),{mode:'browser-bytes',locked:true,canUseBrowserBytes:true,canUseTrueRemote:false});
+ assert.deepEqual(chooseMegaTransferMode({browserBytes:true,trueRemote:true}),{mode:'true-remote',locked:false,canUseBrowserBytes:true,canUseTrueRemote:true});
+ assert.equal(chooseMegaTransferMode({browserBytes:true,trueRemote:true,requestTrueRemote:false}).mode,'browser-bytes');
+ assert.deepEqual(chooseMegaTransferMode({browserBytes:false,trueRemote:true,requestTrueRemote:false}),{mode:'true-remote',locked:true,canUseBrowserBytes:false,canUseTrueRemote:true});
+ assert.throws(()=>chooseMegaTransferMode({browserBytes:false,trueRemote:false}),/NO_VERIFIED_MEGA_TRANSFER_ROUTE/);
+});
+test('MEGA accepts explicit signing region and rejects unimplemented TRUE REMOTE before touching network',async()=>{
+ const f=fixture();
+ const creds={endpoint:'https://s3.eu-luxembourg-1.megas4.com',region:'eu-central-2',accessKeyId:'synthetic-id',secretAccessKey:'synthetic-secret'};
+ let r=await f.api.run('connect',{...creds,transferMode:'true-remote'});
+ assert.equal(r.state,'failed');assert.equal(f.calls.length,0);
+ r=await f.api.run('connect',{...creds,transferMode:'browser-bytes'});
+ assert.equal(r.state,'completed');
+ assert.match(f.calls[0].headers.get('authorization'),/eu-central-2/);
+ const source=(await f.api.run('accounts')).data.accounts[0].id;
+ r=await f.api.run('connectionStatus',{source:{provider:'mega-s4',connectionId:source,accountId:source,bucketName:'test',prefix:''}});
+ assert.equal(r.data.transferMode,'browser-bytes');assert.equal(r.data.trueRemoteSupported,false);
+ r=await f.api.run('remoteIngest',{destination:{provider:'mega-s4',connectionId:source,accountId:source,bucketName:'test',prefix:''},url:'https://source.example/bytes',filename:'a.bin',transferMode:'true-remote'});
+ assert.equal(r.state,'failed');assert.match(r.error,/TRANSFER_MODE_NOT_AVAILABLE/);
+});
