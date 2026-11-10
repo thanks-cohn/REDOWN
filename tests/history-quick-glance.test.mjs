@@ -32,6 +32,8 @@ test('Today reads every local record across archive pages, keeps older pages and
  assert.equal(h.d.querySelector('#history-page-label').textContent,'1 / 3');
  h.d.querySelector('#history-next').click();await waitFor(()=>h.d.querySelector('#history-page-label').textContent==='2 / 3');
  assert.equal(h.d.querySelectorAll('.history-transfer').length,40);assert.equal(reads.at(-1)[0],235);
+ assert.equal(h.d.querySelector('.history-year').open,true);
+ assert.equal(h.d.querySelector('.history-day').open,true); // newest day on the page is open
  await h.w.RedownShelfHistory.open();assert.equal(h.d.querySelectorAll('.history-transfer').length,235);
  h.dom.window.close();
 });
@@ -193,7 +195,7 @@ test('verified public R2 receipt is cloud and Google preview is cloud',async()=>
  assert.equal((await source.resolve({...r,providerKind:'google-drive',destination:{accountId:'a',fileId:'file'}},signal)).origin,'cloud');
 });
 
-test('source dots appear independently of successful and failed transfer status',async()=>{
+test('no green/blue provenance dots or transfer-status dots are rendered',async()=>{
  const h=view();
  const saved=record(),failed={...record(1),ok:false,verified:false,status:'failed'};
  h.d.querySelector('#history-view').hidden=false;
@@ -206,11 +208,24 @@ test('source dots appear independently of successful and failed transfer status'
  assert.ok(rows.some(row=>row.dataset.state==='failed'));
  assert.ok(rows.some(row=>row.dataset.state==='success'||row.dataset.state==='verified'));
  for(const row of rows){
-  assert.ok(row.querySelector('.history-dot'));
-  const origin=row.querySelector('.history-image-origin');
-  assert.equal(origin.dataset.origin,'source');
-  assert.equal(origin.getAttribute('aria-label'),'Preview from original source');
+  assert.equal(row.querySelector('.history-dot'),null);
+  assert.equal(row.querySelector('.history-image-origin'),null);
+  assert.ok(row.querySelector('.history-image-slot img'));
  }
+ h.dom.window.close();
+});
+
+test('verified GO TO is an always-visible sticker inside the image frame, not inside More',async()=>{
+ const h=view();const opens=[];
+ h.d.querySelector('#history-view').hidden=false;
+ h.w.RedownHistoryNavigation={openable:()=>true,open:r=>opens.push(r.id),cloudTarget:()=>null,savedDropboxTarget:()=>null};
+ h.w.chrome={storage:{local:{get:async()=>({transferHistory:[record(3)],quickGlancePremiumEnabled:false})},onChanged:{addListener(){}}}};
+ h.w.eval(read('shelf-history.js'));await h.w.RedownShelfHistory.open();
+ const frame=h.d.querySelector('.history-image-slot'),button=frame?.querySelector('.history-go-to');
+ assert.ok(button);assert.equal(button.textContent,'GO TO');
+ assert.equal(h.d.querySelector('.history-entry-more').open,false);
+ assert.equal(h.d.querySelector('.history-entry-provenance .history-go-to'),null);
+ button.click();assert.deepEqual(opens,['3']);
  h.dom.window.close();
 });
 
@@ -237,10 +252,9 @@ test('enabling Premium on an older page keeps the page and open date, loading on
   assert.equal(calls.length,0);
   enabled=true;
   listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
-  await waitFor(()=>h.d.querySelector('.history-image-origin'));
+  await waitFor(()=>h.d.querySelector('.history-image-slot img'));
   assert.equal(h.d.querySelector('#history-page-label').textContent,'2 / 2');
   assert.equal(h.d.querySelector('.history-day').open,true);
-  assert.equal(h.d.querySelector('.history-image-origin').dataset.origin,'cloud');
   assert.deepEqual(calls,[old.id]);
   h.d.querySelector('#history-view').hidden=true;
   enabled=false;
