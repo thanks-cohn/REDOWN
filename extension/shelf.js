@@ -57,19 +57,56 @@ $('files-entrance')?.addEventListener('change',async event=>{
   catch{event.target.value=filesEntrance;status('Could not save Files entrance.');}
 });
 async function refreshPrepared(){
-  if(!$('keep-prepared-files'))return;
-  const data=await chrome.storage.local.get('shelfKeepPreparedV1');$('keep-prepared-files').checked=data.shelfKeepPreparedV1===true;
-  try{const result=await chrome.runtime.sendMessage({type:'redownChuteV1.stats'});if(!result?.ok)throw Error();$('prepared-files-usage').textContent=`${result.count||0} prepared / pending · ${((result.bytes||0)/1000000).toFixed(1)} MB / 128 MB`;}catch{$('prepared-files-usage').textContent='Prepared-file storage unavailable.';}
+  const enabled=$('guarantee-drag-drops'),hours=$('drag-retention-hours'),queue=$('drag-handoff-queue');
+  if(!enabled||!hours)return;
+  const data=await chrome.storage.local.get(['shelfGuaranteeDragDropV1','shelfDragRetentionHoursV1']);
+  enabled.checked=data.shelfGuaranteeDragDropV1!==false;
+  if(document.activeElement!==hours){
+    try{hours.value=String(RedownChuteStage.parseRetentionHours(data.shelfDragRetentionHoursV1??1));}
+    catch{hours.value='1';}
+  }
+  const result=await chrome.runtime.sendMessage({type:'redownChuteV1.stats'});
+  if(!result?.ok){$('prepared-files-usage').textContent='Temporary file storage unavailable.';return;}
+  $('prepared-files-usage').textContent=`${result.count||0} staged / pending · ${((result.bytes||0)/1000000).toFixed(1)} MB / 128 MB`;
+  if(!queue)return;
+  const response=await chrome.runtime.sendMessage({type:'redownChuteV1.list'});
+  if(!response?.ok||!Array.isArray(response.items)){queue.replaceChildren();return;}
+  queue.replaceChildren();
+  for(const item of response.items){
+    const row=document.createElement('li'),name=document.createElement('strong'),note=document.createElement('small');
+    name.textContent=item.name||'Staged file';
+    const seconds=Math.max(0,Math.ceil((item.expires-Date.now())/1000));
+    note.textContent=` · ${item.state||'pending'} · ${((item.size||0)/1000000).toFixed(1)} MB · expires in ${seconds<3600?Math.ceil(seconds/60)+' min':(seconds/3600).toFixed(1)+' hr'}`;
+    row.append(name,note);queue.append(row);
+  }
+  if(!response.items.length){const empty=document.createElement('li');empty.textContent='No temporary files retained.';queue.append(empty);}
 }
-$('keep-prepared-files')?.addEventListener('change',async event=>{
+$('guarantee-drag-drops')?.addEventListener('change',async event=>{
   const control=event.target;control.disabled=true;
-  try{await chrome.storage.local.set({shelfKeepPreparedV1:control.checked===true});if(!control.checked)await chrome.runtime.sendMessage({type:'redownChuteV1.clear'});await refreshPrepared();}
-  catch{status('Could not update prepared-file storage. Try again.');}
+  try{
+    await chrome.storage.local.set({shelfGuaranteeDragDropV1:control.checked});
+    if(!control.checked)await chrome.runtime.sendMessage({type:'redownChuteV1.clear'});
+    $('guarantee-drag-status').textContent=control.checked?'Browser-byte fallback enabled. Website acceptance still depends on the site.':'Browser-byte fallback disabled.';
+    await refreshPrepared();
+  }catch{control.checked=!control.checked;$('guarantee-drag-status').textContent='Could not save drag-and-drop mode.';}
   finally{control.disabled=false;}
 });
+$('drag-retention-hours')?.addEventListener('change',async event=>{
+  const input=event.target;
+  try{
+    const hours=RedownChuteStage.parseRetentionHours(input.value);
+    await chrome.storage.local.set({shelfDragRetentionHoursV1:hours});
+    $('guarantee-drag-status').textContent='Retention saved for future file handoffs.';
+  }catch(error){$('guarantee-drag-status').textContent=error.message;input.focus();}
+});
+$('refresh-drag-queue')?.addEventListener('click',()=>void refreshPrepared().catch(()=>{}));
 $('clear-prepared-files')?.addEventListener('click',async()=>{
-  try{const result=await chrome.runtime.sendMessage({type:'redownChuteV1.clear'});if(!result?.ok)throw Error();await refreshPrepared();status('Prepared files cleared. Cloud originals are unchanged.');}
-  catch{status('Could not clear prepared files. Reopen the Shelf and try again.');}
+  try{
+    const result=await chrome.runtime.sendMessage({type:'redownChuteV1.clear'});
+    if(!result?.ok)throw Error();
+    await refreshPrepared();
+    $('guarantee-drag-status').textContent='Temporary file queue cleared. Cloud originals are unchanged.';
+  }catch{$('guarantee-drag-status').textContent='Could not clear temporary files. Retry.';}
 });
 void refreshPrepared().catch(()=>{});
 window.addEventListener('focus',()=>{if(!$('settings-view').hidden)void refreshPrepared().catch(()=>{});});
@@ -250,7 +287,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   if(changes.previewNavigationAxisV1&&$('preview-navigation-axis'))$('preview-navigation-axis').value=changes.previewNavigationAxisV1.newValue==='vertical'?'vertical':'horizontal';
   if(changes.shelfFilesEntranceV1){if(changes.shelfFilesEntranceV1.newValue!=='slide-up')settleEntrance();filesEntrance=changes.shelfFilesEntranceV1.newValue==='slide-up'?'slide-up':'normal';if($('files-entrance'))$('files-entrance').value=filesEntrance;}
   if(changes.shelfDragLimitMBV1)void refreshDragLimit().catch(()=>{});
-  if(changes.shelfKeepPreparedV1&&!$('settings-view').hidden)void refreshPrepared().catch(()=>{});
+  if((changes.shelfKeepPreparedV1||changes.shelfGuaranteeDragDropV1||changes.shelfDragRetentionHoursV1)&&!$('settings-view').hidden)void refreshPrepared().catch(()=>{});
   if(changes.redownFailureDot){
     ++failureLaserRevision;
     paintShelfFailureLaser(changes.redownFailureDot.newValue,true);
