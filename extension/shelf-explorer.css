@@ -167,3 +167,9 @@ body:has(#explorer-view:not([hidden])) #status {margin:0;flex-shrink:0;}
 .mini-preview header{min-width:0;gap:4px}.mini-preview header strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mini-preview header button{flex:none}
 #explorer-view.local-demo .mini-grid .mini-image .mini-name{opacity:1;font-weight:600;line-height:1.3}
 #explorer-view.local-demo .mini-grid .mini-image .mini-icon{padding-bottom:22px}
+
+/* Logged-out Explorer: never display diagnostic banners or alter its height
+   as connection checks retry. Real errors remain available through Debug API. */
+#explorer-view[data-no-cloud="true"] .mini-status,
+#explorer-view[data-no-cloud="true"] .mini-drag-status {display:none!important;}
+#explorer-view .mini-status:empty{display:none;}
