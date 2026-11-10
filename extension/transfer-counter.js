@@ -39,12 +39,17 @@
         Number.isSafeInteger(entry.bytes)&&entry.bytes>=0&&v.bytes===entry.bytes&&
         typeof v.etag==='string'&&!!v.etag;
     };
+    // Google uses a stable REDOWN upload job ID for deduplication, not the
+    // Google-assigned file ID. The upload client independently verifies the
+    // exact created file ID, bytes, name and destination before reporting done.
     const googleProof=entry=>entry?.providerKind==='google'&&
       entry?.ok===true&&entry?.verified===true&&entry?.status==='completed'&&
-      /^google:[\w-]+$/.test(entry.deliveryId||'')&&
+      typeof entry.transferId==='string'&&/^[\w-]+$/.test(entry.transferId)&&
+      entry.deliveryId==='google:'+entry.transferId&&
       typeof entry.destination?.fileId==='string'&&
       /^[\w-]+$/.test(entry.destination.fileId)&&
-      entry.deliveryId==='google:'+entry.destination.fileId;
+      typeof entry.destination?.accountId==='string'&&!!entry.destination.accountId&&
+      Number.isSafeInteger(entry.bytes)&&entry.bytes>=0;
     const providerProof=entry=>entry?.ok===true&&entry?.verified===true&&
       entry?.status==='completed'&&(
       entry.providerKind==='cloudflare'?cloudflareProof(entry):
