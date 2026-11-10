@@ -43,7 +43,7 @@ test('Bounded lease queue preserves active transfers; expired/inactive records r
   assert.equal((await h.call('clear',undefined,target)).ok,false);assert.equal((await h.call('stats',undefined,target)).ok,false);
   assert.ok((await h.call('clear',undefined,shelf)).ok);assert.equal((await stage.stats()).count,0);assert.equal((await h.call('chunk',files[0].id,target,{offset:0})).ok,false);
   await stage.put(new Blob(['x']),{name:'logout',mime:'text/plain'});h.callbacks.changed({cloudflareAuth:{newValue:null}},'local');await tick();assert.equal((await stage.stats()).count,0);
-  await stage.put(new Blob(['x']),{name:'restart',mime:'text/plain'});h.callbacks.startup();await tick();assert.equal((await stage.stats()).count,0);
+  await stage.put(new Blob(['x']),{name:'restart',mime:'text/plain'});h.callbacks.startup();await tick();assert.equal((await stage.stats()).count,1,'restart preserves unexpired queue entries');
   await stage.put(new Blob(['x']),{name:'optout',mime:'text/plain'});h.callbacks.changed({shelfKeepPreparedV1:{newValue:false}},'local');await tick();assert.equal((await stage.stats()).count,0);
  }finally{await stage.purge(true);await stage.close();await h.stage.close();}
 });
