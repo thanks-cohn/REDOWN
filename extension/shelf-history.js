@@ -124,7 +124,7 @@
   const archive=globalThis.RedownHistoryArchive?.create();
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
   let quickGlance=null,quickGlanceEnabled=false,firstPageSize=PAGE_SIZE;
-  let resumeAfterMembershipChange=false;
+  let resumeAfterMembershipChange=false,expandFirstOnPage=false;
   let legacy=[],pageItems=[],fallback=false,legacyImported=false;
   const openGroups=new Map([['root',null]]);
   const create=(tag,value='',className='')=>{
@@ -171,7 +171,9 @@
     if(globalThis.RedownHistoryNavigation?.openable(record)){
       const go=create('button','GO TO','history-go-to');go.type='button';
       go.setAttribute('aria-label','Go to saved file '+info.name);
-      go.onclick=event=>{event.preventDefault();event.stopPropagation();globalThis.RedownHistoryNavigation.open(record);};content.append(go);
+      go.onclick=event=>{event.preventDefault();event.stopPropagation();globalThis.RedownHistoryNavigation.open(record);};
+      // A verified GO TO is a primary sticker on the image, never hidden by More.
+      (parent.querySelector('.history-image-slot')||parent).append(go);
     }
     content.append(create('small',info.status,'history-entry-outcome'));
     if(info.detail)content.append(create('small',info.detail,'history-entry-provider'));
@@ -306,7 +308,6 @@
     for(const item of day.items){
       const info=describe(item.record),record=item.record;
       const row=create('li','','history-transfer');row.dataset.state=info.state;
-      const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
       const body=create('div','','history-transfer-body');
       const header=create('div','','history-entry-head');
       const filename=create('strong',info.name);filename.title=info.name;
@@ -322,7 +323,7 @@
         body.append(slot);
       }
       addProvenance(body,record,info);
-      row.append(dot,body);list.append(row);
+      row.append(body);list.append(row);
     }
     container.append(list);
   }
@@ -368,6 +369,20 @@
       }));
     }
     timeline.replaceChildren(fragment);
+    if(expandFirstOnPage){
+      expandFirstOnPage=false;
+      // Expand the exact first entry's year/week/month/day path after paging.
+      // Clicking page 2 must not leave the newest archived day collapsed.
+      let parent='root';
+      let current=[...timeline.children].find(el=>el.matches?.('details.history-year'));
+      while(current){
+        current.open=true;
+        const key=current.dataset.group;
+        openGroups.set(parent,key);
+        parent=key;
+        current=[...current.children].find(el=>el.matches?.('details.history-month,details.history-week,details.history-day'))||null;
+      }
+    }
     quickGlance?.start();
     const pages=pageCount();
     $('history-status').textContent=fallback?'Recent records only · archive unavailable':
@@ -454,6 +469,7 @@
     const max=pageCount()-1;
     if(next<0||next>max||next===pageIndex)return;
     pageIndex=next;
+    expandFirstOnPage=true;
     // Reveal the first year represented on the new page, not a stale year
     // selected on a previous page.
     openGroups.delete('root-chosen');
