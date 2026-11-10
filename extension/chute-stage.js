@@ -4,6 +4,17 @@
   const TTL=90000,RETRY_TTL=30000,KEEP_TTL=10*60000,MAX_BYTES=128000000,MAX_FILES=4,CHUNK_BYTES=128*1024;
   const inactive=v=>v.used||['drop_dispatched','failed','cached'].includes(v.state);
   const parseMB=value=>{const n=typeof value==='number'?value:typeof value==='string'&&value.trim()?Number(value):NaN;if(!Number.isFinite(n)||n<=0)throw Error('Enter a finite positive number of MB.');return n;};
+  const DEFAULT_RETENTION_HOURS=1;
+  // Zero means delete as soon as a handoff finishes. Decimal hours are supported.
+  const parseRetentionHours=value=>{
+    const n=typeof value==='number'?value:typeof value==='string'&&value.trim()?Number(value):NaN;
+    if(!Number.isFinite(n)||n<0||!Number.isSafeInteger(Math.round(n*3600000))||
+      Date.now()+Math.round(n*3600000)>8640000000000000)
+      throw Error('Enter a nonnegative, finite number of hours.');
+    return n;
+  };
+  const validRetentionMs=value=>Number.isSafeInteger(value)&&value>=0&&value<=8640000000000000-Date.now();
+  const lifetime=v=>v.keep===true&&validRetentionMs(v.retentionMs)?v.retentionMs:(v.keep?KEEP_TTL:RETRY_TTL);
   function createStage({indexedDB=globalThis.indexedDB,now=Date.now}={}) {
     let opening;
     function db(){return opening??=new Promise((resolve,reject)=>{
@@ -33,6 +44,15 @@
       s.put(record);done(true);
     }
     return {
+      async list(limit=20){return transaction('readonly',(store,done)=>{
+        const request=store.getAll();request.onsuccess=()=>{
+          const entries=request.result.filter(v=>v.expires>now())
+            .sort((a,b)=>b.expires-a.expires).slice(0,Math.max(1,Math.min(100,limit)))
+            .map(v=>({id:v.id,name:v.name,mime:v.mime,size:v.size,state:v.state,
+              expires:v.expires,used:v.used===true,ready:v.ready===true}));
+          done(entries);
+        };
+      });},
       async reserve(id,{name,mime,size,cacheKey='',maxBytes=MAX_BYTES,policyBytes=50000000}) {
         if(!valid(id,name,size)||size>policyBytes)throw Error('File cannot be staged safely.');
         const record={policyBytes,id,blob:null,name,mime,size,cacheKey,expires:now()+TTL,armed:false,claim:null,offset:0,state:'preparing',used:false};
@@ -45,10 +65,10 @@
         if(!ok)throw Error('Prepared-file queue is full. Clear Prepared Files or wait for a current handoff to finish.');
         return {id,expires:record.expires,name,mime,size,policyBytes};
       },
-      async reuse(id,{cacheKey,version,keep=false,maxBytes=MAX_BYTES}){return transaction('readwrite',(s,done)=>{
+      async reuse(id,{cacheKey,version,keep=false,retentionMs=null,maxBytes=MAX_BYTES}){return transaction('readwrite',(s,done)=>{
         const r=s.getAll();r.onsuccess=()=>{
           const records=r.result,v=records.find(v=>v.id===id);if(!v||v.expires<=now()||v.used){done(null);return;}
-          v.cacheKey=cacheKey;v.version=version;v.keep=keep===true;
+          v.cacheKey=cacheKey;v.version=version;v.keep=keep===true;v.retentionMs=validRetentionMs(retentionMs)?retentionMs:null;
           const cached=version&&records.find(old=>old.id!==id&&old.expires>now()&&old.cacheKey===cacheKey&&old.version===version&&old.size===v.size&&old.blob&&inactive(old));
           if(cached){v.blob=cached.blob;v.ready=false;v.state='validating';s.delete(cached.id);s.put(v);done(true);return;}
           const others=records.filter(old=>{if(old.id!==id&&old.cacheKey===cacheKey&&inactive(old)){s.delete(old.id);return false;}return true;});
@@ -58,7 +78,7 @@
       async fulfill(id,blob,metadata={}){return transaction('readwrite',(s,done)=>{
         const r=s.get(id);r.onsuccess=()=>{const v=r.result;
           if(!v||v.expires<=now()||v.blob||v.used||blob.size!==v.size||blob.size>MAX_BYTES){done(false);return;}
-          v.blob=blob;v.ready=true;v.state='prepared';v.cacheKey=metadata.cacheKey||v.cacheKey;v.version=metadata.version||v.version;v.keep=metadata.keep===true;s.put(v);done(true);
+          v.blob=blob;v.ready=true;v.state='prepared';v.cacheKey=metadata.cacheKey||v.cacheKey;v.version=metadata.version||v.version;v.keep=metadata.keep===true;v.retentionMs=validRetentionMs(metadata.retentionMs)?metadata.retentionMs:null;s.put(v);done(true);
         };
       });},
       async activate(id){return this.update(id,v=>{if(!v.blob||v.used)return false;v.ready=true;v.state='prepared';return true;});},
@@ -75,16 +95,16 @@
       });},
       async retire(id){return this.update(id,v=>{
         if(!v.blob||v.ready===false||v.claim&&!v.used)return false;
-        v.used=true;v.armed=false;v.claim=null;v.state='cached';v.expires=now()+(v.keep?KEEP_TTL:RETRY_TTL);return true;
+        v.used=true;v.armed=false;v.claim=null;v.state='cached';v.expires=now()+lifetime(v);return true;
       });},
       async finish(id,owner,state){return this.update(id,v=>{
         if(v.used||v.claim!==owner||!['drop_dispatched','failed'].includes(state)||state==='drop_dispatched'&&v.offset!==v.size)return false;
-        v.used=true;v.armed=false;v.state=state;v.expires=now()+(v.keep?KEEP_TTL:RETRY_TTL);return true;
+        v.used=true;v.armed=false;v.state=state;v.expires=now()+lifetime(v);return true;
       });},
       async stats(){return transaction('readonly',(s,done)=>{const r=s.getAll();r.onsuccess=()=>{const live=r.result.filter(v=>v.expires>now());done({count:live.length,bytes:live.reduce((n,v)=>n+(v.blob?v.blob.size:0),0),maxBytes:MAX_BYTES,maxFiles:MAX_FILES,retrySeconds:RETRY_TTL/1000,keepMinutes:KEEP_TTL/60000});};});},
       async remove(id){return transaction('readwrite',s=>s.delete(id));},purge,
       async close(){if(opening)(await opening).close();opening=null;}
     };
   }
-  globalThis.RedownChuteStage=Object.freeze({createStage,parseMB,TTL,RETRY_TTL,KEEP_TTL,MAX_BYTES,MAX_FILES,CHUNK_BYTES});
+  globalThis.RedownChuteStage=Object.freeze({createStage,parseMB,parseRetentionHours,DEFAULT_RETENTION_HOURS,TTL,RETRY_TTL,KEEP_TTL,MAX_BYTES,MAX_FILES,CHUNK_BYTES});
 })();
