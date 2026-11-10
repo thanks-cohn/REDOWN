@@ -103,3 +103,33 @@ test('Outside drop before asynchronous reservation is ready cancels the first ge
   await waitFor(()=>states.at(-1)?.state==='cancelled');assert.equal((await stage.stats()).count,0);assert.equal(bridge.getHandle(),null);
  }finally{await bridge.cancel();await stage.purge(true);await stage.close();await h.stage.close();}
 });
+
+test('Guarantee Drag and Drops retention permits a default 1-hour handoff lease and custom durations',async()=>{
+ const h=harness(),stage=h.stage;
+ try{
+  const rule=vm.createContext({crypto,Date,indexedDB:new IDBFactory()});
+  vm.runInContext(readFileSync('extension/chute-stage.js','utf8'),rule);
+  assert.equal(rule.RedownChuteStage.DEFAULT_RETENTION_HOURS,1);
+  assert.equal(rule.RedownChuteStage.parseRetentionHours('1'),1);
+  assert.equal(rule.RedownChuteStage.parseRetentionHours('2.5'),2.5);
+  assert.equal(rule.RedownChuteStage.parseRetentionHours('0'),0);
+  for(const value of ['', '-1','NaN','Infinity'])assert.throws(()=>rule.RedownChuteStage.parseRetentionHours(value));
+
+  const first=await stage.put(new Blob(['abc']),{name:'image.png',mime:'image/png'});
+  await stage.update(first.id,v=>{v.claim='site-owner';v.offset=3;v.retainAfterHandoff=true;v.retentionMs=3600000;return true;});
+  assert.ok(await stage.finish(first.id,'site-owner','drop_dispatched'));
+  const rows=await stage.list();
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].name,'image.png');
+  assert.equal(rows[0].state,'drop_dispatched');
+  assert.equal(rows[0].expires,3601000);
+  assert.equal(JSON.stringify(rows).includes('blob'),false,'Queue listings must not expose cached bytes');
+  h.setClock(3600999);assert.equal((await stage.list()).length,1);
+  h.setClock(3601000);await stage.purge();assert.equal((await stage.list()).length,0);
+
+  const second=await stage.put(new Blob(['x']),{name:'picture.jpg',mime:'image/jpeg'});
+  await stage.update(second.id,v=>{v.claim='site-owner';v.offset=1;v.retainAfterHandoff=true;v.retentionMs=0;return true;});
+  assert.ok(await stage.finish(second.id,'site-owner','drop_dispatched'));
+  assert.equal((await stage.list()).length,0,'0 hours means immediate expiry');
+ }finally{await stage.purge(true);await stage.close();await h.factory().close();}
+});
