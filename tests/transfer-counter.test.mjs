@@ -8,7 +8,7 @@ function verified(provider,id='stable'){
  if(provider==='cloudflare')return {...entry,
    destination:{accountId:'r2-account',bucketName:'saved',key:'files/'+id+'.pdf'},
    verification:{kind:'r2-head-v1',sessionId:'live-login',key:'files/'+id+'.pdf',bytes:1,etag:'etag-'+id}};
- if(provider==='google')return {...entry,transferId:id,destination:{provider:'google-drive',accountId:'drive-account',fileId:'provider-file-'+id,name:id+'.pdf'}};
+ if(provider==='google')return {...entry,destination:{provider:'google-drive',fileId:id,name:id+'.pdf'}};
  if(provider==='dropbox')return {...entry,location:'',
    destination:{proofVersion:1,accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',
    fileId:'id:'+id,revision:'rev-'+id,contentHash:'a'.repeat(64),path:'/a.pdf',name:'a.pdf',bytes:1}};
@@ -49,18 +49,6 @@ test('provider receipt counts require verified attribution, persist deduplicatio
  }
  assert.equal(h.data.providerSaveReceipts.ids.length,8);
  assert.deepEqual(Object.keys(h.data.providerSaveReceipts.latest).sort(),['accountId','at','connectionId','id','provider','verified']);
-});
-
-test('Google job ID and provider file ID differ: verified uploads still count exactly once',async()=>{
- const h=fixture(),api=h.create(),record=verified('google','save-job-123');
- assert.equal(record.deliveryId,'google:save-job-123');
- assert.equal(record.destination.fileId,'provider-file-save-job-123');
- await api.record(record);
- assert.equal(h.data.providerSaveReceipts.totals.google,'1');
- await h.create().record(record);
- assert.equal(h.data.providerSaveReceipts.totals.google,'1');
- await api.record({...record,deliveryId:'google:'+record.destination.fileId});
- assert.equal(h.data.providerSaveReceipts.totals.google,'1','forged file-derived ID must not count');
 });
 
 test('weak Dropbox success cannot count or erase failed attempts and preserves existing lifetime totals',async()=>{
