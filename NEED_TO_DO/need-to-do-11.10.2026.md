@@ -1,5 +1,5 @@
 # NEED TO DO — 11.10.2026 — REDOWN History, Shelf and browser-file future
-**Owner direction:** November 10, 2026. **Documentation only. Do not implement or modify runtime source on the strength of this file.** All requested features below are aspirations/requirements, not claims of completed or tested functionality.
+**Owner direction:** November 10, 2026. This file records the full requested scope. As separately authorized later, implementation of the Guarantee Drag and Drops queue and signed-out Explorer stability has begun **only on the isolated feature branch**; other listed features and the new P0 multi-cloud regression remain unverified, not claims of completion.
 
 ## Scope, feasibility and required construction
 
@@ -116,6 +116,27 @@ REDOWN's default Cloudflare R2 **TRUE REMOTE right-click save** must remain Work
 - **Investigation:** Trace status text writes, conditional sections, height transitions, observer/poll loops and their owning `shelf-explorer.mjs` / CSS classes. Check debug status at the bottom, `mini-status`, `mini-drag-status`, connection state updates and hidden/visible toggles. Reserve bounded status space or overlay the status without changing the Explorer's document-flow height. Dedupe repeated messages; cancel stale async updates. Never mask a genuine error, simply prevent it from destabilizing layout.
 - **Acceptance:** 30–60 seconds signed out; repeat with no provider connected, revoked Cloudflare, and connected Cloudflare. No vertical bouncing/flicker or navigation focus loss across themes and narrow/wide Shelf. Include automated geometry/repaint checks where possible plus visual Chrome verification. **Do not mark fixed based only on source edits.**
 - **Priority:** Track as an independent P0 visual stability defect; don't let queue implementation conceal it or turn a debug message into a false connection state.
+
+## CRITICAL P0 INCIDENT — Multi-cloud saves initially work, then stop; Cloudflare login and counter mismatch (2026-11-10)
+
+**Severity: RELEASE BLOCKER / PRODUCT-THREATENING RELIABILITY BUG — OPEN, UNDIAGNOSED.** This is an owner-observed incident, **not** proof of any particular root cause. Do not mark fixed without live reproduction and sustained verified-save evidence.
+
+### Owner's reported sequence — numbers clarified
+- **11 successful right-click saves TOTAL across Google Drive, Dropbox and OneDrive**, approximately **3–4 saves to each provider**. The user inspected the destinations and confirmed that those files actually existed at their cloud locations. **Not 11 per provider.**
+- After this initial success, subsequent non-Cloudflare right-click saving **suddenly stopped working**. The failure order and exact HTTP/status/error are unknown.
+- **Cloudflare R2**: after login/authorization, the REDOWN card continued to say **Login** rather than showing the connected/ready state. Cloudflare's number/counter did not increase. Owner had not completed a reliable live Cloudflare save test before the other-provider failures, so the actual R2 save result is **unverified**. Do not infer success/failure solely from the counter.
+- The combined pattern is a critical threat to the promise that right-click saves continue working beyond initial connection. Do not interpret initial success as permanent token/permission readiness.
+
+### Immediate diagnosis — distinguish multiple possible causes
+1. Reproduce 30–50 consecutive attempts across Google Drive/Dropbox/OneDrive, alternating roughly 3–4 at a time then continuing. Include tab navigation, Chrome MV3 service-worker suspension/restart, Shelf closed/reopened, OAuth token refresh, stale account identity, permissions and selected folder consistency. Capture each attempt's monotonically assigned request ID, provider, destination, readiness state, server status, independent provider confirmation, receipt state and UI outcome. Redact tokens, URLs, file contents and private names.
+2. Check provider-specific OAuth refresh/scopes, silent reconnect, 401/403/429, transient denial, revoked grants, and whether background message ports, context-menu handlers or BOOT stop processing after several requests. Login display state is **not** operational save readiness. Preserve pending save and exact destination during a targeted reauthorization.
+3. Audit the shared right-click entrypoint, dispatch, worker/controller lifecycle, pending queue/receipt persistence, service worker suspension, request timeout, menu registration and event listener reentry. Compare confirmed files in provider with History/receipt; distinguish **save failed** from **save worked but user-visible confirmation failed**.
+4. For Cloudflare trace OAuth callback → saved auth/session state → scopes/account/bucket/Worker readiness → card renderer/source of truth → right-click action → R2 object verification/HEAD → verified receipt → `providerSaveReceipts` counter display. Determine whether the stuck **Login** label reflects missing auth, insufficient R2 scopes, disconnected UI notification, stale storage state or a different failure. Do not trigger provisioning merely to inspect authorization.
+5. Log failures via the existing debugging and BOOT / Universal File API paths; inspect docs/reliability issue inventory, existing lifecycle smoke tests and repeatability traces. Do not invent a new parallel logging or transfer engine.
+6. Explicit acceptance gate: 50 sequential provider-verified saves distributed across Google Drive/Dropbox/OneDrive with menu durability and no silent failure, plus a separate Cloudflare authentication/ready-state/verified R2/counter validation. Include expired token, permission loss, reconnect, window reload, background restart, offline and quota cases; test that no unverified save increments a counter. **Keep incident OPEN until installed Chrome and real provider evidence exists.**
+
+### Priority and implementation boundary
+**Investigate urgently, ahead of noncritical feature work.** The owner has authorized work on the existing isolated feature branch, not on `main` and not on a deployed instance. A written report, clear reproduction case and independently verified fix are required. This document alone does not establish the cause or close the defect.
 
 ## Cross-cutting non-negotiables
 - **Privacy:** provider APIs receive only upload bytes + file name/extension and required destination identifiers; never source URL, parent page URL, raw auth tokens, Chutey local file paths or debug payloads.
