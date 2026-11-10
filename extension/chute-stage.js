@@ -14,7 +14,7 @@
     return n;
   };
   const validRetentionMs=value=>Number.isSafeInteger(value)&&value>=0&&value<=8640000000000000-Date.now();
-  const lifetime=v=>v.keep===true&&validRetentionMs(v.retentionMs)?v.retentionMs:(v.keep?KEEP_TTL:RETRY_TTL);
+  const lifetime=v=>(v.keep===true||v.retainAfterHandoff===true)&&validRetentionMs(v.retentionMs)?v.retentionMs:(v.keep?KEEP_TTL:RETRY_TTL);
   function createStage({indexedDB=globalThis.indexedDB,now=Date.now}={}) {
     let opening;
     function db(){return opening??=new Promise((resolve,reject)=>{
@@ -65,10 +65,10 @@
         if(!ok)throw Error('Prepared-file queue is full. Clear Prepared Files or wait for a current handoff to finish.');
         return {id,expires:record.expires,name,mime,size,policyBytes};
       },
-      async reuse(id,{cacheKey,version,keep=false,retentionMs=null,maxBytes=MAX_BYTES}){return transaction('readwrite',(s,done)=>{
+      async reuse(id,{cacheKey,version,keep=false,retainAfterHandoff=false,retentionMs=null,maxBytes=MAX_BYTES}){return transaction('readwrite',(s,done)=>{
         const r=s.getAll();r.onsuccess=()=>{
           const records=r.result,v=records.find(v=>v.id===id);if(!v||v.expires<=now()||v.used){done(null);return;}
-          v.cacheKey=cacheKey;v.version=version;v.keep=keep===true;v.retentionMs=validRetentionMs(retentionMs)?retentionMs:null;
+          v.cacheKey=cacheKey;v.version=version;v.keep=keep===true;v.retainAfterHandoff=retainAfterHandoff===true;v.retentionMs=validRetentionMs(retentionMs)?retentionMs:null;
           const cached=version&&records.find(old=>old.id!==id&&old.expires>now()&&old.cacheKey===cacheKey&&old.version===version&&old.size===v.size&&old.blob&&inactive(old));
           if(cached){v.blob=cached.blob;v.ready=false;v.state='validating';s.delete(cached.id);s.put(v);done(true);return;}
           const others=records.filter(old=>{if(old.id!==id&&old.cacheKey===cacheKey&&inactive(old)){s.delete(old.id);return false;}return true;});
@@ -78,7 +78,7 @@
       async fulfill(id,blob,metadata={}){return transaction('readwrite',(s,done)=>{
         const r=s.get(id);r.onsuccess=()=>{const v=r.result;
           if(!v||v.expires<=now()||v.blob||v.used||blob.size!==v.size||blob.size>MAX_BYTES){done(false);return;}
-          v.blob=blob;v.ready=true;v.state='prepared';v.cacheKey=metadata.cacheKey||v.cacheKey;v.version=metadata.version||v.version;v.keep=metadata.keep===true;v.retentionMs=validRetentionMs(metadata.retentionMs)?metadata.retentionMs:null;s.put(v);done(true);
+          v.blob=blob;v.ready=true;v.state='prepared';v.cacheKey=metadata.cacheKey||v.cacheKey;v.version=metadata.version||v.version;v.keep=metadata.keep===true;v.retainAfterHandoff=metadata.retainAfterHandoff===true;v.retentionMs=validRetentionMs(metadata.retentionMs)?metadata.retentionMs:null;s.put(v);done(true);
         };
       });},
       async activate(id){return this.update(id,v=>{if(!v.blob||v.used)return false;v.ready=true;v.state='prepared';return true;});},
