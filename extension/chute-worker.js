@@ -15,9 +15,10 @@
     await chrome.storage?.session?.set?.({redownChuteTraceV1:[...previous.slice(-31),{layer,state,code:safeCode,at:Date.now()}]});
   }
   async function handle(m,s){
-    if(['redownChuteV1.stats','redownChuteV1.clear','redownChuteV1.report'].includes(m.type)){
+    if(['redownChuteV1.stats','redownChuteV1.list','redownChuteV1.clear','redownChuteV1.report'].includes(m.type)){
       if(!shelf(s))return safe();
       if(m.type.endsWith('.stats'))return {ok:true,...await stage.stats()};
+      if(m.type.endsWith('.list'))return {ok:true,items:await stage.list(30)};
       if(m.type.endsWith('.clear')){await stage.purge(true);await chrome.storage?.session?.set?.({redownChuteClearedV1:Date.now()});return {ok:true};}
       if(!['attempted','reading','staged','failed','cancelled'].includes(m.state)||!['source','storage','broker'].includes(m.layer))return safe();
       await trace(m.layer,m.state,m.code).catch(()=>{});return {ok:true};
@@ -67,12 +68,12 @@
     return safe();
   }
   chrome.runtime.onMessage.addListener((m,s,respond)=>{
-    if(!/^redownChuteV1\.(arm|claim|chunk|finish|stats|clear|report)$/.test(m?.type||''))return false;
-    if(!['redownChuteV1.stats','redownChuteV1.clear','redownChuteV1.report'].includes(m.type)&&(typeof m.id!=='string'||!/^[a-f0-9-]{36}$/.test(m.id))){respond(safe());return false;}
+    if(!/^redownChuteV1\.(arm|claim|chunk|finish|stats|list|clear|report)$/.test(m?.type||''))return false;
+    if(!['redownChuteV1.stats','redownChuteV1.list','redownChuteV1.clear','redownChuteV1.report'].includes(m.type)&&(typeof m.id!=='string'||!/^[a-f0-9-]{36}$/.test(m.id))){respond(safe());return false;}
     handle(m,s).then(respond,()=>respond(safe()));return true;
   });
-  chrome.storage?.onChanged?.addListener?.((changes,area)=>{if(area==='local'&&(changes.cloudflareAuth||changes.shelfKeepPreparedV1?.newValue!==true&&changes.shelfKeepPreparedV1))void stage.purge(true).catch(()=>{});});
-  chrome.runtime.onStartup?.addListener(()=>{void stage.purge(true).catch(()=>{});});
+  chrome.storage?.onChanged?.addListener?.((changes,area)=>{if(area==='local'&&(changes.cloudflareAuth||changes.shelfGuaranteeDragDropV1?.newValue===false||changes.shelfKeepPreparedV1?.newValue===false))void stage.purge(true).catch(()=>{});});
+  chrome.runtime.onStartup?.addListener(()=>{void stage.purge().catch(()=>{});});
   const purge=()=>{void stage.purge().catch(()=>{});};
   purge();chrome.alarms.create('redown-chute-cleanup-v1',{periodInMinutes:1});
   chrome.alarms.onAlarm.addListener(alarm=>{if(alarm.name==='redown-chute-cleanup-v1')purge();});
