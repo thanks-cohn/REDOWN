@@ -47,15 +47,15 @@
       async list(limit=20){return transaction('readonly',(store,done)=>{
         const request=store.getAll();request.onsuccess=()=>{
           const entries=request.result.filter(v=>v.expires>now())
-            .sort((a,b)=>b.expires-a.expires).slice(0,Math.max(1,Math.min(100,limit)))
+            .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,Math.max(1,Math.min(100,limit)))
             .map(v=>({id:v.id,name:v.name,mime:v.mime,size:v.size,state:v.state,
-              expires:v.expires,used:v.used===true,ready:v.ready===true}));
+              expires:v.expires,createdAt:v.createdAt||null,completedAt:v.completedAt||null,used:v.used===true,ready:v.ready===true}));
           done(entries);
         };
       });},
       async reserve(id,{name,mime,size,cacheKey='',maxBytes=MAX_BYTES,policyBytes=50000000}) {
         if(!valid(id,name,size)||size>policyBytes)throw Error('File cannot be staged safely.');
-        const record={policyBytes,id,blob:null,name,mime,size,cacheKey,expires:now()+TTL,armed:false,claim:null,offset:0,state:'preparing',used:false};
+        const record={policyBytes,id,blob:null,name,mime,size,cacheKey,createdAt:now(),expires:now()+TTL,armed:false,claim:null,offset:0,state:'preparing',used:false};
         const ok=await transaction('readwrite',(s,done)=>{const r=s.getAll();r.onsuccess=()=>{
           // A reusable candidate will be moved, never copied, after fresh stat.
           const candidate=r.result.find(v=>v.cacheKey&&v.cacheKey===cacheKey&&inactive(v)&&v.blob&&v.expires>now());
@@ -95,11 +95,11 @@
       });},
       async retire(id){return this.update(id,v=>{
         if(!v.blob||v.ready===false||v.claim&&!v.used)return false;
-        v.used=true;v.armed=false;v.claim=null;v.state='cached';v.expires=now()+lifetime(v);return true;
+        v.used=true;v.armed=false;v.claim=null;v.state='cached';v.completedAt=now();v.expires=now()+lifetime(v);return true;
       });},
       async finish(id,owner,state){return this.update(id,v=>{
         if(v.used||v.claim!==owner||!['drop_dispatched','failed'].includes(state)||state==='drop_dispatched'&&v.offset!==v.size)return false;
-        v.used=true;v.armed=false;v.state=state;v.expires=now()+lifetime(v);return true;
+        v.used=true;v.armed=false;v.state=state;v.completedAt=now();v.expires=now()+lifetime(v);return true;
       });},
       async stats(){return transaction('readonly',(s,done)=>{const r=s.getAll();r.onsuccess=()=>{const live=r.result.filter(v=>v.expires>now());done({count:live.length,bytes:live.reduce((n,v)=>n+(v.blob?v.blob.size:0),0),maxBytes:MAX_BYTES,maxFiles:MAX_FILES,retrySeconds:RETRY_TTL/1000,keepMinutes:KEEP_TTL/60000});};});},
       async remove(id){return transaction('readwrite',s=>s.delete(id));},purge,
