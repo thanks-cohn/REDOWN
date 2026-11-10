@@ -98,6 +98,25 @@ REDOWN's default Cloudflare R2 **TRUE REMOTE right-click save** must remain Work
 
 **Documentation only, on `feat/history-shelf-search-queue-vision-2026-11-10`.** Do not merge, ship, enable the toggle or deploy any Worker based on this proposal without a later explicit implementation request.
 
+## November 10 updated priority — implement Guarantee Drag and Drops first
+
+**Owner decision:** This feature is now the **first implementation milestone**, before History search, cosmetic History improvements and direct-provider-card drops. **Enabled by default** (including users with no previous preference). Users can switch it off. The previously proposed OFF-by-default contract is superseded.
+
+**Retention after handing bytes to a website:** Default **1 hour**. The user can type any representable finite, nonnegative **number of hours** in Settings; the chosen time is retained across reopen/restart. The timer starts when browser-byte delivery is dispatched to the website, not at the initial cloud read. Uploaded file bytes must be automatically removed when that period expires, or earlier if the user clears the cache, logs out/revokes the source session, or storage pressure safely evicts old entries. Zero hours means delete immediately after handoff. Do not retain cached bytes indefinitely because a timer or browser is not running: store absolute expiration timestamps and purge on extension startup, alarm and subsequent queue access.
+
+**Storage/privacy:** Retain only browser-staged copies needed for retry or handoff. The actual cloud originals remain unchanged. Avoid double-buffering full files where possible, cap concurrent stages and enforce storage quotas. The prior 4-file/128 MB browser relay is a *current runtime limitation*, not evidence of a 1 GB cache. A recommended free-space note may suggest ~1 GB for larger transfers but must not claim that 1 GB is allocated or guaranteed.
+
+**Queue:** Build on existing REDOWN `redown-chute-v1` IndexedDB staging and the authenticated `redownChuteV1.*` handoff API, rather than creating a second transfer engine. Display a compact list of queued/preparing/handed-off files in Settings, plus each file's pending status and retention/expiration; permit clearing it. An outbound file handoff is NOT proven website acceptance. Keep source identity/version checks for reuse. Retention is not authorization to forward a file without a fresh user gesture.
+
+**Do not confuse inbound saves and outbound website drops:** the existing Cloudflare TRUE REMOTE right-click pipeline remains unchanged. The default-on fallback applies to the Chutey-like outbound cloud-to-website drop and explicitly initiated in-browser drag/import operations. Provide a direct remote URL/API lane only where the site actually accepts it; browser-byte lane remains necessary elsewhere.
+
+### Bug: Explorer/Shelf flickers vertically when no cloud is connected (OPEN)
+- **Reproduction reported by owner:** Open REDOWN Shelf → FILES / File Explorer without logging into Cloudflare (or without a cloud provider). A debug/status message at the bottom changes the layout, making the Explorer/Shelf visibly flicker or bounce up and down. Similar signed-out behavior may occur for other providers.
+- **Expected:** The Explorer has **stable geometry** in logged-out/no-cloud/connecting/error states. A diagnostic message must not change the Explorer's overall height, jump the viewport, trigger repetitive scroll anchoring or reinitialize the entire FILES panel. Guest/demo content and navigation remain usable without cloud login.
+- **Investigation:** Trace status text writes, conditional sections, height transitions, observer/poll loops and their owning `shelf-explorer.mjs` / CSS classes. Check debug status at the bottom, `mini-status`, `mini-drag-status`, connection state updates and hidden/visible toggles. Reserve bounded status space or overlay the status without changing the Explorer's document-flow height. Dedupe repeated messages; cancel stale async updates. Never mask a genuine error, simply prevent it from destabilizing layout.
+- **Acceptance:** 30–60 seconds signed out; repeat with no provider connected, revoked Cloudflare, and connected Cloudflare. No vertical bouncing/flicker or navigation focus loss across themes and narrow/wide Shelf. Include automated geometry/repaint checks where possible plus visual Chrome verification. **Do not mark fixed based only on source edits.**
+- **Priority:** Track as an independent P0 visual stability defect; don't let queue implementation conceal it or turn a debug message into a false connection state.
+
 ## Cross-cutting non-negotiables
 - **Privacy:** provider APIs receive only upload bytes + file name/extension and required destination identifiers; never source URL, parent page URL, raw auth tokens, Chutey local file paths or debug payloads.
 - **Authentication:** logged-in card ≠ operational saving readiness. Check live provider scopes/permissions and repair the precise missing authorization while preserving queue intent.
