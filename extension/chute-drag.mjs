@@ -1,6 +1,18 @@
 import './chute-stage.js';
 export const DRAG_TYPE='application/x-redown-chute-v1';
-export function createDragBridge({api,stage=globalThis.RedownChuteStage.createStage(),send=m=>chrome.runtime.sendMessage(m),onState=()=>{},getKeep=async()=> (await globalThis.chrome?.storage?.local?.get?.('shelfKeepPreparedV1'))?.shelfKeepPreparedV1===true,maxBytes=50000000}={}) {
+export function createDragBridge({api,stage=globalThis.RedownChuteStage.createStage(),send=m=>chrome.runtime.sendMessage(m),onState=()=>{},getKeep=async()=>{
+    const storage=globalThis.chrome?.storage?.local;
+    if(!storage?.get)return true;
+    const data=await storage.get('shelfGuaranteeDragDropV1');
+    return data.shelfGuaranteeDragDropV1!==false;
+  },
+  getRetentionHours=async()=>{
+    const storage=globalThis.chrome?.storage?.local;
+    if(!storage?.get)return globalThis.RedownChuteStage.DEFAULT_RETENTION_HOURS;
+    const data=await storage.get('shelfDragRetentionHoursV1');
+    try{return globalThis.RedownChuteStage.parseRetentionHours(data.shelfDragRetentionHoursV1??1);}
+    catch{return globalThis.RedownChuteStage.DEFAULT_RETENTION_HOURS;}
+  },maxBytes=50000000}={}) {
   let handle=null,controller=null,generation=0,timer;
   const emit=(state,message,layer='source',code='NONE')=>{
     onState({state,message,layer,code});
@@ -32,7 +44,12 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
       const chunks=[];let total=0,layer='source',code='READ_FAILED',pending=reservation;
       emit('reading','Loading file for this drop…');
       try{
-        const cacheKey=await digest(sourceIdentity(source,entry)),keep=await Promise.resolve().then(getKeep).catch(()=>false);
+        const cacheKey=await digest(sourceIdentity(source,entry));
+        const keep=await Promise.resolve().then(getKeep).catch(()=>true);
+        const retentionHours=await Promise.resolve().then(getRetentionHours)
+          .then(globalThis.RedownChuteStage.parseRetentionHours)
+          .catch(()=>globalThis.RedownChuteStage.DEFAULT_RETENTION_HOURS);
+        const retentionMs=Math.round(retentionHours*3600000);
         signal.throwIfAborted();
         if(!pending){layer='storage';code='STORAGE_FAILED';pending=await stage.reserve(crypto.randomUUID(),{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes:globalThis.RedownChuteStage.MAX_BYTES,policyBytes});}
         handle={...pending,key:entry.key,source:JSON.stringify([source.accountId,source.bucketName,source.prefix||''])};
@@ -46,7 +63,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         const version=before&&(before.etag||before.version)?await digest(fingerprint(before)):'';
         const eligibleKeep=keep===true&&!!version;
         if(before&&Number(before.size)!==Number(entry.size)){code='SOURCE_CHANGED';throw Error('File changed. Refresh the folder.');}
-        layer='storage';code='STORAGE_FAILED';const reused=await stage.reuse(pending.id,{cacheKey,version,keep:eligibleKeep,maxBytes:globalThis.RedownChuteStage.MAX_BYTES});
+        layer='storage';code='STORAGE_FAILED';const reused=await stage.reuse(pending.id,{cacheKey,version,keep:eligibleKeep,retentionMs,maxBytes:globalThis.RedownChuteStage.MAX_BYTES});
         if(reused===null){code='STORAGE_FAILED';throw Error('Prepared-file queue unavailable. Clear Prepared Files or retry.');}
         if(!reused){
           layer='source';code='READ_FAILED';const result=await api.run('readStream',{source,key:entry.key},{signal,onChunk:chunk=>{
@@ -60,7 +77,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         if(before!==null&&fingerprint(before)!==fingerprint(await stat())){code='SOURCE_CHANGED';throw Error('File changed during preparation. Refresh and drag again.');}
         signal.throwIfAborted();if(ticket!==generation)throw signal.reason||Error('Drag cancelled.');
         layer='storage';code='STORAGE_FAILED';
-        if(!reused){const payload=new Blob(chunks,{type:pending.mime});chunks.length=0;if(!await stage.fulfill(pending.id,payload,{cacheKey,version,keep:eligibleKeep}))throw Error('Drag expired. Drag the file again.');}
+        if(!reused){const payload=new Blob(chunks,{type:pending.mime});chunks.length=0;if(!await stage.fulfill(pending.id,payload,{cacheKey,version,keep:eligibleKeep,retentionMs}))throw Error('Drag expired. Drag the file again.');}
         if(reused&&!await stage.activate(pending.id))throw Error('Drag expired. Drag again.');
         timer=setTimeout(()=>{if(handle?.id===pending.id){handle=null;controller?.abort();void stage.purge().catch(()=>{});}},Math.max(0,pending.expires-Date.now()));
         timer.unref?.();emit('staged',reused?'Prepared bytes reused after checking current cloud access and version.':'File ready for this drop. Check attachment acceptance at the destination.','storage',reused?'REUSED':'NONE');
