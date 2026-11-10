@@ -18,11 +18,19 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   <div class="mini-actions" hidden><button data-action="download" disabled>Download</button><button data-action="rename" disabled>Rename</button><button data-action="delete" disabled>Delete</button><button data-action="copy" disabled>Copy</button><button data-action="move" disabled>Move</button><button data-action="paste" disabled>Paste here</button><button data-action="folder">New folder</button></div>
   <p class="mini-status" role="status" aria-live="polite"></p><p class="mini-drag-status" role="status" aria-live="polite"></p>
   <section class="mini-preview" tabindex="0" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="previous-preview" aria-label="Previous file">‹</button><button data-action="next-preview" aria-label="Next file">›</button><button data-action="window-preview" aria-label="Open in Window" title="Open in Window"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 2h7v7M18 2 9 11M8 3H3v14h14v-5"/></svg></button><button data-action="expand-preview" aria-label="Expand preview" title="Expand preview"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12 2h6v6z M2 12v6h6z" fill="currentColor"/></svg></button><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
-  const $=selector=>host.querySelector(selector),button=action=>$(`[data-action="${action}"]`),say=message=>{$('.mini-status').textContent=message;};
+  const $=selector=>host.querySelector(selector),button=action=>host.querySelector('[data-action="'+action+'"]');
+  host.dataset.noCloud='true';
+  // Debug/status output stays available to the programmatic API but never
+  // occupies space in the Explorer when the user has no connected cloud.
+  const say=message=>{const next=host.dataset.noCloud==='true'?'':String(message||'');
+    const node=$('.mini-status');if(node.textContent!==next)node.textContent=next;};
   const list=$('.mini-list'),rows=$('.mini-rows'),tree=$('.mini-tree');let visible=[],selectedEntry=null,sideAbort=null,sideUrl='',sideEpoch=0,discovery=0,rootAbort=null,initialized=false,activeView=false,focusIndex=0,saved={},saveTimer,treeRestores=0,clipboard=null; 
   const expansions=new Set(),nodes=new Map();let sortedKey='',sortedEntries=null,grid=true,folderWidth=50,anchor=null,dragging=false,rememberedScroll=0,rememberedRailScroll=0;
   const model=createExplorerModel({api,onChange:paint});
-  const bridge=createDragBridge({api,onState:({message})=>{$('.mini-drag-status').textContent=message;}});
+  const bridge=createDragBridge({api,onState:({message})=>{
+    const node=$('.mini-drag-status'),next=host.dataset.noCloud==='true'?'':message;
+    if(node.textContent!==next)node.textContent=next;
+  }});
   const request=(...args)=>model.request(...args).then(data=>({data}));
   function safe(fn){return (...args)=>{void Promise.resolve().then(()=>fn(...args)).catch(error=>say(error.message||'Could not complete this action.'));};}
   let navigationAxis='horizontal';const stopAxis=watchPreviewAxis(value=>navigationAxis=value);
@@ -262,20 +270,34 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   async function showWelcome(ticket){
     const provider=await verifiedOtherProvider(storage);if(ticket!==discovery)return;
     if(!provider){await showDemo(ticket);return;}
+    host.dataset.noCloud='false';
     tree.replaceChildren();const note=document.createElement('p');note.textContent=provider+' is connected. Manage this provider in Remotes; connect Cloudflare to browse R2 here.';
     const manage=document.createElement('a');manage.href='#clouds';manage.className='mini-demo-connect';manage.textContent='Manage '+provider;tree.append(note,manage);say('Connected provider · Cloudflare setup available in Remotes.');
   }
   async function showDemo(ticket=discovery){
     if(ticket!==discovery||rootAbort?.signal.aborted)return;
+    host.dataset.noCloud='true';say('');
+    $('.mini-drag-status').textContent='';
+    if(model.state.source?.accountId===demoSource.accountId&&tree.querySelector('.mini-demo-connect'))return;
     tree.replaceChildren();
     treeNode('REDOWN Demo / Local Samples',identity(demoSource),parent=>folders(demoSource,parent),demoSource);
     const connect=document.createElement('a');connect.href='#clouds';connect.textContent='Connect Cloudflare';connect.className='mini-demo-connect';tree.append(connect);
     if(ticket===discovery)await navigate({...demoSource});
   }
   async function discover(){
-    const ticket=++discovery;rootAbort?.abort();rootAbort=new AbortController();model.reset();closeSide();preview.close();clearThumbs();await bridge.cancel();tree.textContent='Checking connections…';nodes.clear();treeRestores=0;
+    const ticket=++discovery;rootAbort?.abort();rootAbort=new AbortController();
     try{
-      const {accounts=[]}=await model.request('accounts',{}, {signal:rootAbort.signal});if(ticket!==discovery)return;tree.replaceChildren();
+      const {accounts=[]}=await model.request('accounts',{}, {signal:rootAbort.signal});
+      if(ticket!==discovery)return;
+      // A repeat no-cloud response is not permission to rebuild the guest Explorer.
+      if(!accounts.length&&model.state.source?.accountId===demoSource.accountId){
+        const other=await verifiedOtherProvider(storage);
+        if(ticket!==discovery)return;
+        if(!other){host.dataset.noCloud='true';say('');return;}
+      }
+      host.dataset.noCloud=accounts.length?'false':'true';
+      model.reset();closeSide();preview.close();clearThumbs();await bridge.cancel();
+      tree.replaceChildren();nodes.clear();treeRestores=0;
       for(const account of accounts)treeNode(`Cloudflare R2 · ${account.name||account.id}`,JSON.stringify(['r2',account.id]),async parent=>{
         const result=await model.request('buckets',{accountId:account.id});if(ticket!==discovery)return;parent.replaceChildren();
         for(const bucket of result.buckets||[]){const source={accountId:account.id,accountName:account.name||'',bucketName:bucket.name,prefix:''};treeNode(bucket.name,identity(source),parent=>folders(source,parent),source,parent);}
@@ -286,7 +308,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
         const {buckets=[]}=await model.request('buckets',{accountId:restore.accountId});if(ticket!==discovery)return;
         if(buckets.some(b=>b.name===restore.bucketName)){await navigate(restore);list.scrollTop=Number.isFinite(saved.scroll)?Math.max(0,saved.scroll):0;renderRows();}
       }
-    }catch{if(ticket===discovery){await showWelcome(ticket);say('Cloud access could not be verified. Local samples are offline; reconnect in Remotes.');}}
+    }catch{if(ticket===discovery){await showWelcome(ticket);if(host.dataset.noCloud!=='true')say('Cloud access could not be verified. Reconnect in Remotes.');}}
   }
   function one(){const entries=model.state.entries.filter(e=>model.state.selected.has(e.key));if(entries.length!==1)throw Error('Select one item.');return entries[0];}
   async function download(entry=one()){const result=await model.request('download',{source:{...model.state.source},entry});say(result.downloadState==='complete'?'Chrome confirmed download completion.':'Download started. Completion has not been observed.');}
@@ -382,7 +404,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   const changed=(changes,area)=>{
     if(area==='local'&&changes.shelfDragLimitMBV1){try{bridge.setLimitMB(changes.shelfDragLimitMBV1.newValue??50);}catch{bridge.setLimitMB(50);}}
     if(area==='session'&&changes.redownChuteClearedV1)void bridge.cancel();
-    if(area==='local'&&changes.shelfKeepPreparedV1&&changes.shelfKeepPreparedV1.newValue!==true)void bridge.cancel();
+    if(area==='local'&&(changes.shelfGuaranteeDragDropV1?.newValue===false||changes.shelfKeepPreparedV1?.newValue===false))void bridge.cancel();
     if(area==='session'&&changes.redownChuteReceipt){const receipt=changes.redownChuteReceipt.newValue;if(receipt?.id===bridge.getHandle()?.id){$('.mini-drag-status').textContent=receipt.state==='drop_dispatched'?'File dispatched. Check the destination: acceptance and upload completion are unverified.':'File handoff failed. Try dragging again or use Download and the destination file picker.';}}
     if(area==='local'&&(changes.cloudflareAuth||changes['dropbox:auth']||changes['onedrive:auth']||changes.googleDriveState&&JSON.stringify(changes.googleDriveState.oldValue)!==JSON.stringify(changes.googleDriveState.newValue))){clipboard=null;saved={};expansions.clear();void discover();}
   };
