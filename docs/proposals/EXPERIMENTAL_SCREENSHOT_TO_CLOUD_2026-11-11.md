@@ -25,8 +25,11 @@ Add a Settings option: **Group screenshots by source page** (ON/OFF; user-contro
 - Ten screenshots taken from the **same hosting webpage** should be browsable as **one screenshot group/collection**, yet each screenshot remains individually viewable, downloadable, renameable, and manageable.
 - Group by a privacy-preserving **canonical page identity**, not by image CDN/source-file URL. Different image URLs on one webpage belong to the same page group. Define rules for query parameters, fragments, redirects, same-page navigation, and cross-session persistence.
 - Display an expandable group in REDOWN/Click2Cloud History with screenshot count, thumbnails, latest capture time, and linked upload status per provider. Keep chronological order inside.
-- Where supported and explicitly configured, organize corresponding cloud objects under a **single subfolder/prefix per page group**. Otherwise implement *logical grouping* in the app's local index without claiming the provider itself has grouped files.
-- For cloud-side group names, use a neutral title or local generated group label; sanitize names and handle collisions. **Do not send original webpage/source URLs in cloud object metadata, filenames or folder names.** Source page identity stays in local/private application indexing; the provider receives screenshot bytes and necessary object names/paths only.
+- **Preferred design: naming convention + existing page information + REDOWN UI.** Use a stable screenshot filename convention (for example `Screenshot_<page-group-token>_<YYYYMMDD-HHMMSS>_<sequence>.png`), and associate the capture with the source/hosting-page data already recorded in the application's private History/intent index. Do not invent a second page-discovery pipeline.
+- Group primarily in the **REDOWN / Click2Cloud UX/UI**: display a single expandable collection based on known source-page identity, without requiring any physical grouping or moving files in cloud storage. The files remain ordinary individual objects in their existing provider destinations.
+- Filename nomenclature is a lightweight recognizability/recovery aid, **not** the sole authoritative grouping key: maintain a stable local group identifier derived from the existing source-page information so renames do not break grouping. Sanitize names and avoid collisions.
+- **Do not send original webpage/source URLs in provider object metadata, filenames or folder names.** Keep source-page identity in the application's local/private index; the provider receives screenshot bytes and the necessary filename/path only. A short opaque page-group token in a filename is allowed if it does not reveal the URL.
+- Cloud-side folder/prefix grouping is **not required or the default**. If ever offered, treat it as a separate opt-in enhancement, never as the prerequisite for the History presentation.
 - Make group handling compatible with multi-provider saving: the same logical group can have distinct verified file locations and partial completion states across providers.
 - Allow grouping to be toggled without changing or deleting existing uploaded screenshots; offer a view filter for grouped vs individual items. Never silently move existing cloud files when changing the grouping setting.
 - Page identity should be linked to the user-initiated capture intent, not inferred later from uploaded screenshots.
@@ -47,7 +50,7 @@ Add a Settings option: **Group screenshots by source page** (ON/OFF; user-contro
 - Shortcut and automatic mode; automatic OFF does nothing; ON captures exactly once per image-save attempt.
 - One/all selected providers and mixed success/failure; original image blocked but screenshot succeeds and reverse.
 - Same-page series of ten screenshots is grouped as one collection, including across sessions; different hosting pages stay separate.
-- Cloud folder/prefix grouping only when configured and supported; local grouping otherwise. Toggle grouping without moving/deleting uploaded files.
+- Existing source-page metadata and screenshot filename convention produce an expandable REDOWN UX/UI collection without creating cloud folders. Renamed screenshots remain grouped; toggle grouping without moving/deleting uploaded files.
 - Expired auth, missing scopes, unavailable provider, denied capture permission, restricted page, retries, restart, and duplicate prevention.
 - Per-provider receipt and History GO TO only after verified cloud write. Group status accurately represents incomplete uploads.
 
