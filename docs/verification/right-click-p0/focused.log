@@ -1,0 +1,31 @@
+✔ last 100 redacted attempts are bounded, restart-safe, enum-filtered and nonblocking on storage loss (14.798403ms)
+✔ durable source is sanitized before inclusion in support exports (16.426767ms)
+✔ actual native handler records profile-read and route failures before transfer dispatch (61.051123ms)
+✔ native Cloudflare pipeline verifies exact objects and commits History and counters through 21 clicks (91.040969ms)
+✔ trusted Debug interface exposes attempts; foreign sender and disabled Debug are rejected (9.704995ms)
+✔ Cloudflare ambiguous dispatched write is uncertain and is never replayed or counted (11.473596ms)
+✔ Google stale connecting projection does not silently discard an accepted click (6.562637ms)
+✔ OneDrive stale connecting with durable auth revalidates identity and saves (8.783164ms)
+OneDrive receipt persistence needs retry: injected History failure
+✔ OneDrive initial storage write failure releases admission for the next click (3.172233ms)
+✔ OneDrive History failure releases admission without replaying a verified upload (1.879535ms)
+✔ google stays functional at 1, 2, 3, 5, 10, 20 and 21 saves without Shelf (22.283957ms)
+✔ onedrive stays functional at 1, 2, 3, 5, 10, 20 and 21 saves without Shelf (6.432956ms)
+✔ Google admission failure produces failed History with no upload (1.152902ms)
+✔ OneDrive connecting without durable authorization records blocked History (0.734795ms)
+✔ Dropbox full queue records an explicit rejected attempt without adding a job or opening OAuth (2.649591ms)
+✔ Dropbox completed checkpoint survives History failure; recovery never uploads it again (2.044878ms)
+✔ Dropbox drains a second click arriving during a slow upload in the same pump (7.083496ms)
+✔ Dropbox remains functional through 21 saves without Shelf (38.374798ms)
+✔ OneDrive real in-flight login cannot save against previous durable account (3.726381ms)
+✔ ten rapid Google clicks respect the existing eight-job bound and record every rejection (6.181574ms)
+✔ ten rapid OneDrive clicks admit one and persist nine explicit busy outcomes (3.481529ms)
+✔ ten rapid Dropbox clicks respect eight-job admission and drain without Shelf or alarm (14.104569ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 357.761224

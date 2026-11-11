@@ -1,0 +1,204 @@
+{
+  "scope": "controlled local native-listener and in-memory remote-object fixture; NOT installed Chrome or live provider",
+  "baseline": "44ed072b974aabdfe62c6cc28ba2f561f08ec004",
+  "remote": {
+    "writes": 22,
+    "independentHeads": 22,
+    "verified": 21,
+    "uncertain": 1
+  },
+  "comparison": [
+    {
+      "id": "290ed049-add1-4b10-b8c9-36b4f0ab2554",
+      "provider": "cloudflare",
+      "events": [
+        {
+          "stage": "CLICK_RECEIVED",
+          "at": 1794394632615
+        },
+        {
+          "stage": "ROUTE_RESOLVED",
+          "at": 1794394632616
+        },
+        {
+          "stage": "AUTH_CHECKED",
+          "at": 1794394632616
+        },
+        {
+          "stage": "ADMITTED",
+          "at": 1794394632616
+        },
+        {
+          "stage": "SOURCE_REQUEST",
+          "at": 1794394632616
+        },
+        {
+          "stage": "PROVIDER_WRITE",
+          "at": 1794394632616
+        },
+        {
+          "stage": "REMOTE_VERIFY",
+          "at": 1794394632616
+        },
+        {
+          "stage": "HISTORY_COMMIT",
+          "at": 1794394632617
+        },
+        {
+          "stage": "COUNTER_COMMIT",
+          "at": 1794394632617
+        },
+        {
+          "stage": "TERMINAL",
+          "at": 1794394632617,
+          "outcome": "COMPLETED",
+          "reason": "OK"
+        }
+      ]
+    },
+    {
+      "id": "3f58a733-c2da-4322-8cf3-8d346dd52b7d",
+      "provider": "cloudflare",
+      "events": [
+        {
+          "stage": "CLICK_RECEIVED",
+          "at": 1794394632617
+        },
+        {
+          "stage": "ROUTE_RESOLVED",
+          "at": 1794394632618
+        },
+        {
+          "stage": "AUTH_CHECKED",
+          "at": 1794394632618
+        },
+        {
+          "stage": "ADMITTED",
+          "at": 1794394632618
+        },
+        {
+          "stage": "SOURCE_REQUEST",
+          "at": 1794394632618
+        },
+        {
+          "stage": "PROVIDER_WRITE",
+          "at": 1794394632618
+        },
+        {
+          "stage": "REMOTE_VERIFY",
+          "at": 1794394632618
+        },
+        {
+          "stage": "HISTORY_COMMIT",
+          "at": 1794394632619
+        },
+        {
+          "stage": "COUNTER_COMMIT",
+          "at": 1794394632619
+        },
+        {
+          "stage": "TERMINAL",
+          "at": 1794394632619,
+          "outcome": "COMPLETED",
+          "reason": "OK"
+        }
+      ]
+    },
+    {
+      "id": "000e129d-8c15-4d91-b3bc-78e4a6135c7a",
+      "provider": "cloudflare",
+      "events": [
+        {
+          "stage": "CLICK_RECEIVED",
+          "at": 1794394632660
+        },
+        {
+          "stage": "ROUTE_RESOLVED",
+          "at": 1794394632662
+        },
+        {
+          "stage": "AUTH_CHECKED",
+          "at": 1794394632662
+        },
+        {
+          "stage": "ADMITTED",
+          "at": 1794394632662
+        },
+        {
+          "stage": "SOURCE_REQUEST",
+          "at": 1794394632662
+        },
+        {
+          "stage": "PROVIDER_WRITE",
+          "at": 1794394632662
+        },
+        {
+          "stage": "REMOTE_VERIFY",
+          "at": 1794394632662
+        },
+        {
+          "stage": "HISTORY_COMMIT",
+          "at": 1794394632663
+        },
+        {
+          "stage": "COUNTER_COMMIT",
+          "at": 1794394632663
+        },
+        {
+          "stage": "TERMINAL",
+          "at": 1794394632663,
+          "outcome": "COMPLETED",
+          "reason": "OK"
+        }
+      ]
+    },
+    {
+      "id": "1c4cc7f2-33ea-4782-8e3a-837e128b3c14",
+      "provider": "cloudflare",
+      "events": [
+        {
+          "stage": "CLICK_RECEIVED",
+          "at": 1794394632663
+        },
+        {
+          "stage": "ROUTE_RESOLVED",
+          "at": 1794394632664
+        },
+        {
+          "stage": "AUTH_CHECKED",
+          "at": 1794394632664
+        },
+        {
+          "stage": "ADMITTED",
+          "at": 1794394632664
+        },
+        {
+          "stage": "SOURCE_REQUEST",
+          "at": 1794394632664
+        },
+        {
+          "stage": "PROVIDER_WRITE",
+          "at": 1794394632664
+        },
+        {
+          "stage": "REMOTE_VERIFY",
+          "at": 1794394632665
+        },
+        {
+          "stage": "HISTORY_COMMIT",
+          "at": 1794394632666
+        },
+        {
+          "stage": "TERMINAL",
+          "at": 1794394632666,
+          "outcome": "UNCERTAIN",
+          "reason": "PROVIDER_FAILED"
+        }
+      ]
+    }
+  ],
+  "liveAcceptance": {
+    "state": "BLOCKED",
+    "reason": "Administrator policy disables unpacked extension loading."
+  }
+}

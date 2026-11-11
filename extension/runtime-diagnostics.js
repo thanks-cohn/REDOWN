@@ -42,3 +42,57 @@
   }
   globalThis.RedownRuntimeDiagnostics={VERSION,create};
 })();
+
+/* Bounded save-attempt observations, alongside the existing runtime diagnostics.
+ * Fixed enums only: never copy native IDs, URLs, errors, accounts or object names. */
+(() => {
+  const stages=new Set(['CLICK_RECEIVED','ROUTE_RESOLVED','AUTH_CHECKED','ADMITTED','SOURCE_REQUEST','PROVIDER_WRITE','REMOTE_VERIFY','HISTORY_COMMIT','COUNTER_COMMIT','TERMINAL']);
+  const terminals=new Set(['COMPLETED','FAILED','BLOCKED','CANCELLED','UNCERTAIN','INTERRUPTED']);
+  const reasons=new Set(['OK','ROUTE_REJECTED','PREFLIGHT_FAILED','PROVIDER_FAILED','AUTH_PENDING','QUEUE_FULL','HISTORY_UNAVAILABLE','STORAGE_UNAVAILABLE','WORKER_RESTART','UNCONFIRMED','DIAGNOSTICS_UNAVAILABLE']);
+  const uuid=v=>typeof v==='string'&&/^[a-f0-9-]{36}$/.test(v);
+  function createAttempts({storage,now=()=>Date.now(),id=()=>crypto.randomUUID(),timeoutMs=1000}={}){
+    const key='redownSaveAttempts',clicks=new WeakMap();let attempts=[],unavailable=false,lane=Promise.resolve(),writing=false,dirty=false;
+    const bounded=async p=>{let timer;try{return await Promise.race([p,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('diagnostics unavailable')),timeoutMs);})]);}finally{clearTimeout(timer);}};
+    const signal=()=>{unavailable=true;console.warn('REDOWN save attempt diagnostics unavailable; inspect extension Errors.');};
+    const clean=a=>{
+      if(!uuid(a?.id)||!['cloudflare','google','dropbox','onedrive','unknown'].includes(a.provider))return null;
+      const events=(Array.isArray(a.events)?a.events:[]).filter(e=>stages.has(e.stage)&&Number.isFinite(e.at)).slice(-24).map(e=>({stage:e.stage,at:e.at,...(terminals.has(e.outcome)?{outcome:e.outcome}:{}),...(reasons.has(e.reason)?{reason:e.reason}:{})}));
+      return {id:a.id,provider:a.provider,events};
+    };
+    const ready=(async()=>{
+      try{
+        const saved=await bounded(storage.get(key));
+        const old=(Array.isArray(saved[key])?saved[key]:[]).slice(-100).map(clean).filter(Boolean);
+        for(const a of old)if(a.events.at(-1)?.stage!=='TERMINAL')a.events.push({stage:'TERMINAL',at:now(),outcome:'INTERRUPTED',reason:'WORKER_RESTART'});
+        attempts=[...old.filter(a=>!attempts.some(b=>b.id===a.id)),...attempts].slice(-100);
+      }catch{signal();}
+    })();
+    function persist(){
+      dirty=true;if(writing)return;writing=true;
+      lane=(async()=>{await ready;while(dirty){dirty=false;await bounded(storage.set({[key]:structuredClone(attempts)}));}})()
+        .catch(()=>{dirty=false;signal();}).finally(()=>{writing=false;if(dirty)persist();});
+    }
+    function stage(attemptId,stage,extra={}){
+      const a=attempts.find(a=>a.id===attemptId);
+      if(!a||!stages.has(stage)||a.events.at(-1)?.stage==='TERMINAL')return;
+      if(a.events.at(-1)?.stage===stage)return;
+      a.events.push({stage,at:now(),...(terminals.has(extra.outcome)?{outcome:extra.outcome}:{}),...(reasons.has(extra.reason)?{reason:extra.reason}:{})});
+      a.events=a.events.slice(-24);persist();
+    }
+    return {ready,
+      begin(info){
+        if(clicks.has(info))return clicks.get(info);
+        const attemptId=id(),menu=String(info?.menuItemId||'');
+        const provider=menu.startsWith('provider:google-drive')?'google':menu.startsWith('provider:dropbox')?'dropbox':menu.startsWith('provider:onedrive')?'onedrive':/^(v3:|quick:|simple-option:|nested:|tree:)/.test(menu)?'cloudflare':'unknown';
+        clicks.set(info,attemptId);attempts.push({id:attemptId,provider,events:[{stage:'CLICK_RECEIVED',at:now()}]});attempts=attempts.slice(-100);persist();return attemptId;
+      },
+      forClick:info=>clicks.get(info),stage,
+      dispatched:attemptId=>attempts.find(a=>a.id===attemptId)?.events.some(e=>e.stage==='PROVIDER_WRITE')===true,
+      phase(attemptId,phase){const step={source:'SOURCE_REQUEST',uploading:'PROVIDER_WRITE',committing:'PROVIDER_WRITE',verifying:'REMOTE_VERIFY'}[phase];if(step)stage(attemptId,step);},
+      finish(attemptId,outcome,reason='UNCONFIRMED'){stage(attemptId,'TERMINAL',{outcome,reason});},
+      async snapshot(){await ready;return {schemaVersion:1,scope:'save-attempt-observations',persistence:unavailable?'unavailable':'available',fallback:unavailable?'Inspect extension Errors; saving remains independent.':null,attempts:structuredClone(attempts),limitations:['Stage entry is not remote completion proof.','Interrupted means the observer restarted; inspect provider receipts before retrying.','No native event can be observed when Chrome does not deliver it.']};},
+      async flush(){await lane;}
+    };
+  }
+  globalThis.RedownRuntimeDiagnostics.createAttempts=createAttempts;
+})();

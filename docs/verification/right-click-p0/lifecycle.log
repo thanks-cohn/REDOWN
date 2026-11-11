@@ -1,0 +1,25 @@
+✔ Google stale connecting projection does not silently discard an accepted click (5.897695ms)
+✔ OneDrive stale connecting with durable auth revalidates identity and saves (5.023755ms)
+OneDrive receipt persistence needs retry: injected History failure
+✔ OneDrive initial storage write failure releases admission for the next click (2.020833ms)
+✔ OneDrive History failure releases admission without replaying a verified upload (1.822811ms)
+✔ google stays functional at 1, 2, 3, 5, 10, 20 and 21 saves without Shelf (23.548398ms)
+✔ onedrive stays functional at 1, 2, 3, 5, 10, 20 and 21 saves without Shelf (7.392442ms)
+✔ Google admission failure produces failed History with no upload (1.973753ms)
+✔ OneDrive connecting without durable authorization records blocked History (1.386366ms)
+✔ Dropbox full queue records an explicit rejected attempt without adding a job or opening OAuth (3.473327ms)
+✔ Dropbox completed checkpoint survives History failure; recovery never uploads it again (2.673796ms)
+✔ Dropbox drains a second click arriving during a slow upload in the same pump (4.41089ms)
+✔ Dropbox remains functional through 21 saves without Shelf (23.227915ms)
+✔ OneDrive real in-flight login cannot save against previous durable account (4.191757ms)
+✔ ten rapid Google clicks respect the existing eight-job bound and record every rejection (5.010426ms)
+✔ ten rapid OneDrive clicks admit one and persist nine explicit busy outcomes (2.740676ms)
+✔ ten rapid Dropbox clicks respect eight-job admission and drain without Shelf or alarm (7.036756ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 174.171944

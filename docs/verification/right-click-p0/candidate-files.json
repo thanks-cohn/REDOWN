@@ -1,0 +1,15 @@
+{
+  "baselineCommit": "44ed072b974aabdfe62c6cc28ba2f561f08ec004",
+  "candidate": "uncommitted working checkout",
+  "files": {
+    "extension/background.js": "4fe1c8a47ed7ebb60ec134e337e20c2361ba31044568e0fe2689f4322afe44c4",
+    "extension/dropbox-provider.js": "cbb00aa4328b94d0db082d4ad54480789f9ce04b860241e7e9227d211301e53a",
+    "extension/google-drive-provider.js": "f95e42be39e383f71f0ca12ac051f6f8d3e07452ed47865bc98a8eaf5c56ebb8",
+    "extension/onedrive-provider.js": "f4db03936732efc1c24d49a7afdb7d68bcba22b0ac806a38e323326bb5cb62e3",
+    "extension/options.html": "3ff4f8469c35055868dbf4e7dbfbd2323b2059980328e4b2cf81ccbbb78b50da",
+    "extension/options.js": "be55cfc2c5d8a111779560f64f1b8fa669085d47f51b33c5aefb0e9d03f3efe4",
+    "extension/runtime-diagnostics.js": "b465e186dd5a3ea4b41ad205b77c1371acc6a2332cf86b6b9f18ab0627c6c6c8",
+    "tests/save-attempt-lifecycle.test.mjs": "c1442a81e96e189c6d5b1110189cb981982a8ba6cd51edc4ad7bc624b115595b",
+    "tests/save-attempt-diagnostics.test.mjs": "19075ea1ed74933f0adbc9b2d3362406be496f4d2082b8810d6a43a7dc505ae7"
+  }
+}

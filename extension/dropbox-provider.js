@@ -7,23 +7,25 @@
     const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
     const get=async key=>(await chrome.storage.local.get(key))[key];
     const jobs=async()=>await get(KEY)||[];
-    async function save(job){await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
+    async function save(job){globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
     async function receipt(job){
       const r=job.result;
       if(job.status==='completed'&&!(r?.proofVersion===1&&/^dbid:[\w-]+$/.test(job.accountId||'')&&!!job.connectionId&&/^\d+$/.test(job.namespace||'')&&r.accountId===job.accountId&&r.connectionId===job.connectionId&&r.namespace===job.namespace&&r.root==='/'&&r.path==='/'+r.name&&/^id:[\w-]+$/.test(r.fileId||'')&&r.revision&&/^[a-f0-9]{64}$/.test(r.contentHash||'')&&r.bytes===job.offset)){
         job.status='uncertain';job.error='Stored Dropbox completion lacks exact destination proof. Check Dropbox before retrying.';
       }
       const success=job.status==='completed';job.verified=success;
-      await record({provider:'Dropbox',providerKind:'dropbox',profileId:'dropbox:'+job.accountId,profileName:'Dropbox root',deliveryId:'dropbox:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:success?true:['failed','blocked'].includes(job.status)?false:undefined,verified:success,sourceUrl:job.source?.sourceUrl,pageUrl:job.source?.pageUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,location:'', // Dropbox returns no account-bound web URL; never invent a file link.
+      await record({attemptId:job.source?.attemptId,provider:'Dropbox',providerKind:'dropbox',profileId:'dropbox:'+job.accountId,profileName:'Dropbox root',deliveryId:'dropbox:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:success?true:['failed','blocked'].includes(job.status)?false:undefined,verified:success,sourceUrl:job.source?.sourceUrl,pageUrl:job.source?.pageUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,location:'', // Dropbox returns no account-bound web URL; never invent a file link.
         destination:{provider:'dropbox',accountId:job.accountId,connectionId:job.connectionId,root:'/',namespace:job.namespace,...r},bytes:r?.bytes||job.offset||0,transport:'browser-mediated',error:job.error});
       if(terminal.has(job.status)){job.reported=true;await save(job);}
     }
     async function pump(){
       if(running)return running;
       running=(async()=>{
-        for(const saved of await jobs()){
-          if(stopping)break;
-          const job=(await jobs()).find(j=>j.id===saved.id);if(!job)continue;
+        const attempted=new Set();
+        while(!stopping){
+          const job=(await jobs()).find(j=>!attempted.has(j.id)&&(!terminal.has(j.status)||!j.reported));
+          if(!job)break;
+          attempted.add(job.id);
           if(terminal.has(job.status)){if(!job.reported)await receipt(job);continue;}
           if(job.status==='awaiting-auth'){
             if(pendingAuth.has(job.id))continue;
@@ -35,7 +37,7 @@
             job.result=await api.upload(job,save,controller.signal);job.status='completed';job.error='';
           }catch(e){job.status=terminal.has(e.status)?e.status:'interrupted';job.error=e.status?e.message:'Dropbox save was interrupted. Check Dropbox before retrying.';if(job.phase==='committing'&&job.status==='cancelled'){job.status='uncertain';job.error='Dropbox commit was cancelled or interrupted. Check Dropbox before retrying.';}}
           finally{controller=null;}
-          await receipt(job);
+          await save(job);await receipt(job);
         }
       })().finally(async()=>{running=null;const pending=(await jobs()).some(j=>!terminal.has(j.status)||!j.reported);if(!pending)await chrome.alarms.clear?.('dropbox:resume');});return running;
     }
@@ -64,10 +66,11 @@
       if(info.menuItemId!=='provider:dropbox'||seenClicks.has(info))return;seenClicks.add(info);
       let source,permission;
       try{
-        source=RedownDropboxAPI.sourceSnapshot(info);
+        source={...RedownDropboxAPI.sourceSnapshot(info),attemptId:globalThis.redownSaveAttempts?.forClick(info)};
+        globalThis.redownSaveAttempts?.stage(source.attemptId,'ROUTE_RESOLVED');
         // Invoke the browser prompt directly in the native click gesture, before awaiting storage.
         permission=chrome.permissions.request({origins:[RedownDropboxAPI.sourceURL(source.url).origin+'/*']});
-      }catch(e){const job={id:crypto.randomUUID(),status:'blocked',error:e.status?e.message:'No supported file was clicked.'};await save(job);await receipt(job);return;}
+      }catch(e){const job={id:crypto.randomUUID(),source:{attemptId:globalThis.redownSaveAttempts?.forClick(info)},status:'blocked',error:e.status?e.message:'No supported file was clicked.'};await save(job);await receipt(job);return;}
       try{
         const s=await get('dropbox:state');
         const wasConnected=s?.phase==='connected'&&s.rootReady===true&&s.accountId&&s.connectionId&&s.namespace;
@@ -80,31 +83,33 @@
         // The stored state is only a projection: MV3 can suspend the worker
         // while "connecting" or after refresh expiry. Never silently return
         // or enqueue a save on state alone.
-        if(s?.phase==='connected'&&s.rootReady===true&&s.accountId&&s.connectionId&&s.namespace){
+        let identity;
+        if(wasConnected){
           try{
-            const identity=await auth.ready(undefined,false);
+            identity=await auth.ready(undefined,false);
             if(identity.accountId!==s.accountId||identity.connectionId!==s.connectionId||identity.namespace!==s.namespace)
               throw RedownDropboxAuth.fail('Dropbox account state changed. Reconnect before saving.');
-            const job=await enqueue(source,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace});
-            if(job){await receipt(job);void wake();}
-            return;
-          }catch{
-            // ready() marks stale credentials as reconnect. Authenticate below.
-            // Never reuse an unverified old account/root as upload authority.
-          }
+          }catch{identity=null;}
+        }
+        if(identity){
+          globalThis.redownSaveAttempts?.stage(source.attemptId,'AUTH_CHECKED');
+          const job=await enqueue(source,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace});
+          if(job){globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');await receipt(job);void wake().catch(()=>{});}
+          else await record({attemptId:source.attemptId,providerKind:'dropbox',status:'blocked',ok:false,error:'Dropbox queue is full (8 saves). Wait, then click again.'});
+          return;
         }
         // Disconnected, stale "connecting", or failed refresh: login and then
         // continue this same click. Auth client deduplicates active OAuth.
-        if(pendingAuth.size){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox login is already in progress. Finish login, then click this file again.'}});return;}
+        if(pendingAuth.size){const error='Dropbox login is already in progress. Finish login, then click this file again.';await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error}});await record({attemptId:source.attemptId,providerKind:'dropbox',status:'blocked',ok:false,error});return;}
         const old=await get('dropbox:auth');
         const login=earlyLogin||auth.connect(); // Start OAuth before queuing and History work.
         void login.catch(()=>{}); // Paired with awaited login below; no unhandled rejection.
-        const job=await enqueue(source,{},'awaiting-auth');if(!job){await login.catch(()=>{});return;}
+        const job=await enqueue(source,{},'awaiting-auth');if(!job){await record({attemptId:source.attemptId,providerKind:'dropbox',status:'blocked',ok:false,error:'Dropbox queue is full (8 saves). Wait, then click again.'});await login.catch(()=>{});return;}
         pendingAuth.add(job.id);await receipt(job);
         try{
           const identity=await login;if((await jobs()).find(j=>j.id===job.id)?.status!=='awaiting-auth')return;if(old?.accountId&&old.accountId!==identity.accountId)throw RedownDropboxAuth.fail('Dropbox account changed. Click the file again to save to this account.');
           if(Date.now()-job.at>10*60*1000)throw RedownDropboxAuth.fail('Pending save expired. Click the file again.');
-          Object.assign(job,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace,status:'queued'});await save(job);await receipt(job);void wake();
+          Object.assign(job,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace,status:'queued'});await save(job);await receipt(job);globalThis.redownSaveAttempts?.stage(source.attemptId,'AUTH_CHECKED');globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');void wake().catch(()=>{});
         }catch(e){job.status='blocked';job.error=e.status?e.message:'Dropbox login could not be completed.';await save(job);await receipt(job);}
         finally{pendingAuth.delete(job.id);}
       }catch(e){const job={id:crypto.randomUUID(),source,status:'blocked',error:e.status?e.message:'Dropbox could not start saving.'};await save(job);await receipt(job);}

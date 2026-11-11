@@ -1,0 +1,13 @@
+✔ last 100 redacted attempts are bounded, restart-safe, enum-filtered and nonblocking on storage loss (10.626425ms)
+✔ durable source is sanitized before inclusion in support exports (1.147624ms)
+✔ actual native handler records profile-read and route failures before transfer dispatch (41.386508ms)
+✔ native Cloudflare pipeline verifies exact objects and commits History and counters through 21 clicks (63.369746ms)
+✔ trusted Debug interface exposes attempts; foreign sender and disabled Debug are rejected (8.992593ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 214.900206

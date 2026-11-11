@@ -5,7 +5,8 @@
   const result=(code,error,status='blocked')=>({ok:false,code,error,status});
   function create({chrome=globalThis.chrome,auth=RedownOneDriveAuth.create(),
     api=RedownOneDriveAPI.create(),record=async()=>{}}={}){
-    const seen=new WeakSet();let busy=false,running=null,controller=null,active=null,epoch=0;
+    const seen=new WeakSet();let busy=false,running=null,controller=null,active=null,epoch=0,connecting=null;
+    const connect=()=>connecting||(connecting=auth.connect().finally(()=>{connecting=null;}));
     const get=async key=>(await chrome.storage.local.get(key))[key];
     const setTransfer=s=>chrome.storage.local.set({'onedrive:transfer':s});
     const problem=e=>({code:e?.code||'ONEDRIVE_FAILED',error:e?.code?e.message:'OneDrive operation failed.',
@@ -24,7 +25,7 @@
     }
     async function saveRecord(job){
       const ok=job.status==='completed',item=job.item||{},src=job.source||{};
-      const entry={provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
+      const entry={attemptId:src.attemptId,provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
         profileName:'OneDrive root',deliveryId:'onedrive:'+job.id,transferId:job.id,filename:item.name||job.name,
         status:job.status,ok:ok?true:['failed','blocked'].includes(job.status)?false:undefined,
         verified:ok,sourceUrl:src.sourceUrl,pageUrl:src.pageUrl,srcUrl:src.srcUrl,
@@ -47,16 +48,19 @@
       }
     }
     async function begin(source,identity){
-      if(busy){await setTransfer({status:'blocked',code:'ONEDRIVE_BUSY',error:'Another OneDrive save is in progress.'});return;}
-      busy=true;const ticket=epoch,job={id:crypto.randomUUID(),name:source.name,source,
+      if(busy)throw Object.assign(Error('Another OneDrive save is in progress.'),{code:'ONEDRIVE_BUSY',status:'blocked'});
+      busy=true;const ticket=epoch,job={id:crypto.randomUUID(),attemptId:source.attemptId,name:source.name,source,
         accountId:identity.accountId,driveId:identity.driveId,rootId:identity.rootId,
         status:'active',phase:'source',bytes:0,total:null};
       active=job;controller=new AbortController();
-      await setTransfer({status:'active',phase:'source',name:job.name,bytes:0,total:null});
       running=(async()=>{
         try{
+          globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');
+          await setTransfer({status:'active',phase:'source',name:job.name,bytes:0,total:null});
+          globalThis.redownSaveAttempts?.stage(source.attemptId,'SOURCE_REQUEST');
           job.item=await api.upload(source,identity,async p=>{
             job.phase=p.phase;job.bytes=p.sent;job.total=p.total;
+            globalThis.redownSaveAttempts?.phase(source.attemptId,p.phase);
             await setTransfer({status:'active',phase:p.phase,name:job.name,bytes:p.sent,total:p.total});
           },controller.signal);
           if(ticket!==epoch)throw RedownOneDriveAPI.fail('ONEDRIVE_INTERRUPTED','OneDrive was disconnected.','uncertain');
@@ -73,11 +77,15 @@
           await setTransfer({status:job.status,code:job.code,error:job.error,name:job.name,
             bytes:job.bytes,total:job.total,...(p.uploadOrigin?{uploadOrigin:p.uploadOrigin}:{})});
         }finally{
-          await saveRecord(job);
-          if(active===job)active=null;
-          controller=null;busy=false;
+          try{await saveRecord(job);}
+          finally{
+            if(active===job)active=null;
+            controller=null;busy=false;
+          }
         }
       })().finally(()=>{running=null;});
+      // Observe asynchronous storage/receipt failures; admission is released above.
+      void running.catch(()=>globalThis.redownSaveAttempts?.finish(job.attemptId,'UNCERTAIN','HISTORY_UNAVAILABLE'));
     }
     async function dispatch(info){
       if(!info||typeof info!=='object'||!RedownOneDriveMenu.owns(info.menuItemId)||seen.has(info))return;
@@ -89,13 +97,24 @@
       // Permission is declared by Chrome's extension manifest. There are no
       // OneDrive-specific request() calls or additional host approval dialogs.
       try{
+        globalThis.redownSaveAttempts?.stage(globalThis.redownSaveAttempts?.forClick(info),'ROUTE_RESOLVED');
         const state=await get('onedrive:state');
-        if(state?.phase==='connecting')return;
-        if(state?.phase!=='connected'){await auth.connect();return;}
-        const source=RedownOneDriveAPI.sourceSnapshot(info);
+        if(state?.phase==='connecting'&&(connecting||!await get('onedrive:auth')))
+          throw Object.assign(Error('OneDrive sign-in is pending or was interrupted. Finish or reconnect from Shelf, then click Save again.'),{code:'ONEDRIVE_AUTH_PENDING',status:'blocked'});
+        if(!['connected','connecting'].includes(state?.phase)){
+          await connect();
+          throw Object.assign(Error('OneDrive sign-in completed. Click the file again to save.'),{code:'ONEDRIVE_CLICK_AGAIN',status:'blocked'});
+        }
+        const source={...RedownOneDriveAPI.sourceSnapshot(info),attemptId:globalThis.redownSaveAttempts?.forClick(info)};
         const identity=await auth.ready(null,true);
+        globalThis.redownSaveAttempts?.stage(source.attemptId,'AUTH_CHECKED');
+        await replayVerifiedReceipt();
         await begin(source,identity);
-      }catch(e){await setTransfer(problem(e));}
+      }catch(e){
+        const p=problem(e);await setTransfer(p);
+        await record({provider:'OneDrive',providerKind:'onedrive',status:p.status,ok:false,
+          attemptId:globalThis.redownSaveAttempts?.forClick(info),error:p.error});
+      }
     }
     const ownsMessage=m=>['onedriveConnect','onedriveDisconnect','onedriveStatus','onedriveCancel','onedriveDiagnostic'].includes(m?.type);
     async function message(m,sender){
@@ -115,7 +134,7 @@
       try{
         if(m.type==='onedriveConnect'){
           if(busy)return result('ONEDRIVE_BUSY','Finish the current OneDrive save first.');
-          const state=await auth.connect();return {ok:true,phase:state.phase,rootReady:state.rootReady};
+          const state=await connect();return {ok:true,phase:state.phase,rootReady:state.rootReady};
         }
         if(m.type==='onedriveStatus'){
           const a=await get('onedrive:auth'),s=await get('onedrive:state');

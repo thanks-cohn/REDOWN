@@ -893,13 +893,19 @@ async function recordTransfer(entry) {
     entry={...entry,providerKind:'google',deliveryId:'google:'+entry.destination.fileId};
   // Do not flash green from a URL, POST acknowledgement or decorative timer.
   // The counter commits a *new*, provider-verifier-backed receipt first.
-  const outcome=await transferCounter.record(entry);
-  if(entry?.ok===false){
-    // Store a definitive failed save for the Shelf and History to display.
-    // The native Chrome toolbar icon remains untouched by this indicator.
-    void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});
+  const attempts=globalThis.redownSaveAttempts,id=entry?.attemptId;
+  const indicateFailure=()=>{void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});};
+  if(entry?.ok===false){indicateFailure();}
+  else if(['uncertain','interrupted','blocked'].includes(entry?.status))indicateFailure();
+  let outcome;
+  try{outcome=await transferCounter.record(entry);}
+  catch(error){attempts?.finish(id,'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
+  if(id&&['completed','failed','blocked','cancelled','uncertain','interrupted'].includes(entry.status)){
+    attempts?.stage(id,'HISTORY_COMMIT');
+    if(outcome?.newVerified||outcome?.duplicate)attempts?.stage(id,'COUNTER_COMMIT');
+    attempts?.finish(id,entry.ok===true&&(outcome?.newVerified||outcome?.duplicate)?'COMPLETED':entry.ok===true?'UNCERTAIN':entry.status.toUpperCase(),entry.ok===true?'OK':'PROVIDER_FAILED');
   }
-  else if(outcome?.newVerified===true)void toolbarFeedback("success");
+  if(outcome?.newVerified===true)void toolbarFeedback("success");
   return outcome;
 }
 async function notify(title, message) {
@@ -981,6 +987,7 @@ try{globalThis.redownExplorerBridge=RedownExplorerBridge.install({context:"backg
 importScripts("search-session.js");
 const runtimeDiagnostics = RedownRuntimeDiagnostics.create({build:chrome.runtime.getManifest().version});
 globalThis.redownRuntimeObserver=runtimeDiagnostics;
+globalThis.redownSaveAttempts=RedownRuntimeDiagnostics.createAttempts({storage:chrome.storage.local});
 chrome.storage.local.get("debugModeEnabled").then(value=>runtimeDiagnostics.setEnabled(value.debugModeEnabled)).catch(()=>{});
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area==="local"&&changes.debugModeEnabled)runtimeDiagnostics.setEnabled(changes.debugModeEnabled.newValue);
@@ -2049,6 +2056,11 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
     const capabilities=await callBucketWorker(prepared,{action:"capabilities"},false);
     if(capabilities.exactIngestPaths!==true)throw Object.assign(new Error("This folder needs exact-path support. Use the bucket’s Repair control in Settings, then retry. No upload was started."),{code:"EXPLORER_WORKER_CAPABILITY_MISMATCH"});
   }
+  globalThis.redownSaveAttempts?.stage(receipt?.attemptId,'AUTH_CHECKED');
+  globalThis.redownSaveAttempts?.stage(receipt?.attemptId,'ADMITTED');
+  globalThis.redownSaveAttempts?.stage(receipt?.attemptId,'SOURCE_REQUEST');
+  globalThis.redownSaveAttempts?.stage(receipt?.attemptId,'PROVIDER_WRITE');
+  if(receipt)receipt.writeDispatched=true;
   const response = await fetch(prepared.workerUrl, {
     method: "POST",
     headers: {
@@ -2933,15 +2945,22 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  const saveAction=/^(provider:|v3:|quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId))&&
+    !/:(setup|default-setup|more|separator|connect)$/.test(String(info.menuItemId));
+  const saveAttemptId=saveAction?globalThis.redownSaveAttempts?.begin(info):undefined;
+  try{
   // Acknowledge the selection before destination resolution, OAuth or network I/O.
   if(RedownClickFeedback.providerFor(info.menuItemId))void Promise.resolve(launchSaveDroplet(info,tab)).catch(()=>{});
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
+    if(info.menuItemId!=='provider:onedrive')globalThis.redownSaveAttempts?.finish(saveAttemptId,'BLOCKED','ROUTE_REJECTED');
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
+    if(info.menuItemId!=='provider:dropbox')globalThis.redownSaveAttempts?.finish(saveAttemptId,'BLOCKED','ROUTE_REJECTED');
     await dropboxProvider.dispatch(info,tab);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
+    if(info.menuItemId!=='provider:google-drive')globalThis.redownSaveAttempts?.finish(saveAttemptId,'BLOCKED','ROUTE_REJECTED');
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();
@@ -2965,8 +2984,19 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const profiles = await getProfiles();
   const resolved=await resolveActiveRightClick(info.menuItemId,profiles);
   entryEvidence('context-menu','click','resolve',resolved?'SAVE_ROUTE_RESOLVED':'SAVE_ROUTE_REJECTED',false,attemptId);
-  if(!resolved)return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
-  return saveResolvedRightClick(info,tab,resolved,profiles);
+  if(!resolved){
+    globalThis.redownSaveAttempts?.finish(saveAttemptId,'BLOCKED','ROUTE_REJECTED');
+    if(saveAttemptId)await recordTransfer({attemptId:saveAttemptId,providerKind:'cloudflare',status:'blocked',ok:false,error:'That destination is inactive or was removed. Open Right-click setup in Explorer.'});
+    return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
+  }
+  globalThis.redownSaveAttempts?.stage(saveAttemptId,'ROUTE_RESOLVED');
+  return await saveResolvedRightClick(info,tab,resolved,profiles);
+  }catch{
+    const dispatched=globalThis.redownSaveAttempts?.dispatched(saveAttemptId);
+    globalThis.redownSaveAttempts?.finish(saveAttemptId,dispatched?'UNCERTAIN':'BLOCKED',dispatched?'UNCONFIRMED':'PREFLIGHT_FAILED');
+    if(saveAttemptId)await recordTransfer({attemptId:saveAttemptId,status:dispatched?'uncertain':'blocked',ok:dispatched?undefined:false,error:'REDOWN could not start or record this save. Inspect Save attempts in Debug Mode.'}).catch(()=>{});
+    await notify('REDOWN save blocked','Could not start saving. Inspect Save attempts in Debug Mode.');
+  }
 });
 async function saveResolvedRightClick(info,tab,resolved,profiles){
   // Hitomi gallery Download is an anchor and can expose a javascript: or
@@ -3003,17 +3033,19 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
   // Resolve from the active saved model at click time, never from a legacy
   // default or the previous native-menu snapshot.
   const {profile,owner,prefix}=resolved;
-  const receipt={providerKind:"cloudflare",deliveryId:"cloudflare:"+crypto.randomUUID()};
+  const receipt={providerKind:"cloudflare",deliveryId:"cloudflare:"+crypto.randomUUID(),attemptId:globalThis.redownSaveAttempts?.forClick(info)};
   try{
     const v3=String(info.menuItemId).startsWith('v3:');
     if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
     const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt,v3);
+    globalThis.redownSaveAttempts?.stage(receipt.attemptId,'REMOTE_VERIFY');
     await verifyCloudflareReceipt(profile,sourceUrl,receipt);
     await recordTransfer({pageUrl,ok:true,status:'completed',sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
     await notify("REDOWN complete",location);
   }catch(error){
     const message=error?.message||String(error);
-    await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message,...receipt});
+    const status=receipt.verified||receipt.destination||receipt.writeDispatched?'uncertain':'failed';
+    await recordTransfer({pageUrl,ok:status==='failed'?false:undefined,status,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message,...receipt});
     await notify("REDOWN failed",message);
   }
 }
@@ -3073,9 +3105,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ok:true});
       }
       if(message?.type==="runtimeDiagnosticsV1"){
-        const allowed=_sender?.url===chrome.runtime.getURL("options.html");
+        const allowed=_sender?.id===chrome.runtime.id&&_sender?.url===chrome.runtime.getURL("options.html");
         const {debugModeEnabled}=await chrome.storage.local.get("debugModeEnabled");
         if(!allowed||!debugModeEnabled)return sendResponse({ok:false,error:"Enable Debug Mode in Settings.",code:"DIAGNOSTICS_DISABLED"});
+        if(message.operation==='saveAttempts')return sendResponse({ok:true,result:await globalThis.redownSaveAttempts.snapshot()});
         const result=runtimeDiagnostics.query(message.operation,message.input);
         if(message.operation==="snapshot"){
           const {cloudflareAuth:auth}=await chrome.storage.local.get("cloudflareAuth");

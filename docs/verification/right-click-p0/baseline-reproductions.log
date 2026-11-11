@@ -1,0 +1,111 @@
+✖ Google stale connecting projection does not silently discard an accepted click (10.068512ms)
+✖ OneDrive stale connecting with durable auth revalidates identity and saves (7.98069ms)
+✖ OneDrive initial storage write failure releases admission for the next click (5.210951ms)
+✖ Dropbox full queue records an explicit rejected attempt without adding a job or opening OAuth (4.990476ms)
+✖ Dropbox completed checkpoint survives History failure; recovery never uploads it again (4.556135ms)
+✖ Dropbox drains a second click arriving during a slow upload in the same pump (10.668296ms)
+ℹ Error: Test "Dropbox completed checkpoint survives History failure; recovery never uploads it again" at tests/save-attempt-lifecycle.test.mjs:73:1 generated asynchronous activity after the test ended. This activity created the error "Error: injected History outage" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 101.82676
+
+✖ failing tests:
+
+test at tests/save-attempt-lifecycle.test.mjs:22:1
+✖ Google stale connecting projection does not silently discard an accepted click (10.068512ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/save-attempt-lifecycle.test.mjs:25:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/save-attempt-lifecycle.test.mjs:27:1
+✖ OneDrive stale connecting with durable auth revalidates identity and saves (7.98069ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/save-attempt-lifecycle.test.mjs:29:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/save-attempt-lifecycle.test.mjs:31:1
+✖ OneDrive initial storage write failure releases admission for the next click (5.210951ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/save-attempt-lifecycle.test.mjs:34:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/save-attempt-lifecycle.test.mjs:69:1
+✖ Dropbox full queue records an explicit rejected attempt without adding a job or opening OAuth (4.990476ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'error')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/save-attempt-lifecycle.test.mjs:71:126)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/save-attempt-lifecycle.test.mjs:73:1
+✖ Dropbox completed checkpoint survives History failure; recovery never uploads it again (4.556135ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'active'
+  - 'completed'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/save-attempt-lifecycle.test.mjs:75:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'active',
+    expected: 'completed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/save-attempt-lifecycle.test.mjs:78:1
+✖ Dropbox drains a second click arriving during a slow upload in the same pump (10.668296ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  1 !== 2
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/save-attempt-lifecycle.test.mjs:81:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
