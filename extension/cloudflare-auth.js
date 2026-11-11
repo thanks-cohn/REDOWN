@@ -32,7 +32,8 @@ async function storeCloudflareToken(token, previous = {}) {
     refreshToken: token.refresh_token || previous.refreshToken || null,
     expiresAt: token.expires_in ? Date.now() + Number(token.expires_in) * 1000 : null
   };
-  await navigator.locks.request("redown-cloudflare-token",()=>chrome.storage.local.set({ cloudflareAuth: {...auth,reconnectRequired:false} }));
+  try{await navigator.locks.request("redown-cloudflare-token",()=>chrome.storage.local.set({ cloudflareAuth: {...auth,reconnectRequired:false} }));}
+  catch(error){throw Object.assign(new Error('Cloudflare token could not be saved locally.'),{code:'TOKEN_STORAGE_FAILED',exceptionName:['QuotaExceededError','AbortError','InvalidStateError','UnknownError','SecurityError'].includes(error?.name)?error.name:'Error'});}
   return auth;
 }
 // Keep the login window visible before Cloudflare finishes loading. Chrome's
@@ -52,6 +53,14 @@ async function cloudflareLoginStatus() {
   } : { phase: "idle" };
 }
 const CF_LOGIN_STATE_LOCK = "redown-cloudflare-login-state";
+async function loginCheckpoint(id, checkpoint, code='OK', evidence={}) {
+  return navigator.locks.request(CF_LOGIN_STATE_LOCK,async()=>{
+    const current=(await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];
+    if(current?.id!==id||!['opening','authorizing','verifying'].includes(current.phase))return;
+    const checkpoints=[...(current.checkpoints||[]),{checkpoint,code,at:Date.now(),...(['QuotaExceededError','AbortError','InvalidStateError','UnknownError','SecurityError','Error'].includes(evidence.exceptionName)?{exceptionName:evidence.exceptionName,storageArea:'local'}:{})}].slice(-16);
+    await chrome.storage.session.set({[CF_LOGIN_SESSION]:{...current,checkpoints}});
+  }).catch(()=>{console.warn('REDOWN OAuth checkpoint unavailable.');});
+}
 async function finishCloudflareLogin(id, phase, error = "") {
   return navigator.locks.request(CF_LOGIN_STATE_LOCK, () => finishCloudflareLoginLocked(id, phase, error));
 }
@@ -60,7 +69,7 @@ async function finishCloudflareLoginLocked(id, phase, error = "") {
   const attempt = stored[CF_LOGIN_SESSION];
   if (attempt?.id !== id || !["opening", "authorizing", "verifying"].includes(attempt.phase)) return;
   // Erase PKCE/state before closing the window, whose removal emits an event.
-  await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { id, phase, error } });
+  await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { id, phase, error, checkpoints:attempt.checkpoints||[] } });
   await chrome.alarms.clear(CF_LOGIN_ALARM);
   if (Number.isInteger(attempt.windowId)) {
     await chrome.windows.remove(attempt.windowId).catch(() => {});
@@ -106,7 +115,7 @@ async function startCloudflareLoginUnlocked({ openExplorerAfterLogin = false } =
     const state = randomString(24);
     const attempt = {
       id, windowId: loginWindow.id, tabId, redirectUri, verifier, state,
-      phase: "opening", expiresAt: Date.now() + CF_LOGIN_TIMEOUT_MS,
+      phase: "opening", checkpoints:[{checkpoint:"WINDOW_CREATED",code:"OK",at:Date.now()}], expiresAt: Date.now() + CF_LOGIN_TIMEOUT_MS,
       // An explicit Shelf LOGIN! request only; never infer this from token refresh or startup.
       openExplorerAfterLogin: openExplorerAfterLogin === true
     };
@@ -128,6 +137,7 @@ async function startCloudflareLoginUnlocked({ openExplorerAfterLogin = false } =
       await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { ...attempt, phase: "authorizing" } });
     });
     await chrome.tabs.update(tabId, { url: auth.toString(), active: true });
+    await loginCheckpoint(id,"AUTHORIZATION_NAVIGATED");
     return { pending: true, ...(await cloudflareLoginStatus()) };
   } catch (error) {
     await finishCloudflareLogin(id, "failed", error?.message || "Cloudflare sign-in could not open. Try again.");
@@ -166,11 +176,12 @@ async function completeCloudflareLogin(details) {
     try { returned = new URL(details.url); } catch { return null; }
     const expected = new URL(current.redirectUri);
     if (returned.origin !== expected.origin || returned.pathname !== expected.pathname) return null;
-    await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { ...current, phase: "verifying" } });
+    await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { ...current, phase: "verifying",checkpoints:[...(current.checkpoints||[]),{checkpoint:"CALLBACK_MATCHED",code:"OK",at:Date.now()}].slice(-16) } });
     return current;
   });
   if (!attempt) return;
   const returned = new URL(details.url);
+  let issued=false;
   try {
     if (Date.now() >= attempt.expiresAt) throw new Error("Cloudflare sign-in timed out. Try again.");
     if (returned.searchParams.get("state") !== attempt.state) throw new Error("Cloudflare OAuth state mismatch. Try again.");
@@ -178,6 +189,7 @@ async function completeCloudflareLogin(details) {
     if (oauthError) throw new Error(returned.searchParams.get("error_description") || oauthError);
     const code = returned.searchParams.get("code");
     if (!code) throw new Error("Cloudflare did not return an authorization code. Try again.");
+    await loginCheckpoint(attempt.id,"CODE_VALIDATED");
     const { response: tokenRes, body: token } = await cloudflareLoginJson(CF_TOKEN_URL, {
       method: "POST",
       headers: { "content-type": "application/x-www-form-urlencoded" },
@@ -190,6 +202,18 @@ async function completeCloudflareLogin(details) {
     // OAuth token issuance is the sign-in boundary. Account listing is a
     // separate API connectivity check, not a reason to throw away a valid
     // token when a browser network change interrupts the follow-up GET.
+    // Persist the one-use code's result before any separate account request.
+    // A failed account check cannot recover an already consumed OAuth code.
+    await loginCheckpoint(attempt.id,'TOKEN_EXCHANGED');
+    issued=await navigator.locks.request(CF_LOGIN_STATE_LOCK,async()=>{
+      const current=(await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];
+      if(current?.id!==attempt.id||current.phase!=='verifying'||Date.now()>=attempt.expiresAt)return false;
+      await storeCloudflareToken(token,{user:null,accountVerification:'pending'});
+      return true;
+    });
+    if(!issued)return;
+    await loginCheckpoint(attempt.id,'TOKEN_STORED');
+    let accountState='pending';
     const headers = { authorization: `Bearer ${token.access_token}` };
     let verified = false;
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -198,9 +222,10 @@ async function completeCloudflareLogin(details) {
         if (!verifyRes.ok || verifyBody.success === false) {
           // Real Cloudflare authorization failures are not transient and
           // must not be silently treated as a successful API verification.
-          throw new Error(cloudflareErrorMessage(verifyBody, `Cloudflare API verification failed (HTTP ${verifyRes.status}).`));
+          accountState=verifyRes.status===401?'rejected':verifyRes.status===403?'denied':'unavailable';
+          break;
         }
-        verified = true;
+        verified = true;accountState="verified";
         break;
       } catch (error) {
         // fetch TypeError/AbortError are transport failures without an HTTP
@@ -208,20 +233,24 @@ async function completeCloudflareLogin(details) {
         const transient = error instanceof TypeError ||
           error?.name === "AbortError" ||
           /failed to fetch|did not respond|network changed|networkerror/i.test(error?.message || "");
-        if (!transient) throw error;
+        if (!transient) {accountState="unavailable";break;}
         if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
       }
     }
-    if (!verified) console.warn("REDOWN Cloudflare token received; account API verification deferred after network interruption.");
-    const user = null;
+    if (!verified) console.warn("REDOWN Cloudflare token received; account API verification is not established.");
+    await loginCheckpoint(attempt.id,'ACCOUNT_CHECKED',accountState==='verified'?'OK':accountState==='denied'?'ACCOUNT_DENIED':accountState==='rejected'?'TOKEN_REJECTED':'ACCOUNT_UNAVAILABLE');
+    await navigator.locks.request('redown-cloudflare-token',async()=>{
+      const current=(await chrome.storage.local.get('cloudflareAuth')).cloudflareAuth;
+      if(current?.accessToken!==token.access_token)return;
+      await chrome.storage.local.set({cloudflareAuth:{...current,accountVerification:accountState,...(accountState==='rejected'?{reconnectRequired:true}:{})}});
+    });
     // Only the context that finalizes this exact OAuth attempt may open Explorer.
     // The same callback can be observed by Settings and the MV3 worker; the lock
     // prevents duplicate tabs, and a tab failure must not invalidate a valid login.
     const openExplorer = await navigator.locks.request(CF_LOGIN_STATE_LOCK, async () => {
       const current = (await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];
       if (current?.id !== attempt.id || current.phase !== "verifying" || Date.now() >= attempt.expiresAt) return false;
-      await storeCloudflareToken(token, { user });
-      await finishCloudflareLoginLocked(attempt.id, "connected");
+      await finishCloudflareLoginLocked(attempt.id, "connected",verified?"":"Cloudflare token received; account access is "+accountState+". Review connection status.");
       return current.openExplorerAfterLogin === true;
     });
     if (openExplorer) {
@@ -232,7 +261,9 @@ async function completeCloudflareLogin(details) {
       }
     }
   } catch (error) {
-    await finishCloudflareLogin(attempt.id, "failed", error?.message || "Cloudflare sign-in failed. Try again.");
+    if(error?.code==='TOKEN_STORAGE_FAILED')await loginCheckpoint(attempt.id,'TOKEN_STORAGE_FAILED','STORAGE_UNAVAILABLE',error).catch(()=>{});
+    await loginCheckpoint(attempt.id,issued?'POST_TOKEN_FAILED':'LOGIN_FAILED',issued?'ACCOUNT_UNAVAILABLE':'LOGIN_FAILED').catch(()=>{});
+    await finishCloudflareLogin(attempt.id, issued?'connected':"failed", issued?'Cloudflare token received; account verification or local status persistence needs attention.':error?.message || "Cloudflare sign-in failed. Try again.");
   }
 }
 

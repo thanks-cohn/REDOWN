@@ -125,5 +125,7 @@
   "extension/diagnostic-bundle.js",
   "extension/diagnostic-download.js",
   "extension/shelf-queue.js",
-  "scripts/visible-queue-browser.mjs"
+  "scripts/visible-queue-browser.mjs",
+  "scripts/compare-owner-windows.mjs",
+  "scripts/windows-storage-browser.mjs"
 ]

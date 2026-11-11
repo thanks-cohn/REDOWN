@@ -7,13 +7,13 @@
   let data=null,debug=false,debugStarted=Date.now(),hydrated=false,refreshTimer=null,version=0,disposed=false;
   const seen=new Map();
   const make=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
-  const tone=row=>['uncertain','interrupted','needs-attention'].includes(row.state)?'amber':['blocked','failed'].includes(row.state)?'red':'neutral';
+  const tone=row=>row.accountingPending?'amber':['uncertain','interrupted','needs-attention'].includes(row.state)?'amber':['blocked','failed'].includes(row.state)?'red':'neutral';
   function cardSignals(){
     for(const [provider,label] of Object.entries(providers)){
       const card=document.querySelector('#clouds-view [data-provider="'+provider+'"]');if(!card)continue;
       let signal=card.querySelector('.queue-card-signal');if(!signal){signal=make('button','','queue-card-signal');signal.type='button';signal.hidden=true;card.append(signal);card.addEventListener('animationend',event=>{if(event.animationName==='queue-failure-pulse')card.classList.remove('queue-failure-flash');});}
       const row=data?.rows.filter(r=>r.provider===provider).sort((a,b)=>(b.outcomeAt??b.lastActivityAt??b.receivedAt??0)-(a.outcomeAt??a.lastActivityAt??a.receivedAt??0))[0];
-      if(!debug||!row||row.acknowledged||row.state==='verified'||row.state==='cancelled'){
+      if(!debug||!row||row.acknowledged||row.state==='verified'&&!row.accountingPending||row.state==='cancelled'){
         signal.hidden=true;delete card.dataset.queueState;card.classList.remove('queue-failure-flash');continue;
       }
       const key=row.id+':'+row.state+':'+(row.outcomeAt??row.receivedAt),color=tone(row),newEvent=seen.get(provider)!==key;
@@ -36,7 +36,7 @@
     cardSignals();if($('queue-view').hidden)return;
     let selected='';try{selected=decodeURIComponent(location.hash.split('/').slice(1).join('/')||'');}catch{}
     const filter=$('queue-filter').value;
-    const accepts=r=>filter==='active'?['received','queued','active','fetching','uploading','verifying'].includes(r.state):filter==='waiting'?['queued','waiting-for-login'].includes(r.state):filter==='attention'?['failed','blocked','uncertain','interrupted','needs-attention'].includes(r.state):filter==='completed'?r.state==='verified':true;
+    const accepts=r=>filter==='active'?['received','queued','active','fetching','uploading','verifying'].includes(r.state):filter==='waiting'?['queued','waiting-for-login'].includes(r.state):filter==='attention'?r.accountingPending||['failed','blocked','uncertain','interrupted','needs-attention'].includes(r.state):filter==='completed'?r.state==='verified':true;
     const fragment=document.createDocumentFragment();let index=0,lastProvider=null;
     const group=$('queue-group').value,visible=data.rows.filter(r=>accepts(r)||r.id===selected);
     if(group==='provider')visible.sort((a,b)=>Object.keys(providers).indexOf(a.provider)-Object.keys(providers).indexOf(b.provider)||(b.receivedAt||0)-(a.receivedAt||0));
@@ -45,7 +45,7 @@
       const card=make('article',undefined,'queue-row');card.dataset.queueId=row.id;card.dataset.tone=tone(row);card.tabIndex=-1;
       if(row.id===selected){card.dataset.selected='true';card.setAttribute('aria-current','true');}
       const header=make('div',undefined,'queue-row-heading');header.append(make('strong',providers[row.provider]||providers.unknown),make('span',row.state.replaceAll('-',' ').toUpperCase(),'queue-row-state'));card.append(header,make('h2',row.name));
-      if(row.accountingPending)card.append(make('small','Provider completion returned · waiting for local receipt reconciliation'));
+      if(row.accountingPending)card.append(make('small','Remote save verified · local History accounting pending. Do not upload again.'));
       if(row.attemptOnly)card.append(make('small','Attempt only · no admitted job linked'));
       card.append(make('p',row.code+(reasons[row.code]?' · '+reasons[row.code]:''),'queue-row-reason'));
       const detail=make('dl');for(const [label,value] of [['Attempt',row.attemptId||'Not linked'],['Received',row.receivedAt?new Date(row.receivedAt).toLocaleString():'Unavailable'],['Last activity',row.lastActivityAt?new Date(row.lastActivityAt).toLocaleString():'Unavailable'],['Queue position',row.queuePosition],['Destination',row.destination?Object.entries(row.destination).filter(([k])=>k!=='provider').map(([k,v])=>k+': '+v).join(' · '):'Reference unavailable'],['History',row.historyLinked?'Receipt linked':'No local receipt linked']]){

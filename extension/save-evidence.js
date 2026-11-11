@@ -25,6 +25,7 @@
   function sanitize(input={}){
     if(!input||typeof input!=='object'||Array.isArray(input))return {};
     const out={};
+    for(const [key,values] of Object.entries({storageArea:['local','indexedDB','session'],storageOperation:['state-read','receipt-read','daily-read','dedupe-read','local-commit','archive-write','archive-open','archive-transaction'],exceptionName:['Error','QuotaExceededError','AbortError','InvalidStateError','UnknownError','NotFoundError','VersionError','SecurityError','DataError','ConstraintError','TransactionInactiveError','TypeError']}))if(values.includes(input[key]))out[key]=input[key];
     if(input.code!==undefined)out.code=code(input.code);
     for(const k of ['status','httpStatus'])if(Number.isInteger(input[k])&&input[k]>=100&&input[k]<=599)out[k]=input[k];
     for(const [k,allowed] of Object.entries({decision:['recovered','blocked','failed','uncertain','cancelled','interrupted'],expectedMedia:['image','video','audio','unknown'],sniff:['image','html','other','empty','not-read'],role:['source','provider'],phase:['source','queued','auth','starting','session','uploading','committing','verifying','history','wake','alarm','pump'],method:['GET','HEAD','POST','PUT'],contentType:[...mimes,'other','absent'],contentLength:['present','absent','invalid'],contentEncoding:['identity','gzip','br','deflate','other','absent'],redirectPolicy:['error','follow','manual'],redirectOutcome:['not-followed','followed','unknown'],bodyKind:['html','bytes','empty','unknown'],sizeRange:['empty','under-1MiB','1-16MiB','over-16MiB','unknown'],acquisition:['stream','bounded-memory','worker-remote'],category:['auth','permission','rate-limit','server','source','unknown']})){
@@ -40,7 +41,7 @@
     return sanitize({role,method,httpStatus:response.status,contentType:!type?'absent':mimes.has(type)?type:'other',contentLength:raw===null||raw===undefined?'absent':/^\d+$/.test(raw)&&Number.isSafeInteger(n)?'present':'invalid',contentEncoding:!encoding?'absent':['identity','gzip','br','deflate'].includes(encoding)?encoding:'other',redirectPolicy:'error',redirectOutcome:response.redirected?'followed':'not-followed'});
   }
   function note(attemptId,input){try{globalThis.redownSaveAttempts?.observe(attemptId,sanitize(input));}catch{}}
-  function failure(attemptId,error,phase){note(attemptId,{code:classify(error),phase,decision:error?.status,httpStatus:error?.http,role:phase==='source'?'source':'provider'});}
+  function failure(attemptId,error,phase){note(attemptId,{code:classify(error),phase,exceptionName:error?.name,decision:error?.status,httpStatus:error?.http,role:phase==='source'?'source':'provider'});}
   const fail=(c,message,status='blocked')=>Object.assign(Error(message),{code:c,status});
   async function read(reader,signal){
     let timer,abort;

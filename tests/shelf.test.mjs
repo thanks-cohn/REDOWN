@@ -21,7 +21,7 @@ test('Shelf defaults to Shelf and preserves explicitly selected native Popup acr
 test('provider order, pending integrations, verified account state and actual history remain honest',async()=>{
  const s=await shelf({cloudflareAuth:{accessToken:'fixture'},transferHistory:[{ok:false,profileName:'Failed fixture',at:'2026-10-29T00:00:00Z'}]});
  assert.deepEqual([...s.doc.querySelectorAll('h3')].map(x=>x.textContent),['Google Drive','Dropbox','Microsoft OneDrive','Cloudflare R2']);assert.equal(s.doc.getElementById('cf-state').textContent,'Connected');s.dom.window.eval(readFileSync('extension/shelf-history.js','utf8'));await s.dom.window.RedownShelfHistory.open();assert.match(s.doc.getElementById('history-timeline').textContent,/Failed fixture/);assert.equal(s.doc.querySelectorAll('.state').length,4);s.dom.window.close();
- const bad=await shelf({cloudflareAuth:{accessToken:'fixture'}},{ok:false});assert.equal(bad.doc.getElementById('cf-state').textContent,'Check sign-in');bad.dom.window.close();
+ const bad=await shelf({cloudflareAuth:{accessToken:'fixture'}},{ok:false});assert.equal(bad.doc.getElementById('cf-state').textContent,'Check access');bad.dom.window.close();
 });
 test('History opens Today by default and preserves clickable source and hosting-page URLs',async()=>{
  const now=new Date().toISOString();
@@ -87,8 +87,8 @@ test('Shelf reassurance appears immediately beneath navigation; Cloud Storage is
 test('unverified Cloudflare retains card-level status but no duplicate warning in the introduction',async()=>{
  const h=await shelf({cloudflareAuth:{accessToken:'fixture'}},{ok:false});
  try{
-   assert.equal(h.doc.querySelector('#cf-state').dataset.state,'error');
-   assert.match(h.doc.querySelector('#cf-state').textContent,/Check sign-in/);
+   assert.equal(h.doc.querySelector('#cf-state').dataset.state,'account-unavailable');
+   assert.match(h.doc.querySelector('#cf-state').textContent,/Check access/);
    assert.ok(!h.doc.getElementById('connection-summary').textContent.includes('Cloudflare needs attention'));
    assert.equal(h.doc.getElementById('connection-summary').textContent,'');
  }finally{h.dom.window.close();}
@@ -110,4 +110,8 @@ test('Membership uses the existing Quick Glance flag and restores both modes on 
   }
   assert.deepEqual(data.transferHistory,[{id:'keep'}]);
  }finally{original.dom.window.close();}
+});
+
+test('valid saved Cloudflare login with unavailable accounts opens access review instead of repeated OAuth',async()=>{
+ const h=await shelf({cloudflareAuth:{accessToken:'fixture',expiresAt:Date.now()+3600000}},{ok:false});try{assert.equal(h.doc.getElementById('cloudflare-label').textContent,'Check access');h.doc.getElementById('cloudflare').click();await settle();assert.equal(h.opened.at(-1).url,'https://extension.test/beta/explorer.html');}finally{h.dom.window.close();}
 });

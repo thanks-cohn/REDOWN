@@ -109,6 +109,7 @@
       forClick:info=>clicks.get(info),stage,
       dispatched:attemptId=>attempts.find(a=>a.id===attemptId)?.events.some(e=>e.stage==='PROVIDER_WRITE')===true,
       phase(attemptId,phase){const step={source:'SOURCE_REQUEST',uploading:'PROVIDER_WRITE',committing:'PROVIDER_WRITE',verifying:'REMOTE_VERIFY'}[phase];if(step)stage(attemptId,step);},
+      reconcile(attemptId){const a=attempts.find(a=>a.id===attemptId),last=a?.events.at(-1);if(last?.stage==='TERMINAL'&&last.outcome==='COMPLETED'&&last.reason==='HISTORY_UNAVAILABLE'){a.events.pop();persist();}},
       finish(attemptId,outcome,reason='UNCONFIRMED'){stage(attemptId,'TERMINAL',{outcome,reason});},
       async snapshot(){await ready;return {schemaVersion:1,scope:'save-attempt-observations',persistence:unavailable?'unavailable':'available',fallback:unavailable?'Inspect extension Errors; saving remains independent.':null,attempts:structuredClone(attempts),limitations:['Stage entry is not remote completion proof.','Interrupted means the observer restarted; inspect provider receipts before retrying.','No native event can be observed when Chrome does not deliver it.']};},
       async flush(){await lane;}

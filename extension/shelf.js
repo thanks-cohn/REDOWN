@@ -7,7 +7,7 @@ function updateConnectionSummary(){
     ? 'Download Direct2Cloud! Nothing Downloads Directly!'
     : state==='checking'
       ? 'Checking Cloudflare connection…'
-      : state==='error'
+      : state==='error'||state==='account-unavailable'
         ? '' // Keep verification issues on the Cloudflare card, not in the Shelf welcome copy.
         : 'Connect Cloudflare to make R2 your cloud home.';
 }
@@ -154,14 +154,14 @@ const openPage = path => chrome.tabs.create({url:chrome.runtime.getURL(path)}).c
 $('dashboard').addEventListener('click',()=>openPage('beta/explorer.html'));
 $('cloudflare').addEventListener('click',async()=>{
   const state=$('cf-state').dataset.state;
-  if(state==='connected'){void openPage('beta/explorer.html');return;}
+  if(state==='connected'||state==='account-unavailable'){void openPage('beta/explorer.html');return;}
   if(state==='checking')return;
   $('cloudflare').disabled=true;
   status('Opening Cloudflare sign-in…');
   try {
     const result=await chrome.runtime.sendMessage({type:'cfConnect'});
     if(!result?.ok)throw Error(result?.error||'Could not start Cloudflare sign-in.');
-    status('Finish Cloudflare sign-in in the window that opens.');
+    status(result.phase==='connected'?'Sign-in returned a token. Checking Cloudflare account access…':'Finish Cloudflare sign-in in the window that opens.');
     void refreshConnection().catch(()=>{});
   } catch(error) { status(error?.message||'Cloudflare sign-in could not start.'); }
   finally { $('cloudflare').disabled=false; }
@@ -229,8 +229,8 @@ async function refreshConnection() {
     updateConnectionSummary();
     $('cloudflare').disabled=state==='checking';
     $('cloudflare').dataset.connected=String(state==='connected');
-    $('cloudflare').setAttribute('aria-label',state==='connected'?'Manage Cloudflare':'Log in to Cloudflare');
-    $('cloudflare-label').textContent=state==='connected'?'Manage':'LOGIN!';
+    $('cloudflare').setAttribute('aria-label',state==='connected'?'Manage Cloudflare':state==='account-unavailable'?'Review Cloudflare account access':'Log in to Cloudflare');
+    $('cloudflare-label').textContent=state==='connected'?'Manage':state==='account-unavailable'?'Check access':'LOGIN!';
   };
   if(!cloudflareAuth?.accessToken){paint('disconnected','Not connected','Connect Cloudflare to bring TRUE REMOTE to your Shelf.');return;}
   paint('checking','Checking','Saved sign-in found. Checking account access…');
@@ -239,7 +239,7 @@ async function refreshConnection() {
     const response=await Promise.race([chrome.runtime.sendMessage({type:'cfAccounts'}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('timeout')),12000);})]);
     if(!response?.ok||!Array.isArray(response.accounts))throw Error('unavailable');
     paint('connected','Connected','Account access verified. Manage your connection and destinations in Dashboard.');
-  } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Reconnect Cloudflare or check your account access.');}
+  } catch {const expired=cloudflareAuth.reconnectRequired===true||Number.isFinite(cloudflareAuth.expiresAt)&&cloudflareAuth.expiresAt<=Date.now();paint(expired?'error':'account-unavailable',expired?'Reconnect':'Check access');}
   finally {clearTimeout(timer);}
 }
 // Keep the tiny failure laser fixed at the Shelf's bottom-left edge.
