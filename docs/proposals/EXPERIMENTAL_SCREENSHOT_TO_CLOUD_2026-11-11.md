@@ -34,6 +34,18 @@ Add a Settings option: **Group screenshots by source page** (ON/OFF; user-contro
 - Allow grouping to be toggled without changing or deleting existing uploaded screenshots; offer a view filter for grouped vs individual items. Never silently move existing cloud files when changing the grouping setting.
 - Page identity should be linked to the user-initiated capture intent, not inferred later from uploaded screenshots.
 
+## Optional Cloudflare R2 metadata for portable grouping
+
+**Owner extension (2026-11-11):** Cloudflare R2 may carry the screenshot's **hosting-page URL as object custom metadata** so REDOWN can rebuild screenshot groups later by reading cloud objects, even if its local History index is lost. This is an *opt-in exception* to the default rule against sending page/source URLs to providers; it does not change the default for R2 or any other provider.
+
+- Settings: **Store source page URL in Cloudflare R2 metadata for screenshot grouping** — OFF by default, with plain-language disclosure that URLs may contain private paths, searches, account IDs or access tokens and that cloud metadata is not inherently private from the storage provider or people with bucket access.
+- In the enabled mode, set an explicitly namespaced user-defined R2 object metadata key (e.g. `redown-source-page-url`) containing the **hosting page URL** of the screenshot, not the media/CDN URL. Never attach this key to unrelated objects. Follow R2 metadata size and character constraints and validate successful write/read-back.
+- For safer operation, strip credentials, fragments and sensitive query parameters by default; allow an origin-only mode (`https://example.com`) for less exact grouping. If sanitization changes identity, show the possible grouping limitations. Avoid storing secrets from signed URLs or private pages.
+- Also store an opaque stable grouping token (e.g. `redown-page-group-id`), screenshot intent ID, and capture time where supported. Tokens are preferred for comparisons and prevent relying on URL text equality alone. Ensure these values agree with the app's local index.
+- On History rebuild / cloud restore: list permitted R2 objects, read their metadata, reconstruct page-group entries and associate each with its own provider receipt/key; tolerate objects lacking metadata and account/bucket permission failures. Do not infer successful cloud writes from a filename alone.
+- Maintain local-only grouping when this option is OFF, the provider is not Cloudflare R2, or the object metadata cannot be read. Never backfill or rewrite existing cloud objects merely from toggling the option; require a separate user-approved migration.
+- Keep the original object-byte + filename privacy rule for all other providers, and for R2 unless the user has explicitly enabled this feature.
+
 ## Capture, security, and architecture
 
 - The default capture mode is the visible active browser tab; explore selected-area and full-page capture later. Screenshots are not replacements for the original full-resolution images.
@@ -41,7 +53,7 @@ Add a Settings option: **Group screenshots by source page** (ON/OFF; user-contro
 - One API-first capture-and-save workflow serves manual shortcut, toolbar, and automatic trigger. Record independent stages: **CAPTURE_REQUESTED → CAPTURED → QUEUED → UPLOADING → VERIFIED**, with clear errors and recoverable states.
 - Reuse provider readiness checks, targeted OAuth repair, queue, History, GO TO receipts, logging and debug mode. Preserve pending work only with a clear retention and quota policy.
 - Ensure idempotency on retry or menu events: one capture per original user intent, no duplicate objects in cloud.
-- Provider upload carries screenshot bytes and required filename/path only. The source webpage URL and unrelated browsing details must not become provider object metadata.
+- By default, provider upload carries screenshot bytes and required filename/path only. The source webpage URL must not become provider metadata **except under the separately enabled Cloudflare R2 screenshot-metadata option documented above**.
 - Explicitly distinguish browser-captured screenshot bytes from TRUE REMOTE URL-to-Cloudflare fetching; never perform an implicit browser Downloads save.
 - Give screenshots readable timestamped names, clearly identified as screenshots, and implement filename/group collision handling.
 
@@ -50,7 +62,7 @@ Add a Settings option: **Group screenshots by source page** (ON/OFF; user-contro
 - Shortcut and automatic mode; automatic OFF does nothing; ON captures exactly once per image-save attempt.
 - One/all selected providers and mixed success/failure; original image blocked but screenshot succeeds and reverse.
 - Same-page series of ten screenshots is grouped as one collection, including across sessions; different hosting pages stay separate.
-- Existing source-page metadata and screenshot filename convention produce an expandable REDOWN UX/UI collection without creating cloud folders. Renamed screenshots remain grouped; toggle grouping without moving/deleting uploaded files.
+- Existing source-page metadata and screenshot filename convention produce an expandable REDOWN UX/UI collection without creating cloud folders. Renamed screenshots remain grouped; toggle grouping without moving/deleting uploaded files. With explicit R2 metadata opt-in, reconstruct groups after loss of local indexing.
 - Expired auth, missing scopes, unavailable provider, denied capture permission, restricted page, retries, restart, and duplicate prevention.
 - Per-provider receipt and History GO TO only after verified cloud write. Group status accurately represents incomplete uploads.
 
