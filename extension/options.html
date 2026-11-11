@@ -683,9 +683,8 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
   <button id="boot-repair" class="ghost">Repair entrypoints</button>
   <button id="boot-export" class="ghost">Export startup receipts</button>
   <button id="runtime-save-attempts" class="ghost">Inspect save attempts</button>
-  <button id="runtime-save-attempts-export" class="ghost">Export save attempts</button>
   <button id="runtime-diagnostics-status" class="ghost">Inspect runtime</button>
-  <button id="runtime-diagnostics-export" class="ghost">Export support bundle</button>
+  <button id="runtime-diagnostics-export" class="ghost" data-diagnostic-export>Export Diagnostic Bundle</button>
   <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>
   <details id="explorer-diagnostics-panel" style="margin-top:18px">
     <summary>File Explorer diagnostics</summary>
@@ -702,6 +701,7 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
     <div id="explorer-diagnostics-status" class="status" role="status"></div>
     <pre id="explorer-diagnostics-output" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow:auto" role="status"></pre>
   </details>
+  <p class="meta">Diagnostic ZIP: a ZIP of at most 512 KiB (up to 2 MiB expanded) of redacted metadata, timestamps and opaque IDs. No filenames, credentials, private URLs or file bytes. Review before sharing.</p>
   <pre id="runtime-diagnostics-output" role="status" aria-live="polite"></pre>
 </section>
 
@@ -741,5 +741,6 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
 <script src="history-navigation.js"></script><script src="options.js"></script>
 <script src="toolbar-preferences.js"></script>
 <script src="explorer-diagnostics-ui.js"></script>
+<script src="history-archive.js"></script><script src="save-evidence.js"></script><script src="transfer-queue.js"></script><script src="vendor/fflate.js"></script><script src="diagnostic-bundle.js"></script><script src="diagnostic-download.js"></script>
 </body>
 </html>

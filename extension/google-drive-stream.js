@@ -15,22 +15,24 @@
     }
     function endpoint(path){const u=new URL(path,'https://www.googleapis.com/drive/v3/');if(u.origin!=='https://www.googleapis.com'||!/^\/(?:upload\/)?drive\/v3\//.test(u.pathname))throw fail('Invalid Google upload endpoint.');return u.href;}
     async function http(path,options={}){
-      let r;try{r=await fetch(endpoint(path),{...options,headers:{...options.headers,Authorization:'Bearer '+token},credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}catch{throw fail('Google request interrupted. The saved job will be checked before retrying.','interrupted');}
+      const {attemptId,...wireOptions}=options;
+      let r;try{r=await fetch(endpoint(path),{...wireOptions,headers:{...options.headers,Authorization:'Bearer '+token},credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}catch{throw fail('Google request interrupted. The saved job will be checked before retrying.','interrupted');}
+      globalThis.RedownSaveEvidence?.note(attemptId,{role:'provider',method:options.method||'GET',httpStatus:r.status,category:r.status===401?'auth':r.status===403?'permission':r.status===429?'rate-limit':r.status>=500?'server':'unknown'});
       if(r.status===401){await chrome.identity.removeCachedAuthToken({token});token=null;await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});throw fail('Reconnect Google Drive.');}
       if(r.status===403||r.status===429)throw fail('Google access or quota needs attention. Try again later.');
       return r;
     }
     async function json(path,options){const r=await http(path,options);if(!r.ok)throw fail('Google request failed (HTTP '+r.status+').',r.status>=500?'interrupted':'failed');return r.json();}
-    async function identity(interactive=false,signal){
+    async function identity(interactive=false,signal,attemptId){
       await authorize(interactive);
       signal?.throwIfAborted();
-      const about=await json('about?fields=user(permissionId)',{signal});
+      const about=await json('about?fields=user(permissionId)',{signal,attemptId});
       const accountId=about.user?.permissionId;if(!/^[\w-]+$/.test(accountId||''))throw fail('Google account could not be verified.');
       return accountId;
     }
     async function connect(interactive=false){try{const accountId=await identity(interactive);await chrome.storage.local.set({googleDriveState:{phase:'connected',accountId,destination:'root'}});return accountId;}catch(e){await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});throw e;}}
     async function proof(job,signal){
-      const r=await http('files/'+encodeURIComponent(job.fileId)+'?fields=id,name,size,trashed,parents',{signal});
+      const r=await http('files/'+encodeURIComponent(job.fileId)+'?fields=id,name,size,trashed,parents',{signal,attemptId:job.source?.attemptId});
       if(r.status===404)return null;
       if(!r.ok)throw fail('Google receipt cannot yet be checked.','interrupted');
       const f=await r.json();
@@ -44,7 +46,7 @@
     }
     async function upload(job,checkpoint,signal){
       if(signal?.aborted)throw fail('Google save cancelled.','cancelled');
-      const accountId=await identity(false);
+      const accountId=await identity(false,signal,job.source?.attemptId);
       if(signal?.aborted)throw fail('Google save cancelled.','cancelled');
       if(accountId!==job.accountId)throw fail('Google account changed. Reconnect and start a new save.');
       // A final PUT may have completed before the worker checkpoint. Reconcile
@@ -53,7 +55,7 @@
         const result=await proof(job,signal);if(result)return result;
       }
       if(job.session){
-        const probe=await http(job.session,{method:'PUT',headers:{'Content-Range':'bytes */'+(job.total??'*')},body:new Uint8Array(),signal});
+        const probe=await http(job.session,{method:'PUT',headers:{'Content-Range':'bytes */'+(job.total??'*')},body:new Uint8Array(),signal,attemptId:job.source?.attemptId});
         if(probe.ok){const result=await proof(job,signal);if(result)return result;throw fail('Google completion could not be verified.','uncertain');}
         if(probe.status===404||probe.status===410)throw fail('Google upload session expired. Check Drive before starting a new save.','uncertain');
         if(probe.status!==308)throw fail('Google upload session needs checking.','interrupted');
@@ -68,7 +70,7 @@
         const source=sourceURL(job.source.url);
         if(!await chrome.permissions.contains({origins:[source.origin+'/*']}))throw fail('Source access is needed. Right-click again to grant it.');
         response=await fetch(source.href,{...(headers?{headers}:{}),credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',cache:'no-store',signal:controller.signal});clearTimeout(timer);
-        reader=response.body?.getReader();if(!response.ok||!reader)throw fail('Source did not provide an accessible file.');
+        reader=globalThis.RedownSourceGuard?await RedownSourceGuard.open(response,{attemptId:job.source?.attemptId,signal,expectedMedia:job.source?.mediaType||'unknown'}):response.body?.getReader();if(!response.ok||!reader)throw fail('Source did not provide an accessible file.');
         const mime=(response.headers.get('Content-Type')||'application/octet-stream').split(';')[0];
         if(/text\/html|application\/xhtml/i.test(mime))throw fail('The source returned a web page rather than a file.');
         const len=response.headers.get('Content-Length'),length=len===null?null:Number(len);
@@ -78,10 +80,10 @@
         }else{
           if(response.status!==200)throw fail('Unexpected partial source response.');
           job.total=length;job.etag=response.headers.get('ETag');job.name=resolveName(response,job.source);job.mime=mime;
-          if(!job.fileId){job.fileId=(await json('files/generateIds?count=1&space=drive&type=files',{signal})).ids?.[0];if(!/^[\w-]+$/.test(job.fileId||''))throw fail('Google did not allocate a file ID.');}
+          if(!job.fileId){job.fileId=(await json('files/generateIds?count=1&space=drive&type=files',{signal,attemptId:job.source?.attemptId})).ids?.[0];if(!/^[\w-]+$/.test(job.fileId||''))throw fail('Google did not allocate a file ID.');}
           job.phase='starting';await checkpoint(job);
           const metadata={id:job.fileId,name:job.name,mimeType:mime,...(job.folderId?{parents:[job.folderId]}:{})};
-          const start=await http('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',{method:'POST',headers:{'Content-Type':'application/json','X-Upload-Content-Type':mime,...(length!==null?{'X-Upload-Content-Length':String(length)}:{})},body:JSON.stringify(metadata),signal});
+          const start=await http('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',{method:'POST',headers:{'Content-Type':'application/json','X-Upload-Content-Type':mime,...(length!==null?{'X-Upload-Content-Length':String(length)}:{})},body:JSON.stringify(metadata),signal,attemptId:job.source?.attemptId});
           if(!start.ok)throw fail('Google could not start the upload.',start.status>=500||start.status===409?'uncertain':'failed');
           job.session=endpoint(start.headers.get('Location')||'https://invalid.invalid');job.phase='uploading';job.offset=0;await checkpoint(job);
         }
@@ -92,7 +94,7 @@
           if(final){if(job.total!==null&&job.offset+used!==job.total)throw fail('Source length changed.','interrupted');job.total=job.offset+used;job.phase='committing';await checkpoint(job);}
           const end=job.offset+used;
           const range=used?`bytes ${job.offset}-${end-1}/${final?job.total:job.total??'*'}`:'bytes */'+job.total;
-          const r=await http(job.session,{method:'PUT',headers:{'Content-Type':job.mime,'Content-Range':range},body:buffer.slice(0,used),signal});
+          const r=await http(job.session,{method:'PUT',headers:{'Content-Type':job.mime,'Content-Range':range},body:buffer.slice(0,used),signal,attemptId:job.source?.attemptId});
           if(r.status===308){const next=acknowledged(r,job.total);if(next!==end||final)throw fail('Google did not confirm this chunk.','interrupted');job.offset=next;used=0;job.phase='uploading';await checkpoint(job);return;}
           if(!r.ok)throw fail('Google upload interrupted (HTTP '+r.status+').',r.status>=500?'interrupted':'failed');
           if(!final)throw fail('Google completed before the source ended.','uncertain');
@@ -108,6 +110,7 @@
         }
         await send(true);const result=await proof(job,signal);if(!result)throw fail('Google saved file is not yet visible.','interrupted');return result;
       }catch(e){
+        globalThis.RedownSaveEvidence?.failure(job.source?.attemptId,e,job.phase==='source'?'source':job.phase);
         if(signal?.aborted)throw fail('Google save cancelled. Check Drive if the final chunk was sent.',['committing','verifying'].includes(job.phase)?'uncertain':'cancelled');
         if(e.status)throw e;throw fail('Source or Google connection interrupted.','interrupted');
       }finally{clearTimeout(timer);controller.abort();signal?.removeEventListener('abort',abort);await reader?.cancel().catch(()=>{});}

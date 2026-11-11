@@ -56,8 +56,8 @@
     const signal=()=>{unavailable=true;console.warn('REDOWN save attempt diagnostics unavailable; inspect extension Errors.');};
     const clean=a=>{
       if(!uuid(a?.id)||!['cloudflare','google','dropbox','onedrive','unknown'].includes(a.provider))return null;
-      const events=(Array.isArray(a.events)?a.events:[]).filter(e=>stages.has(e.stage)&&Number.isFinite(e.at)).slice(-24).map(e=>({stage:e.stage,at:e.at,...(terminals.has(e.outcome)?{outcome:e.outcome}:{}),...(reasons.has(e.reason)?{reason:e.reason}:{})}));
-      return {id:a.id,provider:a.provider,events};
+      const events=(Array.isArray(a.events)?a.events:[]).filter(e=>stages.has(e.stage)&&Number.isFinite(e.at)).slice(-24).map(e=>({stage:e.stage,at:e.at,...(Number.isFinite(e.durationMs)?{durationMs:Math.max(0,Math.min(86400000,e.durationMs))}:{}),...(terminals.has(e.outcome)?{outcome:e.outcome}:{}),...(reasons.has(e.reason)?{reason:e.reason}:{})}));
+      return {id:a.id,provider:a.provider,events,...(/^[a-f0-9]{64}$/.test(a.sourceId||'')?{sourceId:a.sourceId}:{}),sourceEvidence:globalThis.RedownSaveEvidence?.sanitize(a.sourceEvidence)||{},observations:(Array.isArray(a.observations)?a.observations:[]).slice(-20).filter(o=>Number.isFinite(o.at)).map(o=>({at:o.at,...(globalThis.RedownSaveEvidence?.sanitize(o)||{})}))};
     };
     const ready=(async()=>{
       try{
@@ -76,15 +76,35 @@
       const a=attempts.find(a=>a.id===attemptId);
       if(!a||!stages.has(stage)||a.events.at(-1)?.stage==='TERMINAL')return;
       if(a.events.at(-1)?.stage===stage)return;
-      a.events.push({stage,at:now(),...(terminals.has(extra.outcome)?{outcome:extra.outcome}:{}),...(reasons.has(extra.reason)?{reason:extra.reason}:{})});
-      a.events=a.events.slice(-24);persist();
+      const at=now(),previous=a.events.at(-1)?.at??at;
+      a.events.push({stage,at,durationMs:Math.max(0,Math.min(86400000,at-previous)),...(terminals.has(extra.outcome)?{outcome:extra.outcome}:{}),...(reasons.has(extra.reason)?{reason:extra.reason}:{})});
+      if(a.events.length>24)a.events=[a.events[0],...a.events.slice(-23)];persist();
     }
-    return {ready,
+    let sourceKey;
+    const fingerprint=async value=>{
+      const u=new URL(value);if(!['https:','http:'].includes(u.protocol))return null;
+      if(!sourceKey)sourceKey=(async()=>{
+        const name='redownSourceFingerprintKeyV1',stored=await bounded(storage.get(name));let raw=stored[name];
+        if(typeof raw!=='string'||!/^[a-f0-9]{64}$/.test(raw)){raw=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');await bounded(storage.set({[name]:raw}));}
+        return crypto.subtle.importKey('raw',Uint8Array.from(raw.match(/../g),v=>parseInt(v,16)),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+      })();
+      const key=await sourceKey,result=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(u.origin+u.pathname+u.search));
+      return Array.from(new Uint8Array(result),b=>b.toString(16).padStart(2,'0')).join('');
+    };
+    function observe(attemptId,input){
+      try{const a=attempts.find(a=>a.id===attemptId),safe=globalThis.RedownSaveEvidence?.sanitize(input);if(!a||!safe||!Object.keys(safe).length)return;
+        if(safe.sourceId)a.sourceId=safe.sourceId;
+        if(safe.role==='source'||safe.phase==='source')a.sourceEvidence={...(a.sourceEvidence||{}),...safe};
+        a.observations=[...(a.observations||[]),{at:now(),...safe}].slice(-20);persist();
+      }catch{/* Evidence cannot block transfer. */}
+    }
+    return {ready,observe,
       begin(info){
         if(clicks.has(info))return clicks.get(info);
         const attemptId=id(),menu=String(info?.menuItemId||'');
         const provider=menu.startsWith('provider:google-drive')?'google':menu.startsWith('provider:dropbox')?'dropbox':menu.startsWith('provider:onedrive')?'onedrive':/^(v3:|quick:|simple-option:|nested:|tree:)/.test(menu)?'cloudflare':'unknown';
-        clicks.set(info,attemptId);attempts.push({id:attemptId,provider,events:[{stage:'CLICK_RECEIVED',at:now()}]});attempts=attempts.slice(-100);persist();return attemptId;
+        clicks.set(info,attemptId);attempts.push({id:attemptId,provider,events:[{stage:'CLICK_RECEIVED',at:now()}]});attempts=attempts.slice(-100);persist();
+        void fingerprint(info.srcUrl||info.linkUrl||info.pageUrl||'').then(sourceId=>{if(sourceId)observe(attemptId,{sourceId});}).catch(()=>{});return attemptId;
       },
       forClick:info=>clicks.get(info),stage,
       dispatched:attemptId=>attempts.find(a=>a.id===attemptId)?.events.some(e=>e.stage==='PROVIDER_WRITE')===true,

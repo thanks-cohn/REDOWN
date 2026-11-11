@@ -73,9 +73,21 @@ $('clear-prepared-files')?.addEventListener('click',async()=>{
 });
 void refreshPrepared().catch(()=>{});
 window.addEventListener('focus',()=>{if(!$('settings-view').hidden)void refreshPrepared().catch(()=>{});});
+let currentShelfView=null,queueReturnView='clouds';
+const shelfPositions=new Map();
+const shelfSection=()=>location.hash.slice(1).split('/')[0];
 function route() {
-  const view=['settings','history','explorer'].includes(location.hash.slice(1))?location.hash.slice(1):'clouds';
-  for (const name of ['clouds','explorer','history','settings']) {
+  const view=['settings','history','explorer','queue'].includes(shelfSection())?shelfSection():'clouds';
+  const prior=currentShelfView,changed=prior!==view;
+  if(changed&&prior){shelfPositions.set(prior,{y:window.scrollY||0,focus:document.activeElement?.id||null});}
+  if(view==='queue'&&changed){
+    const saved=history.state?.redownQueueFrom;
+    queueReturnView=['clouds','explorer','history','settings'].includes(saved)?saved:['clouds','explorer','history','settings'].includes(prior)?prior:'clouds';
+    history.replaceState({...history.state,redownQueueFrom:queueReturnView},'');
+  }
+  currentShelfView=view;
+  if(view==='queue'&&changed)requestAnimationFrame(()=>window.scrollTo?.(0,0));
+  for (const name of ['clouds','explorer','history','settings','queue']) {
     $(name+'-view').hidden=name!==view;
     if(name===view)$('nav-'+name).setAttribute('aria-current','page');
     else $('nav-'+name).removeAttribute('aria-current');
@@ -83,8 +95,9 @@ function route() {
   window.dispatchEvent(new Event('redown:shelf-route'));
   if(location.hash)void chrome.storage.local.set?.({shelfLastViewV1:view})?.catch(()=>{});
   if(view==='settings')void refreshPrepared().catch(()=>{});
+  if(changed&&prior==='queue'&&view!=='queue'){const position=shelfPositions.get(view);requestAnimationFrame(()=>{window.scrollTo?.(0,position?.y||0);if(position?.focus)document.getElementById(position.focus)?.focus({preventScroll:true});});}
   const reviewStart=Date.now();
-  if(view==='history')void Promise.resolve(globalThis.RedownShelfHistory?.open()).then(async()=>{
+  if(view==='history'&&prior!=='queue')void Promise.resolve(globalThis.RedownShelfHistory?.open()).then(async()=>{
     // Opening the actual History view acknowledges previously signaled failures.
     // A newer failure arriving during the read must retain its indicator.
     const {redownFailureDot}=await chrome.storage.local.get('redownFailureDot');
@@ -95,12 +108,26 @@ function route() {
 }
 window.addEventListener('hashchange',()=>{if(location.hash!=='#explorer'){exitTarget=null;settleEntrance();}route();}); route();
 window.addEventListener('resize',settleEntrance);
+window.addEventListener('popstate',route);
+globalThis.RedownShelfNavigation={
+  openQueue(id){
+    if(['clouds','explorer','history','settings'].includes(shelfSection())&&shelfSection()!==currentShelfView)route();
+    exitTarget=null;settleEntrance();const target='#queue'+(typeof id==='string'?'/' + encodeURIComponent(id):'');
+    if(currentShelfView==='queue')history.replaceState(history.state,'',target);
+    else history.pushState({redownQueueFrom:currentShelfView||'clouds'},'',target);
+    route();document.getElementById('queue-back')?.focus({preventScroll:true});
+  },
+  back(){history.replaceState(null,'','#'+queueReturnView);route();},
+  async history(attemptId){location.hash='#history';route();await globalThis.RedownShelfHistory?.focusAttempt(attemptId);}
+};
+document.getElementById('nav-queue')?.addEventListener('click',event=>{event.preventDefault();RedownShelfNavigation.openQueue();});
+document.getElementById('queue-back')?.addEventListener('click',()=>RedownShelfNavigation.back());
 // REMOTES is the default Shelf opening view regardless of the visual tab order.
 // Opt-in "last" mode restores a validated route only when no explicit hash/deep link
 // was requested. This read never blocks the visible Shelf shell.
 if(!location.hash)void chrome.storage.local.get(['shelfStartViewMode','shelfLastViewV1']).then(data=>{
   if(!location.hash&&data.shelfStartViewMode==='last'&&
-     ['clouds','explorer','history','settings'].includes(data.shelfLastViewV1)){
+     ['clouds','explorer','history','settings','queue'].includes(data.shelfLastViewV1)){
     location.hash='#'+data.shelfLastViewV1;
   }
 }).catch(()=>{});

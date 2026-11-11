@@ -1,0 +1,49 @@
+✖ OneDrive determines decoded byte count before Graph: {"content-type":"image/png"} (37.732507ms)
+✖ OneDrive determines decoded byte count before Graph: {"content-type":"image/png","content-length":"invalid"} (5.524577ms)
+✖ OneDrive determines decoded byte count before Graph: {"content-type":"image/png","content-length":"1","content-encoding":"gzip"} (5.384781ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168.781206
+
+✖ failing tests:
+
+test at tests/visible-queue.test.mjs:53:185
+✖ OneDrive determines decoded byte count before Graph: {"content-type":"image/png"} (37.732507ms)
+  Error: Source size is not known; OneDrive upload sessions need an exact byte count.
+      at fail (onedrive-api.js:16:61)
+      at Object.upload (onedrive-api.js:229:19)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/visible-queue.test.mjs:54:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'ONEDRIVE_SOURCE_LENGTH_UNKNOWN',
+    status: 'blocked'
+  }
+
+test at tests/visible-queue.test.mjs:53:185
+✖ OneDrive determines decoded byte count before Graph: {"content-type":"image/png","content-length":"invalid"} (5.524577ms)
+  Error: Source size is not known; OneDrive upload sessions need an exact byte count.
+      at fail (onedrive-api.js:16:61)
+      at Object.upload (onedrive-api.js:229:19)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/visible-queue.test.mjs:54:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'ONEDRIVE_SOURCE_LENGTH_UNKNOWN',
+    status: 'blocked'
+  }
+
+test at tests/visible-queue.test.mjs:53:185
+✖ OneDrive determines decoded byte count before Graph: {"content-type":"image/png","content-length":"1","content-encoding":"gzip"} (5.384781ms)
+  Error: Source compression prevents a reliable byte-counted upload.
+      at fail (onedrive-api.js:16:61)
+      at Object.upload (onedrive-api.js:231:19)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/visible-queue.test.mjs:54:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'ONEDRIVE_SOURCE_ENCODING',
+    status: 'blocked'
+  }

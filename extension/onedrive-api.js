@@ -1,10 +1,11 @@
 /* Direct OneDrive root upload, owned by OneDrive alone.
  * Bounded browser-mediated streaming; no transfer tab, R2 Worker or Downloads.
- * Unknown-length sources, unsafe sources and uncertain commits fail closed.
+ * Small unknown-length sources use bounded temporary memory before Graph; uncertain commits fail closed.
  */
 (() => {
   'use strict';
   const GRAPH='https://graph.microsoft.com/v1.0/';
+  const MATERIALIZE_LIMIT=16*1024*1024;let materializedBytes=0;
   const CHUNK=16*320*1024; // 5 MiB; every nonfinal fragment is a multiple of 320 KiB.
   // Recognition aids only; host access is a browser-level extension permission.
   // Graph's uploadUrl remains opaque and is never persisted.
@@ -154,7 +155,7 @@
     }
     const url=sourceURL(picked);
     const name=fileName(url.pathname.split('/').pop()||'Web file');
-    return {kind:'url',url:url.href,name,sourceUrl:safe(url.href),pageUrl:safe(info.pageUrl),
+    return {kind:'url',url:url.href,name,mediaType:info.mediaType||'unknown',sourceUrl:safe(url.href),pageUrl:safe(info.pageUrl),
       srcUrl:safe(info.srcUrl),frameUrl:safe(info.frameUrl),linkUrl:safe(info.linkUrl)};
   }
   function knownUploadHost(host){
@@ -189,9 +190,11 @@
       }finally{clearTimeout(timer);options?.signal?.removeEventListener('abort',abort);}
     }
     async function graph(token,path,options={}){
-      const response=await request(GRAPH+path,{...options,headers:{
+      const {attemptId,...wireOptions}=options;
+      const response=await request(GRAPH+path,{...wireOptions,headers:{
         Authorization:'Bearer '+token,Accept:'application/json',...(options.headers||{})
       }},30000);
+      globalThis.RedownSaveEvidence?.note(attemptId,{role:'provider',httpStatus:response.status,method:wireOptions.method||'GET',category:response.status===401?'auth':response.status===403?'permission':response.status===429?'rate-limit':response.status>=500?'server':'unknown'});
       if(!response.ok)
         throw fail('ONEDRIVE_GRAPH_'+response.status,'Microsoft Graph request failed (HTTP '+response.status+').',
           [401,403,404,409,429,507].includes(response.status)?'blocked':'failed');
@@ -199,7 +202,8 @@
     }
     async function upload(source,identity,onProgress=async()=>{},signal){
       let reader=null,session=null,phase='source',sent=0,finalAttempt=false;
-      let sourceHeaders=null;
+      let sourceHeaders=null,heldBytes=0;const heldChunks=[];
+      const evidence=(data)=>globalThis.RedownSaveEvidence?.note(source.attemptId,data);
       const abortSource=()=>{void reader?.cancel().catch(()=>{});};
       let total=null;
       const token=identity.token;
@@ -222,14 +226,33 @@
           const u=sourceURL(source.url);
           const response=await request(u.href,{method:'GET',signal,headers:{Accept:'*/*'}},60000);
           sourceHeaders=response.headers;
+          evidence({...globalThis.RedownSaveEvidence?.response(response),phase:'source'});
           if(!response.ok||!response.body)
             throw fail('ONEDRIVE_SOURCE_HTTP','Chrome could not fetch the source (HTTP '+response.status+').','blocked');
-          total=Number(response.headers.get('content-length'));
-          if(!Number.isSafeInteger(total)||total<=0||!response.headers.get('content-length'))
-            throw fail('ONEDRIVE_SOURCE_LENGTH_UNKNOWN','Source size is not known; OneDrive upload sessions need an exact byte count.');
-          if(response.headers.get('content-encoding')&&!['identity',''].includes(response.headers.get('content-encoding').toLowerCase()))
-            throw fail('ONEDRIVE_SOURCE_ENCODING','Source compression prevents a reliable byte-counted upload.');
-          reader=response.body.getReader();
+          evidence({...globalThis.RedownSaveEvidence?.response(response),phase:'source'});
+          const lengthHeader=response.headers.get('content-length'),encoding=(response.headers.get('content-encoding')||'identity').toLowerCase();
+          total=Number(lengthHeader);
+          reader=globalThis.RedownSourceGuard?await RedownSourceGuard.open(response,{attemptId:source.attemptId,signal,expectedMedia:source.mediaType||'unknown'}):response.body.getReader();
+          const known=/^\d+$/.test(lengthHeader||'')&&Number.isSafeInteger(total)&&total>0&&encoding==='identity';
+          if(!known){
+            // Graph requires exact decoded bytes. Materialize only small unknown/compressed sources,
+            // before creating any Graph session. Fixed-length larger files retain streaming.
+            evidence({phase:'source',code:'ONEDRIVE_SOURCE_LENGTH_UNKNOWN',acquisition:'bounded-memory'});
+            total=0;
+            while(true){
+              const part=globalThis.RedownSourceGuard?await RedownSourceGuard.read(reader,signal):await reader.read();
+              if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','Source acquisition cancelled.','cancelled');
+              if(part.done)break;if(!part.value?.length)continue;
+              if(materializedBytes+part.value.length>MATERIALIZE_LIMIT)
+                throw fail('ONEDRIVE_SOURCE_BUFFER_LIMIT','This unknown-size source exceeds the 16 MiB temporary-memory limit. Choose an accessible fixed-length file or upload the original file.');
+              const chunk=part.value.slice();heldChunks.push(chunk);heldBytes+=chunk.length;materializedBytes+=chunk.length;total+=chunk.length;
+              await onProgress({phase:'source',sent:0,total:null,acquired:total});
+            }
+            await reader.cancel().catch(()=>{});
+            if(total<=0)throw fail('ONEDRIVE_SOURCE_TRUNCATED','The source contains no readable bytes.','blocked');
+            let index=0;reader={read:async()=>index<heldChunks.length?{done:false,value:heldChunks[index++]}:{done:true},cancel:async()=>{}};
+            evidence({phase:'source',acquisition:'bounded-memory',decision:'recovered',sizeRange:total<1048576?'under-1MiB':'1-16MiB'});
+          }else evidence({phase:'source',acquisition:'stream'});
         }
         signal?.addEventListener('abort',abortSource,{once:true});
         if(signal?.aborted)abortSource();
@@ -256,7 +279,7 @@
         phase='session';await onProgress({phase,sent,total});
         const path='me/drive/items/'+encodeURIComponent(identity.rootId)+':/'+encodeURIComponent(name)+':/createUploadSession';
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal});
+          body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal,attemptId:source.attemptId});
         const uploadUrl=validUploadURL(session?.uploadUrl);
         // Graph supplies the opaque HTTPS upload destination for this session.
         // Neither its hostname nor the source hostname triggers a Chrome prompt.
@@ -302,7 +325,7 @@
             const item=await result.json().catch(()=>({}));
             if(!item.id)throw fail('ONEDRIVE_COMMIT_UNCERTAIN','OneDrive did not confirm the uploaded item ID. Check before retrying.','uncertain');
             sent+=used;phase='verifying';await onProgress({phase,sent,total});
-            const verified=await graph(token,'me/drive/items/'+encodeURIComponent(item.id)+'?$select=id,name,size,parentReference,webUrl,file',{signal});
+            const verified=await graph(token,'me/drive/items/'+encodeURIComponent(item.id)+'?$select=id,name,size,parentReference,webUrl,file',{signal,attemptId:source.attemptId});
             if(verified.id!==item.id||verified.size!==total||typeof verified.name!=='string'||!verified.name||
               verified.parentReference?.id!==identity.rootId||
               verified.parentReference?.driveId&&verified.parentReference.driveId!==identity.driveId||
@@ -320,14 +343,15 @@
         }
         throw fail('ONEDRIVE_TRANSFER_INCOMPLETE','The OneDrive upload did not complete.','uncertain');
       }catch(e){
+        globalThis.RedownSaveEvidence?.failure(source.attemptId,e,phase==='source'?'source':phase);
         if(finalAttempt&&!['ONEDRIVE_PROOF_UNCERTAIN','ONEDRIVE_COMMIT_UNCERTAIN'].includes(e.code))
           throw fail('ONEDRIVE_COMMIT_UNCERTAIN','Final OneDrive commit may have succeeded. Check your drive before retrying.','uncertain');
         if(e.code)throw e;
         throw fail('ONEDRIVE_TRANSFER_INTERRUPTED','OneDrive upload was interrupted. Check the drive before retrying.','interrupted');
-      }finally{signal?.removeEventListener('abort',abortSource);await reader?.cancel().catch(()=>{});}
+      }finally{signal?.removeEventListener('abort',abortSource);await reader?.cancel().catch(()=>{});materializedBytes-=heldBytes;heldChunks.length=0;}
     }
     return {upload,graph};
   }
   globalThis.RedownOneDriveAPI={create,sourceURL,sourceSnapshot,fileName,uploadFileName,validUploadURL,
-    knownUploadHost,UPLOAD_ORIGINS,CHUNK,fail};
+    knownUploadHost,UPLOAD_ORIGINS,CHUNK,MATERIALIZE_LIMIT,fail};
 })();

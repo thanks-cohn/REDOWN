@@ -7,14 +7,14 @@
     const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
     const get=async key=>(await chrome.storage.local.get(key))[key];
     const jobs=async()=>await get(KEY)||[];
-    async function save(job){globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
+    async function save(job){job.updatedAt=Date.now();globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
     async function receipt(job){
       const r=job.result;
       if(job.status==='completed'&&!(r?.proofVersion===1&&/^dbid:[\w-]+$/.test(job.accountId||'')&&!!job.connectionId&&/^\d+$/.test(job.namespace||'')&&r.accountId===job.accountId&&r.connectionId===job.connectionId&&r.namespace===job.namespace&&r.root==='/'&&r.path==='/'+r.name&&/^id:[\w-]+$/.test(r.fileId||'')&&r.revision&&/^[a-f0-9]{64}$/.test(r.contentHash||'')&&r.bytes===job.offset)){
         job.status='uncertain';job.error='Stored Dropbox completion lacks exact destination proof. Check Dropbox before retrying.';
       }
       const success=job.status==='completed';job.verified=success;
-      await record({attemptId:job.source?.attemptId,provider:'Dropbox',providerKind:'dropbox',profileId:'dropbox:'+job.accountId,profileName:'Dropbox root',deliveryId:'dropbox:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:success?true:['failed','blocked'].includes(job.status)?false:undefined,verified:success,sourceUrl:job.source?.sourceUrl,pageUrl:job.source?.pageUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,location:'', // Dropbox returns no account-bound web URL; never invent a file link.
+      await record({code:job.code,attemptId:job.source?.attemptId,provider:'Dropbox',providerKind:'dropbox',profileId:'dropbox:'+job.accountId,profileName:'Dropbox root',deliveryId:'dropbox:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:success?true:['failed','blocked'].includes(job.status)?false:undefined,verified:success,sourceUrl:job.source?.sourceUrl,pageUrl:job.source?.pageUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,location:'', // Dropbox returns no account-bound web URL; never invent a file link.
         destination:{provider:'dropbox',accountId:job.accountId,connectionId:job.connectionId,root:'/',namespace:job.namespace,...r},bytes:r?.bytes||job.offset||0,transport:'browser-mediated',error:job.error});
       if(terminal.has(job.status)){job.reported=true;await save(job);}
     }
@@ -25,7 +25,7 @@
         while(!stopping){
           const job=(await jobs()).find(j=>!attempted.has(j.id)&&(!terminal.has(j.status)||!j.reported));
           if(!job)break;
-          attempted.add(job.id);
+          attempted.add(job.id);globalThis.RedownSaveEvidence?.note(job.source?.attemptId,{phase:'pump',resumed:job.status!=='queued'});
           if(terminal.has(job.status)){if(!job.reported)await receipt(job);continue;}
           if(job.status==='awaiting-auth'){
             if(pendingAuth.has(job.id))continue;
@@ -35,7 +35,7 @@
           try{
             job.status='active';await save(job);await receipt(job);
             job.result=await api.upload(job,save,controller.signal);job.status='completed';job.error='';
-          }catch(e){job.status=terminal.has(e.status)?e.status:'interrupted';job.error=e.status?e.message:'Dropbox save was interrupted. Check Dropbox before retrying.';if(job.phase==='committing'&&job.status==='cancelled'){job.status='uncertain';job.error='Dropbox commit was cancelled or interrupted. Check Dropbox before retrying.';}}
+          }catch(e){globalThis.RedownSaveEvidence?.failure(job.source?.attemptId,e,job.phase);job.code=globalThis.RedownSaveEvidence?.classify(e);job.status=terminal.has(e.status)?e.status:'interrupted';job.error=e.status?e.message:'Dropbox save was interrupted. Check Dropbox before retrying.';if(job.phase==='committing'&&job.status==='cancelled'){job.status='uncertain';job.error='Dropbox commit was cancelled or interrupted. Check Dropbox before retrying.';}}
           finally{controller=null;}
           await save(job);await receipt(job);
         }
@@ -44,7 +44,7 @@
     async function enqueue(source,identity,status='queued'){
       return serial(async()=>{
         const all=await jobs();if(all.filter(j=>!terminal.has(j.status)||!j.reported).length>=LIMIT){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox queue is full (8 saves). Wait, then click again.'}});return null;}
-        const job={id:crypto.randomUUID(),provider:'dropbox',source,...identity,status,offset:0,phase:'source',at:Date.now()};all.push(job);await chrome.storage.local.set({[KEY]:all,'dropbox:transfer':{id:job.id,status,bytes:0}});return job;
+        const job={id:crypto.randomUUID(),provider:'dropbox',source,...identity,status,offset:0,phase:'source',at:Date.now(),updatedAt:Date.now()};all.push(job);await chrome.storage.local.set({[KEY]:all,'dropbox:transfer':{id:job.id,status,bytes:0}});return job;
       });
     }
     async function captureDownloadName(source,info,tab){
@@ -115,6 +115,7 @@
       }catch(e){const job={id:crypto.randomUUID(),source,status:'blocked',error:e.status?e.message:'Dropbox could not start saving.'};await save(job);await receipt(job);}
     }
     async function wake(){
+      for(const job of await jobs())if(!terminal.has(job.status))globalThis.RedownSaveEvidence?.note(job.source?.attemptId,{phase:'wake',wakeRequested:true});
       // Periodic alarm is a recovery trigger, not a permanent worker keepalive.
       await chrome.alarms.create('dropbox:resume',{periodInMinutes:0.5});return pump();
     }

@@ -3727,15 +3727,12 @@ $("refresh-storage").addEventListener("click",async()=>{
 });
 
 // Explicit Debug Mode controls; no remote probe or repair is triggered here.
-for(const [id,operation] of [["runtime-save-attempts","saveAttempts"],["runtime-save-attempts-export","saveAttempts"],["runtime-diagnostics-status","snapshot"],["runtime-diagnostics-export","exportSupport"],["runtime-diagnostics-clear","clear"]]){
+for(const [id,operation] of [["runtime-save-attempts","saveAttempts"],["runtime-diagnostics-status","snapshot"],["runtime-diagnostics-clear","clear"]]){
   $(id)?.addEventListener("click",async()=>{
     const result=await send({type:"runtimeDiagnosticsV1",operation});
     if(!result?.ok){$("runtime-diagnostics-output").textContent=result?.error||"Diagnostics unavailable.";return;}
     $("runtime-diagnostics-output").textContent=JSON.stringify(result.result,null,2);
-    if(operation==="exportSupport"||id==="runtime-save-attempts-export"){
-      const url=URL.createObjectURL(new Blob([JSON.stringify(operation==="saveAttempts"?result.result:result.result.data,null,2)],{type:"application/json"}));
-      const link=document.createElement("a");link.href=url;link.download=operation==="saveAttempts"?"redown-save-attempts.json":"redown-support.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    }
+
   });
 }
 
