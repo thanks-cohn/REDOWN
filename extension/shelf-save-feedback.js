@@ -53,7 +53,7 @@
     const run={node,timers:[]};runs.set(provider,run);
     const schedule=(ms,fn)=>run.timers.push(setTimeout(()=>{fn();fit();},ms));
     const word='SUCCESS!',neon=root.dataset.shelfTheme==='neon';
-    stage.querySelector('.provider-save-announcement').textContent=`${provider==='google'?'Google Drive':provider}: save verified.`;
+    stage.querySelector('.provider-save-announcement').textContent=`${provider==='google'?'Google Drive':provider}: last recorded save verified.`;
     if(reduced()){node.textContent=word;fit();schedule(1600,()=>cleanup(provider));return;}
     if(neon){
       node.textContent=word;

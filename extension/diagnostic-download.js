@@ -8,12 +8,15 @@
       return {attempts:Array.isArray(stored.redownSaveAttempts)?stored.redownSaveAttempts:[],persistence:Array.isArray(stored.redownSaveAttempts)?'stored-only':'unavailable'};
     }}});
     const snapshot=await queue.snapshot();let archiveCount=null,timer;
+    try{snapshot.data.cloudflareLogin=(await Promise.race([chrome.storage.session.get('cloudflareLogin'),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('session unavailable')),1000);})])).cloudflareLogin;}catch{}finally{clearTimeout(timer);}
     try{
       if(!globalThis.RedownHistoryArchive)throw Error('unavailable');
       const page=await Promise.race([(archive||(archive=RedownHistoryArchive.create())).page(0,1),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('archive unavailable')),1000);})]);archiveCount=page.total;
     }catch{}finally{clearTimeout(timer);}
+    let storageCapacity={osFreeBytes:null};
+    try{storageCapacity=await Promise.race([(async()=>{const [localBytes,estimate]=await Promise.all([chrome.storage.local.getBytesInUse?.(null),navigator.storage?.estimate?.()]);return {localBytes,quotaBytes:chrome.storage.local.QUOTA_BYTES,originUsage:estimate?.usage,originQuota:estimate?.quota,osFreeBytes:null};})(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('capacity unavailable')),1000);})]);}catch{}finally{clearTimeout(timer);}
     const browserVersion=globalThis.navigator?.userAgent?.match(/(?:Chrome|Chromium)\/[\d.]+/)?.[0]||'unknown';
-    return RedownDiagnosticBundle.build(snapshot,{extensionVersion:chrome.runtime.getManifest().version,browserVersion,archiveCount,backgroundState:'not-contacted',scope:'Local stored metadata only: no background activation or provider probes; volatile/uncommitted observations and current writer readiness are unavailable'});
+    return RedownDiagnosticBundle.build(snapshot,{extensionVersion:chrome.runtime.getManifest().version,browserVersion,archiveCount,storageCapacity,backgroundState:'not-contacted',scope:'Local stored metadata only: no background activation or provider probes; volatile/uncommitted observations and current writer readiness are unavailable'});
   }
   for(const button of document.querySelectorAll('[data-diagnostic-export]'))button.addEventListener('click',async()=>{
     const output=document.getElementById('diagnostic-bundle-status')||document.getElementById('runtime-diagnostics-output');

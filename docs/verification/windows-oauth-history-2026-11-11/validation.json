@@ -1,0 +1,650 @@
+{
+  "scope": "Three real Windows owner captures, deterministic source/provider fixtures, Linux Chromium page fixture, and attempted Linux quota induction. No independent live provider acceptance.",
+  "baseline": {
+    "ref": "69b62070ddcd8ad1a7181af5cf293d36815a100b",
+    "passed": 1058,
+    "failed": 111
+  },
+  "delivery": {
+    "passed": 1076,
+    "failed": 111,
+    "incomplete": true,
+    "newFailureNames": [],
+    "resolvedFailureNames": []
+  },
+  "unchangedFailures": [
+    {
+      "file": "tests/add-menu-location.test.mjs",
+      "name": "one shared add control targets Simple or Nested and asks which destination when needed"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "M0 inventory covers every literal message branch without inventing handlers"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Activate Buckets styling targets its current actions slot rather than obsolete navigation toolbar"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Side Preview Lightbox is labeled, independently loaded, and returns to the exact side image"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Upload Folder retains themed primary fill despite generic transparent action-button styling"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "activation effect only glows success after verified readiness; reduced-motion has a static alternative"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "regular Explorer hides stale limitations and keeps new bucket setup optional"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "same-folder copy keeps both and never destroys the source"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work"
+    },
+    {
+      "file": "tests/brand-and-paginated-history.test.mjs",
+      "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Cloudflare sign-in started outside Shelf never opens an automatic Explorer tab"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Shelf LOGIN! opens exactly one Explorer Home tab after successful interactive OAuth"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Shelf cancelled or failed login never opens Explorer"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Shelf login remains connected when Chrome cannot open Explorer tab"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Worker deployments cannot overlap and a failed deployment releases the lock"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "callback resumes after service worker restart from session state"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "click creates a visible window before network navigation; repeated clicks focus it"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "closed popup releases attempt and stale window is replaced on next click"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "denied consent and missing authorization code fail cleanly"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "destination folder pages preserve parent prefix, immediate children and continuation"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "duplicate navigation events exchange a code only once"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "expired attempt clears secrets, closes popup, and permits retry"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "failed API verification never stores an access token"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "popup creation errors are returned instead of leaving an in-flight lock"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "settings and worker observing the same callback exchange the code once across contexts"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "state mismatch fails without token exchange and allows a fresh retry"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "successful callback exchanges PKCE and verifies access before saving token"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored"
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "verification network stall aborts and releases the attempt"
+    },
+    {
+      "file": "tests/cloudflare-reconnect.test.mjs",
+      "name": "slow bucket loading does not block locations, Explorer, or connection refresh"
+    },
+    {
+      "file": "tests/cloudflare-reconnect.test.mjs",
+      "name": "verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "queries never modify the canonical corpus or cited historical evidence"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "actual native dispatcher isolates all Dropbox IDs before V3 resolver or navigation"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "actual single native writer reconciles transitions/restart/lost IDs and retains management last"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "login via native action resumes exactly one pending click; Shelf login alone creates no job"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "protected bytes unchanged except explicitly authorized shared composer hook"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "shared composer preserves every V3/Google plan and route, Dropbox leaf ordering and invalid fragment rejection"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "stale logged-out native leaf records a blocked attempt, never a successful receipt"
+    },
+    {
+      "file": "tests/dropbox.test.mjs",
+      "name": "status refresh invalidates a stale connected menu/card projection with no auth"
+    },
+    {
+      "file": "tests/explorer-account-and-history-navigation.test.mjs",
+      "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens"
+    },
+    {
+      "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+      "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input"
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed"
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "large retained histories render in bounded increments and unrelated storage changes do no history work"
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager"
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes"
+    },
+    {
+      "file": "tests/explorer-parity-audit.test.mjs",
+      "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP"
+    },
+    {
+      "file": "tests/get-url.test.mjs",
+      "name": "switching files while enabling cannot reopen the old file or overwrite current choices"
+    },
+    {
+      "file": "tests/google-drive.test.mjs",
+      "name": "actual Google click early return never resolves Cloudflare or invokes R2/dashboard even for unknown IDs"
+    },
+    {
+      "file": "tests/google-drive.test.mjs",
+      "name": "actual shared native writer mode/provider races, restart, stale cache, partial API failure and recovery preserve root/manage and targets"
+    },
+    {
+      "file": "tests/google-drive.test.mjs",
+      "name": "provider receipt gate rejects untrusted pages and malformed success; history retains provider and verified file identity"
+    },
+    {
+      "file": "tests/google-drive.test.mjs",
+      "name": "repeated saves reuse the owned tab with a fresh job; active transfer is never replaced"
+    },
+    {
+      "file": "tests/history-go-home-polish.test.mjs",
+      "name": "Go Home does not hijack a split Explorer; opens normal home tab instead"
+    },
+    {
+      "file": "tests/history-go-home-polish.test.mjs",
+      "name": "Go Home reuses an existing nonsplit Explorer and clears stale GO TO deep links"
+    },
+    {
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open"
+    },
+    {
+      "file": "tests/modern-destinations.test.mjs",
+      "name": "tests/modern-destinations.test.mjs"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "tests/nested-locations.test.mjs"
+    },
+    {
+      "file": "tests/onedrive-connected.test.mjs",
+      "name": "right-click saves never invoke Chrome permission APIs on any source hostname"
+    },
+    {
+      "file": "tests/onedrive.test.mjs",
+      "name": "OneDrive menu shows root save only with a verified connected-state identity"
+    },
+    {
+      "file": "tests/onedrive.test.mjs",
+      "name": "unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "debug-only sections start hidden and toggle exists only inside header disclosure"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "persisted mode combinations restore independently, with Beta off when absent"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "settings disclosure dismisses outside and Escape restores focus"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready"
+    },
+    {
+      "file": "tests/popup-destinations.test.mjs",
+      "name": "background accepts a discovered unsaved bucket only after read-only existence validation"
+    },
+    {
+      "file": "tests/popup-destinations.test.mjs",
+      "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page"
+    },
+    {
+      "file": "tests/popup-folders.test.mjs",
+      "name": "background ingest honors explicit root/deep prefixes and preserves the legacy category route"
+    },
+    {
+      "file": "tests/right-click-dispatch.test.mjs",
+      "name": "T01 T13 T14 T15 actual handler selects five Chrome source contexts and dispatches zero or one transfer"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Legacy pre-v1 tree migrates to exact V3 targets without mutating original profiles"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "T01\u2013T04 T26 T27 provider leaf expands to siblings separator Home last and conserves exact default"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "T16 T21 actual background commits IndexedDB before Chrome acknowledgment and rehydrates CURRENT on restart"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "V3 save/register/resolve persists across restart and refuses Legacy selection"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "actual Level background inventory registration and click resolver retain exact authorized targets across restart"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "actual click listener waits for V3 read-back before recording completion and never falls back"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "durable snapshot restores fresh inventory without a provider rescan and stores no secrets"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "failed registration retains persisted edits, Retry Apply repairs without rewriting destinations"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics"
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "presentation transitions serialize independently, retain Level depth 5 and persist across background restart"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+    },
+    {
+      "file": "tests/shelf-destinations.test.mjs",
+      "name": "equal minimalist cloud tiles show only an icon and a short action"
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape"
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "History opens Today by default and preserves clickable source and hosting-page URLs"
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "Shelf reassurance appears immediately beneath navigation; Cloud Storage is title-cased"
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "provider order, pending integrations, verified account state and actual history remain honest"
+    },
+    {
+      "file": "tests/simple-cloudflare-branding.test.mjs",
+      "name": "native registered Simple menu contains only Cloudflare and actual click retains verified root receipt"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: invalid path segments never send creation requests"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: new directory is created under the exact parent only after Create"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: refreshing during creation cannot leave a permanent Creating status"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: selecting existing folder does not populate creation draft"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: stalled creation releases button and explains uncertain outcome"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: valid names including zero and f create at bucket root"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections"
+    },
+    {
+      "file": "tests/storage-signals.test.mjs",
+      "name": "guided simulation waits for the correct controls, completes, and settles"
+    },
+    {
+      "file": "tests/storage-signals.test.mjs",
+      "name": "reset and exit reject old callbacks even if timer cancellation loses a race"
+    },
+    {
+      "file": "tests/storage-signals.test.mjs",
+      "name": "simulation executes without Chrome, fetch, messaging, profiles, or authentication"
+    },
+    {
+      "file": "tests/storage-signals.test.mjs",
+      "name": "simulation lives only in diagnostics and cannot start while Debug is hidden"
+    },
+    {
+      "file": "tests/worker-bootstrap-first-install.test.mjs",
+      "name": "fresh worker with failing heavy core still registers the original toolbar opener"
+    },
+    {
+      "file": "tests/worker-bootstrap-first-install.test.mjs",
+      "name": "late core import failure does not register a second toolbar listener"
+    }
+  ],
+  "focused": {
+    "passed": 112,
+    "failed": 0,
+    "scope": "new defect tests plus P0/provider lifecycle, privacy, BOOT/menu, counters and feedback"
+  },
+  "newDefectTests": {
+    "baseline": {
+      "passed": 1,
+      "failed": 16,
+      "ref": "69b62070ddcd8ad1a7181af5cf293d36815a100b",
+      "loader": "read-only git show; no checkout reset"
+    },
+    "delivery": {
+      "passed": 17,
+      "failed": 0
+    }
+  },
+  "browser": {
+    "assertions": 42,
+    "state": "passed",
+    "scope": "real Chromium page rendering with mocked Chrome storage/runtime and simulated provider outcomes; NOT installed extension or real provider acceptance"
+  },
+  "installedChrome": {
+    "scope": "installed-chrome",
+    "installation": "unpacked directory",
+    "state": "blocked",
+    "scenario": "fresh isolated profile, real service worker and options, passive diagnostics, local persistence",
+    "startedAt": "2026-11-11T18:35:44.435Z",
+    "assertions": [],
+    "limitations": [
+      "No Cloudflare login or remote data",
+      "Not a CRX or store-distributed installation",
+      "Not the complete workflow matrix"
+    ],
+    "extensionId": "mkadkgpekmkknfbniacdlmgikihjjepf",
+    "extensionVersion": "0.5.27",
+    "browser": "Chrome/156.0.8078.79",
+    "os": "linux x64",
+    "code": "CDP_-32600: Loading of unpacked extensions is disabled by the administrator.",
+    "finishedAt": "2026-11-11T18:35:45.299Z"
+  },
+  "lowSpace": {
+    "scope": "Real Linux Chromium IndexedDB quota fault in isolated localhost origin; NOT Windows or extension storage.local or provider acceptance",
+    "state": "blocked",
+    "cases": [
+      {
+        "id": "ample-free-small-write",
+        "state": "committed"
+      },
+      {
+        "id": "browser-quota-fault-with-ample-os-disk",
+        "state": "committed"
+      },
+      {
+        "id": "second-transaction-under-override",
+        "state": "committed"
+      },
+      {
+        "id": "quota-restored-small-write",
+        "state": "committed"
+      }
+    ],
+    "osLowSpaceCases": [
+      {
+        "freeBytes": 705335296,
+        "state": "blocked",
+        "reason": "No disposable Windows volume; shared host volume not filled"
+      },
+      {
+        "freeBytes": 415735808,
+        "state": "blocked",
+        "reason": "No disposable Windows volume; shared host volume not filled"
+      }
+    ],
+    "hostFreeBytes": 63463305216,
+    "browser": "Chrome/156.0.8078.79",
+    "beforeQuota": {
+      "usage": 2716,
+      "quota": 40551921254,
+      "overrideActive": false,
+      "usageBreakdown": [
+        {
+          "storageType": "file_systems",
+          "usage": 0
+        },
+        {
+          "storageType": "indexeddb",
+          "usage": 2716
+        },
+        {
+          "storageType": "cache_storage",
+          "usage": 0
+        },
+        {
+          "storageType": "service_workers",
+          "usage": 0
+        }
+      ]
+    },
+    "afterQuota": {
+      "usage": 2716,
+      "quota": 1048576,
+      "overrideActive": true,
+      "usageBreakdown": [
+        {
+          "storageType": "file_systems",
+          "usage": 0
+        },
+        {
+          "storageType": "indexeddb",
+          "usage": 2716
+        },
+        {
+          "storageType": "cache_storage",
+          "usage": 0
+        },
+        {
+          "storageType": "service_workers",
+          "usage": 0
+        }
+      ]
+    },
+    "afterFirstWrite": {
+      "usage": 4197711,
+      "quota": 1048576,
+      "overrideActive": true,
+      "usageBreakdown": [
+        {
+          "storageType": "file_systems",
+          "usage": 0
+        },
+        {
+          "storageType": "indexeddb",
+          "usage": 4197711
+        },
+        {
+          "storageType": "cache_storage",
+          "usage": 0
+        },
+        {
+          "storageType": "service_workers",
+          "usage": 0
+        }
+      ]
+    },
+    "code": "QUOTA_FAULT_NOT_REPRODUCED"
+  },
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "schemas": {
+    "BOOT": "6 valid; 3 invalid rejected",
+    "gateway": "59 routed/error fixtures; issue assessment valid",
+    "Explorer": "17 simulated bundles",
+    "runtime": "5 responses plus 1 bundle; oversized rejected"
+  },
+  "packageAudit": {
+    "state": "passed",
+    "files": 143,
+    "releaseCertified": false,
+    "sha256": "9810415221dd21daf819f08fcec3b4c541056864703bc167a1ed4b64ad715dd7"
+  },
+  "limitations": [
+    "Original Windows OAuth checkpoint and storage exception unknown",
+    "No authenticated disposable provider sessions or independent remote-object verification",
+    "No disposable Windows disk-volume matrix",
+    "Linux CDP quota override did not induce QuotaExceededError",
+    "Stale architecture map and saved regression expectation remain",
+    "Prior failed/partial iterations preserved; see final files for delivered results",
+    "Installed build commit in owner captures unavailable; source version equality is not deployed-byte proof"
+  ],
+  "ownerEvidence": "owner-comparison.json",
+  "fullRegressionEvidence": "WORKING_EVIDENCE.tar.gz:windows-oauth-history/delivery-regression.json",
+  "sourceInventoryNote": "The offline capture comparison script was extended after the full product-source run; node --check and its real-archive comparison passed separately. Product source is the version tested by the full run."
+}

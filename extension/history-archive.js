@@ -11,7 +11,7 @@
       if(!database)return Promise.reject(Error('On-device history archive is unavailable.'));
       if(connection)return connection;
       connection=new Promise((resolve,reject)=>{
-        const request=database.open(DB,1);
+        const request=database.open(DB,1);let abandoned=false;
         request.onupgradeneeded=()=>{
           const db=request.result;
           if(!db.objectStoreNames.contains(STORE)){
@@ -19,9 +19,15 @@
             store.createIndex('timeline',['time','id'],{unique:false});
           }
         };
-        request.onsuccess=()=>resolve(request.result);
+        request.onsuccess=()=>{
+          const db=request.result;
+          if(abandoned){db.close();return;}
+          db.onversionchange=()=>{db.close();connection=null;};
+          db.onclose=()=>{connection=null;};
+          resolve(db);
+        };
         request.onerror=()=>reject(request.error||Error('History archive could not open.'));
-        request.onblocked=()=>reject(Error('History archive is blocked by another open extension page.'));
+        request.onblocked=()=>{abandoned=true;reject(Error('History archive is blocked by another open extension page.'));};
       }).catch(error=>{connection=null;throw error;});
       return connection;
     };
@@ -34,7 +40,8 @@
       if(!valid.length)return;
       const db=await open();
       return new Promise((resolve,reject)=>{
-        const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE);
+        let tx;try{tx=db.transaction(STORE,'readwrite');}catch(error){connection=null;throw error;}
+        const store=tx.objectStore(STORE);
         for(const item of valid)store.put(normalized(item));
         tx.oncomplete=()=>resolve();
         tx.onerror=()=>reject(tx.error||Error('History archive write failed.'));

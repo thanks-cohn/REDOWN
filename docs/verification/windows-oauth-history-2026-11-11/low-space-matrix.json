@@ -1,0 +1,106 @@
+{
+  "scope": "Real Linux Chromium IndexedDB quota fault in isolated localhost origin; NOT Windows or extension storage.local or provider acceptance",
+  "state": "blocked",
+  "cases": [
+    {
+      "id": "ample-free-small-write",
+      "state": "committed"
+    },
+    {
+      "id": "browser-quota-fault-with-ample-os-disk",
+      "state": "committed"
+    },
+    {
+      "id": "second-transaction-under-override",
+      "state": "committed"
+    },
+    {
+      "id": "quota-restored-small-write",
+      "state": "committed"
+    }
+  ],
+  "osLowSpaceCases": [
+    {
+      "freeBytes": 705335296,
+      "state": "blocked",
+      "reason": "No disposable Windows volume; shared host volume not filled"
+    },
+    {
+      "freeBytes": 415735808,
+      "state": "blocked",
+      "reason": "No disposable Windows volume; shared host volume not filled"
+    }
+  ],
+  "hostFreeBytes": 63463305216,
+  "browser": "Chrome/156.0.8078.79",
+  "beforeQuota": {
+    "usage": 2716,
+    "quota": 40551921254,
+    "overrideActive": false,
+    "usageBreakdown": [
+      {
+        "storageType": "file_systems",
+        "usage": 0
+      },
+      {
+        "storageType": "indexeddb",
+        "usage": 2716
+      },
+      {
+        "storageType": "cache_storage",
+        "usage": 0
+      },
+      {
+        "storageType": "service_workers",
+        "usage": 0
+      }
+    ]
+  },
+  "afterQuota": {
+    "usage": 2716,
+    "quota": 1048576,
+    "overrideActive": true,
+    "usageBreakdown": [
+      {
+        "storageType": "file_systems",
+        "usage": 0
+      },
+      {
+        "storageType": "indexeddb",
+        "usage": 2716
+      },
+      {
+        "storageType": "cache_storage",
+        "usage": 0
+      },
+      {
+        "storageType": "service_workers",
+        "usage": 0
+      }
+    ]
+  },
+  "afterFirstWrite": {
+    "usage": 4197711,
+    "quota": 1048576,
+    "overrideActive": true,
+    "usageBreakdown": [
+      {
+        "storageType": "file_systems",
+        "usage": 0
+      },
+      {
+        "storageType": "indexeddb",
+        "usage": 4197711
+      },
+      {
+        "storageType": "cache_storage",
+        "usage": 0
+      },
+      {
+        "storageType": "service_workers",
+        "usage": 0
+      }
+    ]
+  },
+  "code": "QUOTA_FAULT_NOT_REPRODUCED"
+}

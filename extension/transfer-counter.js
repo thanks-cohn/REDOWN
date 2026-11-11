@@ -71,7 +71,15 @@
       const stored=(await storage.get('redownDailyVerified')).redownDailyVerified;
       return {daily:validDaily(stored,today)?stored:freshDaily(today),reset:!validDaily(stored,today)};
     }
+    const storageFailure=(error,entry,operation)=>{
+      const names=['QuotaExceededError','AbortError','InvalidStateError','UnknownError','NotFoundError','VersionError','SecurityError','DataError','ConstraintError','TransactionInactiveError','TypeError'];
+      const exceptionName=names.includes(error?.name)?error.name:/quota|QUOTA_BYTES|disk.*full/i.test(String(error?.message||''))?'QuotaExceededError':'Error';
+      globalThis.RedownSaveEvidence?.note(entry?.attemptId,{phase:'history',code:'HISTORY_UNAVAILABLE',storageArea:'local',storageOperation:operation,exceptionName});
+      const failure=new Error('REDOWN local History accounting is unavailable.');
+      return Object.assign(failure,{localHistoryFailure:true,remoteVerified:providerProof(entry),exceptionName,storageOperation:operation});
+    };
     return {
+      isVerifiedReceipt:providerProof,
       read:()=>serial(async()=>{const {counter}=await state();await storage.set({transferCounter:counter});return counter;}),
       readDaily:()=>serial(async()=>{
         const {daily,reset}=await dailyState();
@@ -83,6 +91,8 @@
         const {counter}=await state(),next=increment(counter,amount);await storage.set({transferCounter:next});return next;
       }),
       record:entry=>serial(async()=>{
+        let operation='state-read';
+        try{
         const {counter,history}=await state(),now=new Date().toISOString();
         // Do not rewrite old History/totals; reject weak NEW Dropbox completions.
         if(entry?.providerKind==='dropbox'&&entry.ok===true&&!dropboxProof(entry))entry={...entry,ok:undefined,verified:false,status:'uncertain',location:'',error:'Dropbox completion lacks verified destination evidence.'};
@@ -90,6 +100,7 @@
         // the bounded legacy History window. IDs persist across worker restarts.
         const provider=entry?.providerKind;
         const confirmed=providerProof(entry);
+        operation='receipt-read';
         const storedProviders=confirmed?await storage.get('providerSaveReceipts'):{};
         const providers=storedProviders.providerSaveReceipts||{version:1,startedAt:now,totals:{},ids:[]};
         if(confirmed&&providers.ids.includes(entry.deliveryId))return {newVerified:false,duplicate:true};
@@ -102,25 +113,30 @@
         // attempted clicks, local browser downloads, or the lifetime odometer.
         // Commit the daily increment atomically alongside the provider receipt.
         // Never infer historical days from the bounded 50-row History.
+        operation='daily-read';
         const day=confirmed?(await dailyState()).daily:null;
         const dailyPatch=confirmed?{redownDailyVerified:{...day,total:String(BigInt(day.total)+1n)}}:{};
         const dropboxId=counted(entry)&&entry?.providerKind==='dropbox'&&/^dropbox:[\w-]+$/.test(entry.deliveryId||'')?entry.deliveryId:null;
+        operation='dedupe-read';
         const deliveredIds=dropboxId?(await storage.get('dropbox:deliveries'))['dropbox:deliveries']||[]:[];
         if(dropboxId&&deliveredIds.includes(dropboxId))return {newVerified:false,duplicate:true};
         const cleaned=entry?.providerKind!=='dropbox'&&entry?.ok&&entry?.sourceUrl?history.filter(item=>{
           if(item?.ok||item?.sourceUrl!==entry.sourceUrl||entry.profileId&&item?.profileId&&item.profileId!==entry.profileId)return true;
           const age=Math.abs(Date.now()-new Date(item?.at||0).getTime());return !Number.isFinite(age)||age>5*60*1000;
         }):history;
-        const saved={...entry,id:provider==='dropbox'&&entry.deliveryId?entry.deliveryId+':'+entry.status:crypto.randomUUID(),at:now};
+        const saved={...entry,id:confirmed?entry.deliveryId+':completed':provider==='dropbox'&&entry.deliveryId?entry.deliveryId+':'+entry.status:crypto.randomUUID(),at:now};
         // Archive before truncating the legacy 50-row compatibility window.
         // Archival failure must not misreport a completed upload as a failure;
         // the visible window and lifetime count still persist as before.
         if(archive)try{await archive.append(saved);}catch(error){
+          globalThis.RedownSaveEvidence?.note(entry?.attemptId,{phase:'history',code:'HISTORY_UNAVAILABLE',storageArea:'indexedDB',storageOperation:'archive-write',exceptionName:['QuotaExceededError','AbortError','InvalidStateError','UnknownError','VersionError','SecurityError'].includes(error?.name)?error.name:'Error'});
           console.warn('REDOWN archive unavailable; recent transfer retained:',error?.message||String(error));
         }
         const next=[saved,...cleaned].slice(0,50);
+        operation='local-commit';
         await storage.set({...providerPatch,...dailyPatch,transferHistory:next,transferCounter:increment(counter,counted(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
         return {newVerified:confirmed};
+        }catch(error){throw storageFailure(error,entry,operation);}
       })
     };
   }

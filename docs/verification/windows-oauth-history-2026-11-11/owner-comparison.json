@@ -1,0 +1,1375 @@
+{
+  "scope": "Real owner Windows captures; local receipt assertions are not new independent remote verification",
+  "captures": [
+    {
+      "file": "REDOWN-BEFORE.zip",
+      "sha256": "f62939ef20e4931ed7584af243ff67d82faa91448f6d7d4a373c817a7323c26b",
+      "perProvider": {
+        "google": {
+          "firstRetainedFailure": {
+            "id": "7d7f4a3f-79fe-4b1b-984f-247347a6858e",
+            "receivedAt": 1794402911412,
+            "lastStage": "TERMINAL",
+            "outcome": "UNCERTAIN",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "PROVIDER_FAILED"
+          },
+          "lastRetainedCompletion": {
+            "id": "0e89ab63-2051-41be-bd75-5d31377b8e6d",
+            "receivedAt": 1794403093513,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "5e47f36b-8497-461f-8bf4-87fd6ffdc790",
+            "receivedAt": 1794403162083,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "SOURCE_RETURNED_HTML"
+          }
+        },
+        "dropbox": {
+          "firstRetainedFailure": {
+            "id": "8df9331b-15e4-46f9-97ed-fca4e467445d",
+            "receivedAt": 1794403078914,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "SOURCE_RETURNED_HTML"
+          },
+          "lastRetainedCompletion": {
+            "id": "b9c57201-8120-4c63-b0de-ff95ae8690a7",
+            "receivedAt": 1794403195727,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": null
+        },
+        "onedrive": {
+          "firstRetainedFailure": {
+            "id": "6fc17ebd-b7d5-40d0-94ad-b228447b5df4",
+            "receivedAt": 1794402640493,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "PROVIDER_FAILED"
+          },
+          "lastRetainedCompletion": {
+            "id": "3a3369dd-745d-4b37-a987-36ea62ed5eaf",
+            "receivedAt": 1794403053885,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "ee556c9d-a2e4-4ea0-b407-04ddc74ab97b",
+            "receivedAt": 1794403085061,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "PROVIDER_FAILED"
+          }
+        },
+        "cloudflare": {
+          "firstRetainedFailure": {
+            "id": "f840cf82-2cad-4dcb-ab87-4a78e4fae4b9",
+            "receivedAt": 1794403181288,
+            "lastStage": "TERMINAL",
+            "outcome": "UNCERTAIN",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "PROVIDER_FAILED"
+          },
+          "lastRetainedCompletion": {
+            "id": "1f2c266f-e1da-400e-9e13-083813b1132c",
+            "receivedAt": 1794409745144,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": null
+        }
+      },
+      "bytes": 15411,
+      "collectedAt": 1794409870933,
+      "collectedISO": "2026-11-11T15:11:10.933Z",
+      "privacy": {
+        "scope": "Owner redacted ZIP, inspected as untrusted data; no raw extraction published",
+        "files": [
+          "SUMMARY.md",
+          "attempts.json",
+          "queue.json",
+          "history-reconciliation.json",
+          "environment.json",
+          "source-and-provider-failures.json",
+          "README.md"
+        ],
+        "rawUrlFieldsExported": false,
+        "tokenValuesExported": false,
+        "correlationIdentifiersPresent": true
+      },
+      "attemptCount": 50,
+      "counters": {
+        "google/COMPLETED/OK": 9,
+        "dropbox/COMPLETED/OK": 10,
+        "onedrive/BLOCKED/PROVIDER_FAILED": 8,
+        "onedrive/COMPLETED/OK": 7,
+        "cloudflare/COMPLETED/OK": 7,
+        "google/UNCERTAIN/PROVIDER_FAILED": 1,
+        "dropbox/BLOCKED/PROVIDER_FAILED": 4,
+        "google/BLOCKED/PROVIDER_FAILED": 2,
+        "cloudflare/UNCERTAIN/PROVIDER_FAILED": 2
+      },
+      "historyFailures": [],
+      "oldestRetainedAttempt": "e662dd35-6aeb-482b-8ff3-68ba05a7a2a3",
+      "latestRetainedAttempts": [
+        {
+          "id": "b9c57201-8120-4c63-b0de-ff95ae8690a7",
+          "provider": "dropbox",
+          "lastStage": "TERMINAL",
+          "at": 1794403199646
+        },
+        {
+          "id": "c3b5da0f-3449-44ae-86bb-e550310e1c32",
+          "provider": "onedrive",
+          "lastStage": "TERMINAL",
+          "at": 1794403205309
+        },
+        {
+          "id": "a0229f05-bd0f-441f-b930-33717c73404b",
+          "provider": "cloudflare",
+          "lastStage": "TERMINAL",
+          "at": 1794403217647
+        },
+        {
+          "id": "4a2099a5-a1fc-49de-80c6-4af7cca088a8",
+          "provider": "cloudflare",
+          "lastStage": "TERMINAL",
+          "at": 1794409713800
+        },
+        {
+          "id": "1f2c266f-e1da-400e-9e13-083813b1132c",
+          "provider": "cloudflare",
+          "lastStage": "TERMINAL",
+          "at": 1794409751038
+        }
+      ],
+      "cloudflareAuth": {
+        "credentialPresent": true,
+        "refreshAvailable": false,
+        "reconnectRequired": false,
+        "expired": false
+      },
+      "archive": {
+        "count": 128,
+        "state": "read"
+      },
+      "totals": {
+        "lifetime": "311",
+        "daily": "33",
+        "providers": {
+          "google": "42",
+          "dropbox": "34",
+          "onedrive": "33",
+          "cloudflare": "118"
+        }
+      },
+      "retainedReceiptLinks": 16,
+      "workerHttp200Observations": 2,
+      "attemptIds": [
+        "e662dd35-6aeb-482b-8ff3-68ba05a7a2a3",
+        "f391e40b-1410-48f2-85a1-641927962dcd",
+        "6fc17ebd-b7d5-40d0-94ad-b228447b5df4",
+        "f5158966-6f43-4b19-81a0-e8aad018c4bf",
+        "6b67ecbe-ed4e-4b4e-b7ab-347c5e0c3cfa",
+        "5579209c-b847-4c22-9800-cb06320c6348",
+        "b86a60ac-a03b-4e36-ac16-5a21054c8b92",
+        "85cc8cad-800c-482b-8f94-f753f489afcc",
+        "84ebab15-cfe6-4abc-b987-963f7e45da8a",
+        "88a79723-f5f9-4791-8aaa-0eedf19fe775",
+        "5afb152e-1d39-4571-960d-77377b393ddc",
+        "e64e94fe-e174-416a-b9c5-bc6750c12b0e",
+        "14eaf2a3-b0c5-47a1-8f1e-dba683528b01",
+        "7d7f4a3f-79fe-4b1b-984f-247347a6858e",
+        "573647c0-1c86-42e8-b2a4-f2612244ce74",
+        "484fac2e-2945-4a7d-b9f4-27b7739e6d2c",
+        "92c796b8-861f-4ed6-ac57-4242a4a35da6",
+        "7ebb267c-949b-4571-8d29-c1c98bd61c3e",
+        "b4abda6a-2251-4664-9d32-9ed5c36980b3",
+        "adac66bd-3540-4fad-af87-52e50fe674a4",
+        "059aefca-7989-46f9-aca5-8c445513abde",
+        "16efd586-f63c-4d98-b4f0-915d4085f305",
+        "e6994c65-204c-4e95-a47f-03263a898a41",
+        "19d78411-4304-44ca-9f98-1b042a43ef51",
+        "f5e3e937-13e4-4da8-9b7f-bef82c505e5b",
+        "0afa246f-560c-435c-8d4d-1f6895d2a875",
+        "07464cb6-26d7-4b90-9b7b-a8f71f9af02e",
+        "1f6ea85a-a2c1-43c6-bed2-895836113bc0",
+        "3a3369dd-745d-4b37-a987-36ea62ed5eaf",
+        "b922f5d6-269f-4cda-9033-0f549223c06e",
+        "0ec2afe5-343a-4b18-bfbb-f9f28e5f9f4b",
+        "8df9331b-15e4-46f9-97ed-fca4e467445d",
+        "ee556c9d-a2e4-4ea0-b407-04ddc74ab97b",
+        "0e89ab63-2051-41be-bd75-5d31377b8e6d",
+        "edb36482-1f43-4c37-a3da-89fbcdd1a1b4",
+        "8cefeff2-f590-42b1-99fd-d827f01d457a",
+        "dd45ec4b-f200-4571-adef-ddbf9ebf36b0",
+        "ffb3c778-3091-45da-9f97-d59a2482d1e6",
+        "fa1423a3-3908-4360-9ccc-82ba7aaf01ce",
+        "f9338b67-9098-4399-ad0b-7670c6cd3a74",
+        "5e47f36b-8497-461f-8bf4-87fd6ffdc790",
+        "9a8fa424-2431-4873-a14d-16489b7afaaf",
+        "c179c9cf-1e4c-4ec5-b3d7-8e23b43c366c",
+        "f840cf82-2cad-4dcb-ab87-4a78e4fae4b9",
+        "afd5d2de-1434-4058-8776-bf60479442f6",
+        "b9c57201-8120-4c63-b0de-ff95ae8690a7",
+        "c3b5da0f-3449-44ae-86bb-e550310e1c32",
+        "a0229f05-bd0f-441f-b930-33717c73404b",
+        "4a2099a5-a1fc-49de-80c6-4af7cca088a8",
+        "1f2c266f-e1da-400e-9e13-083813b1132c"
+      ],
+      "attemptsDigest": "df6968ac1c19bb6f581e1f536a89e9992234fcba43a406a902dccbfcc16eb58c"
+    },
+    {
+      "file": "REDOWN-DIAGNOSTIC-2026-11-11a.zip",
+      "sha256": "6ad9ffcd49c220a32c8efce0810fffe1f4c6361b767fc7bea6eaabab8b2222f0",
+      "perProvider": {
+        "google": {
+          "firstRetainedFailure": null,
+          "lastRetainedCompletion": {
+            "id": "f41ddbf0-6195-49b2-9b14-94d212819058",
+            "receivedAt": 1794415170259,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415170598,
+                "code": "OK",
+                "phase": "auth"
+              },
+              {
+                "at": 1794415178349,
+                "code": "PROVIDER_FAILED",
+                "phase": "starting"
+              },
+              {
+                "at": 1794415178403,
+                "code": "PROVIDER_FAILED",
+                "phase": "starting"
+              }
+            ],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": null
+        },
+        "dropbox": {
+          "firstRetainedFailure": {
+            "id": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+            "receivedAt": 1794415175636,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PREFLIGHT_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415178037,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              },
+              {
+                "at": 1794415178319,
+                "code": "HISTORY_UNAVAILABLE",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          },
+          "lastRetainedCompletion": {
+            "id": "7652a91e-f1f6-4696-9741-638ea7b39d57",
+            "receivedAt": 1794415071955,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+            "receivedAt": 1794415175636,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PREFLIGHT_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415178037,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              },
+              {
+                "at": 1794415178319,
+                "code": "HISTORY_UNAVAILABLE",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          }
+        },
+        "onedrive": {
+          "firstRetainedFailure": {
+            "id": "dbc9c6ef-e18d-461e-93a1-e6af93a4a14c",
+            "receivedAt": 1794414834680,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794414838739,
+                "code": "ONEDRIVE_BUSY",
+                "phase": "auth"
+              },
+              {
+                "at": 1794414839126,
+                "code": "ONEDRIVE_BUSY",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "ONEDRIVE_BUSY"
+          },
+          "lastRetainedCompletion": {
+            "id": "9e068028-b6c6-4916-8ff0-0e4f601485f4",
+            "receivedAt": 1794415074373,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          },
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+            "receivedAt": 1794415180415,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PREFLIGHT_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415181134,
+                "code": "PROVIDER_FAILED",
+                "phase": "auth"
+              },
+              {
+                "at": 1794415181253,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              },
+              {
+                "at": 1794415181330,
+                "code": "HISTORY_UNAVAILABLE",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          }
+        },
+        "cloudflare": {
+          "firstRetainedFailure": {
+            "id": "4443b0ae-697e-498c-8006-8f0810af75c3",
+            "receivedAt": 1794414202053,
+            "lastStage": "TERMINAL",
+            "outcome": "UNCERTAIN",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794414205783,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "PROVIDER_FAILED"
+          },
+          "lastRetainedCompletion": null,
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "4443b0ae-697e-498c-8006-8f0810af75c3",
+            "receivedAt": 1794414202053,
+            "lastStage": "TERMINAL",
+            "outcome": "UNCERTAIN",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794414205783,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "PROVIDER_FAILED"
+          }
+        }
+      },
+      "bytes": 43132,
+      "collectedAt": 1794416067853,
+      "collectedISO": "2026-11-11T16:54:27.853Z",
+      "privacy": {
+        "scope": "Owner redacted ZIP, inspected as untrusted data; no raw extraction published",
+        "files": [
+          "SUMMARY.md",
+          "attempts.json",
+          "queue.json",
+          "history-reconciliation.json",
+          "environment.json",
+          "source-and-provider-failures.json",
+          "README.md"
+        ],
+        "rawUrlFieldsExported": false,
+        "tokenValuesExported": false,
+        "correlationIdentifiersPresent": true
+      },
+      "attemptCount": 100,
+      "counters": {
+        "dropbox/COMPLETED/OK": 23,
+        "onedrive/COMPLETED/OK": 23,
+        "google/COMPLETED/OK": 26,
+        "cloudflare/UNCERTAIN/PROVIDER_FAILED": 20,
+        "onedrive/BLOCKED/PROVIDER_FAILED": 3,
+        "dropbox/BLOCKED/PREFLIGHT_FAILED": 1,
+        "onedrive/BLOCKED/PREFLIGHT_FAILED": 1,
+        "google/OPEN/none": 1,
+        "dropbox/OPEN/none": 1,
+        "onedrive/OPEN/none": 1
+      },
+      "historyFailures": [
+        {
+          "attemptId": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+          "provider": "dropbox",
+          "at": 1794415178319,
+          "events": [
+            {
+              "stage": "CLICK_RECEIVED",
+              "at": 1794415175636
+            },
+            {
+              "stage": "ROUTE_RESOLVED",
+              "at": 1794415175682
+            },
+            {
+              "stage": "AUTH_CHECKED",
+              "at": 1794415177843
+            },
+            {
+              "stage": "TERMINAL",
+              "at": 1794415178037,
+              "outcome": "BLOCKED",
+              "reason": "PREFLIGHT_FAILED"
+            }
+          ],
+          "displayedState": "blocked",
+          "displayedCode": "HISTORY_UNAVAILABLE",
+          "exceptionName": "not captured",
+          "storageArea": "not captured"
+        },
+        {
+          "attemptId": "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+          "provider": "onedrive",
+          "at": 1794415181330,
+          "events": [
+            {
+              "stage": "CLICK_RECEIVED",
+              "at": 1794415180415
+            },
+            {
+              "stage": "ROUTE_RESOLVED",
+              "at": 1794415180416
+            },
+            {
+              "stage": "TERMINAL",
+              "at": 1794415181250,
+              "outcome": "BLOCKED",
+              "reason": "PREFLIGHT_FAILED"
+            }
+          ],
+          "displayedState": "blocked",
+          "displayedCode": "HISTORY_UNAVAILABLE",
+          "exceptionName": "not captured",
+          "storageArea": "not captured"
+        }
+      ],
+      "oldestRetainedAttempt": "c4bdeb3f-e2a0-49c4-a42d-1212b4fa617e",
+      "latestRetainedAttempts": [
+        {
+          "id": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+          "provider": "dropbox",
+          "lastStage": "TERMINAL",
+          "at": 1794415178037
+        },
+        {
+          "id": "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+          "provider": "onedrive",
+          "lastStage": "TERMINAL",
+          "at": 1794415181250
+        },
+        {
+          "id": "b9649090-7bec-4cea-af4e-81aac03ed017",
+          "provider": "google",
+          "lastStage": "SOURCE_REQUEST",
+          "at": 1794415202399
+        },
+        {
+          "id": "d128e54e-47cc-45a4-a259-b41d21c06729",
+          "provider": "dropbox",
+          "lastStage": "SOURCE_REQUEST",
+          "at": 1794415201341
+        },
+        {
+          "id": "bf039ef5-4e0b-48c7-a518-ea540982c1e7",
+          "provider": "onedrive",
+          "lastStage": "ROUTE_RESOLVED",
+          "at": 1794415202035
+        }
+      ],
+      "cloudflareAuth": {
+        "credentialPresent": true,
+        "refreshAvailable": false,
+        "reconnectRequired": true,
+        "expired": true
+      },
+      "archive": {
+        "count": 699,
+        "state": "read"
+      },
+      "totals": {
+        "lifetime": "610",
+        "daily": "332",
+        "providers": {
+          "google": "139",
+          "dropbox": "119",
+          "onedrive": "123",
+          "cloudflare": "145"
+        }
+      },
+      "retainedReceiptLinks": 25,
+      "workerHttp200Observations": 20,
+      "attemptIds": [
+        "c4bdeb3f-e2a0-49c4-a42d-1212b4fa617e",
+        "b6271f5c-d48b-4507-8034-cc8ebf97b887",
+        "9d79de12-2297-4684-a8aa-9224de9cdd88",
+        "4443b0ae-697e-498c-8006-8f0810af75c3",
+        "ce20475b-a73c-429c-9f7e-ce97192317d1",
+        "3631f136-419c-49f7-9b11-3e1581382fa5",
+        "2e7f45c8-e497-462a-a16d-16b40929312b",
+        "eded25b5-978d-40c6-a045-8c9d4d6fde94",
+        "6a034f72-8fc2-4ae0-a0e8-96e0667424ba",
+        "6b5df287-9974-43b6-9246-3fb8dd55aaa5",
+        "92d44a88-8e5c-4790-a77e-eae25af8e0e9",
+        "81f37f3b-de14-4327-8270-bbd5f043b577",
+        "e9bea8b7-fb66-4d7a-bb47-d8d4589c74ce",
+        "8231d6df-82e0-443b-afc9-27245f74713a",
+        "3c7eeb42-1e9f-4655-80f4-1d71dab0412a",
+        "3ed55f24-227d-4f92-ac8c-3c69af7866a3",
+        "8eb8675f-6211-47fc-b21f-a3e0ec0124ce",
+        "e51578b8-a386-46d3-b80a-429aeb7698dd",
+        "3388fd0e-b286-47a6-ab18-ed81d21e374f",
+        "a8775152-5e4b-4510-ba18-9458ef380952",
+        "464f8e4f-f10f-4ab6-b253-4851e7428a36",
+        "c23ab2fd-75e8-4819-87b3-9d4c37a6a43b",
+        "b344f7b3-2183-48a3-be19-ce0bb91dbea1",
+        "70e867fb-ce43-4494-a580-f6fe9c0d701e",
+        "00518393-cf75-4544-bb18-976ba3b01e47",
+        "697e3759-4545-4072-9574-9b6d4b543419",
+        "a32f5810-1112-4bdc-b0a4-455cf69d6966",
+        "2db1d7af-fdc8-485a-b94b-d75406c166d0",
+        "9852168a-5a7c-4522-9f54-3a25bdd7d925",
+        "1bd854aa-af81-4248-969b-6ca27492353a",
+        "d79caee0-ee07-4caa-8b34-31e2d1eeed98",
+        "2566d55a-9dc2-49e6-ae65-a12ffbf64a65",
+        "5b091c0b-2920-4d6e-9472-b5609a7b1efb",
+        "485ba2f7-8df7-41ea-825e-c8da503dfe16",
+        "3a60490a-2459-477e-8ca6-49797b02f83d",
+        "2fbf40ae-d5b0-4bc1-b661-1d9dee165751",
+        "d86a1c28-fa9b-4a77-9f77-9930ea82accb",
+        "cf359c47-945a-4467-9e24-4809646ebbb6",
+        "38494fa0-7535-46b0-886a-0352d56c6184",
+        "7ec95390-1cd9-42d2-a18e-06dccbb2ed66",
+        "37ae0a0a-9f57-451d-97d6-91aa8d62d638",
+        "d480981c-9aee-4768-947b-d6c6d3c6a0be",
+        "616ebe67-5b93-4f96-95d7-66d76de2273b",
+        "766d59d8-eb5f-4b8a-8283-2f96473091b6",
+        "892866bf-b337-4537-ae36-61c61852b09f",
+        "b0975d48-1df9-4085-b376-42706a51dc2b",
+        "ca2ad8f0-e83e-465f-8660-1b8e8e0c480e",
+        "6037229a-724d-4dde-a9ac-6d3e7b6060d1",
+        "8eb32c91-683a-476a-a593-dcf049fe2a93",
+        "965f188f-a510-402c-b7ef-d37a78b408aa",
+        "53fbbfd9-6302-4cd2-af00-94c735033e44",
+        "d4a01b6b-1814-49b7-80aa-75499d05c56b",
+        "dbc9c6ef-e18d-461e-93a1-e6af93a4a14c",
+        "a231d55c-fc42-45f9-9da3-9064499048a5",
+        "08346101-8281-4a9e-883f-f7d0e0883ccd",
+        "4477241e-9583-4196-a4cd-dd3a29d8c3e0",
+        "2ddc766f-2472-4158-afcc-1e6f3102be4e",
+        "8db5beb0-8997-4bfb-8392-5cb267ba6a47",
+        "63967edd-1f5a-4a11-baad-0393f43c429d",
+        "9990a3a8-1433-4efc-bbbd-1e1465e79a14",
+        "87a0fb5b-89d5-4076-b90b-c03be4517f33",
+        "d52afdff-bea2-4315-8d3d-a00ca6c03d2b",
+        "b0492e9d-8ae0-40ea-9650-6bc4e8915b61",
+        "05885ceb-6d30-4633-8eee-10f3efc5927a",
+        "7fcc281a-8696-4203-a7c4-872a2a221b54",
+        "acd0642f-dcca-498f-a144-4036c3831351",
+        "30ca269d-c5ea-49e9-a3a4-c1c27e4bf7fc",
+        "b8a7298f-b159-449b-9f47-a233dbabefa2",
+        "2996a5ea-8698-49fa-8738-f645dfc21075",
+        "e2bc721c-a0cf-4b74-8d99-1e4ec1faba65",
+        "e1061cb8-1fbe-4c52-bdd2-7bfa1b727639",
+        "52d7bafc-8f66-46f3-bdd6-afea9c2bb09c",
+        "bccf02cc-4b8c-44ce-bf00-bfd0fc7a258b",
+        "2294986c-80e1-4784-8d03-4e5f243c2ea9",
+        "52e7575f-8ce3-4a31-a665-c1a9e81fe7d9",
+        "f0e086b9-7fa2-448b-b556-6cd3690af156",
+        "033241bf-2622-437c-9b02-837a0427ce82",
+        "05ff82ca-db8b-43ad-bac7-47ea3b592419",
+        "08b4429a-7a49-46cb-83f6-46e96e0fd9ca",
+        "76a115dc-c1b6-4d78-b41a-77638c57a85d",
+        "c0c789ea-9206-485a-87e8-e7bea79c54d2",
+        "5d70ad71-196a-4142-9616-69d033e758a1",
+        "07249efc-42c3-4a8e-bc4b-b1f9d5e47568",
+        "19c1833a-aad1-4731-844c-9302847ed750",
+        "c48d1952-6dc8-428f-b091-75cfa52c4ad6",
+        "5e701738-4433-4cbf-bae8-f5d4355880af",
+        "a620ea75-25aa-4f22-ba78-bb6dd17e06bc",
+        "ba7fed51-e389-4b1b-ae61-5915cb72c9c5",
+        "8ca9594d-1268-4432-adaf-a25f4bf28dcf",
+        "79f95765-00a8-4d51-87af-b117df9d9d63",
+        "2b76322f-dcd4-47ec-94ae-f857e7cb062b",
+        "7652a91e-f1f6-4696-9741-638ea7b39d57",
+        "9e068028-b6c6-4916-8ff0-0e4f601485f4",
+        "c9ce49d8-ba10-4b4a-a313-55b834cc22e8",
+        "f41ddbf0-6195-49b2-9b14-94d212819058",
+        "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+        "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+        "b9649090-7bec-4cea-af4e-81aac03ed017",
+        "d128e54e-47cc-45a4-a259-b41d21c06729",
+        "bf039ef5-4e0b-48c7-a518-ea540982c1e7"
+      ],
+      "attemptsDigest": "c40810caf3bbead376a31e1d82546318bd69295400bc3d54083bcb159ceb2ccc"
+    },
+    {
+      "file": "REDOWN-DIAGNOSTIC-2026-11-11.zip",
+      "sha256": "4e7b0d3263cfa2fec11302051321f7c8c6f8bdde572b98b096cd9fe1adfbc6eb",
+      "perProvider": {
+        "google": {
+          "firstRetainedFailure": null,
+          "lastRetainedCompletion": {
+            "id": "f41ddbf0-6195-49b2-9b14-94d212819058",
+            "receivedAt": 1794415170259,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415170598,
+                "code": "OK",
+                "phase": "auth"
+              },
+              {
+                "at": 1794415178349,
+                "code": "PROVIDER_FAILED",
+                "phase": "starting"
+              },
+              {
+                "at": 1794415178403,
+                "code": "PROVIDER_FAILED",
+                "phase": "starting"
+              }
+            ],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": null
+        },
+        "dropbox": {
+          "firstRetainedFailure": {
+            "id": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+            "receivedAt": 1794415175636,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PREFLIGHT_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415178037,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              },
+              {
+                "at": 1794415178319,
+                "code": "HISTORY_UNAVAILABLE",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          },
+          "lastRetainedCompletion": {
+            "id": "7652a91e-f1f6-4696-9741-638ea7b39d57",
+            "receivedAt": 1794415071955,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "OK"
+          },
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+            "receivedAt": 1794415175636,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PREFLIGHT_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415178037,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              },
+              {
+                "at": 1794415178319,
+                "code": "HISTORY_UNAVAILABLE",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          }
+        },
+        "onedrive": {
+          "firstRetainedFailure": {
+            "id": "dbc9c6ef-e18d-461e-93a1-e6af93a4a14c",
+            "receivedAt": 1794414834680,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794414838739,
+                "code": "ONEDRIVE_BUSY",
+                "phase": "auth"
+              },
+              {
+                "at": 1794414839126,
+                "code": "ONEDRIVE_BUSY",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "ONEDRIVE_BUSY"
+          },
+          "lastRetainedCompletion": {
+            "id": "9e068028-b6c6-4916-8ff0-0e4f601485f4",
+            "receivedAt": 1794415074373,
+            "lastStage": "TERMINAL",
+            "outcome": "COMPLETED",
+            "reason": "OK",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "COUNTER_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          },
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+            "receivedAt": 1794415180415,
+            "lastStage": "TERMINAL",
+            "outcome": "BLOCKED",
+            "reason": "PREFLIGHT_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794415181134,
+                "code": "PROVIDER_FAILED",
+                "phase": "auth"
+              },
+              {
+                "at": 1794415181253,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              },
+              {
+                "at": 1794415181330,
+                "code": "HISTORY_UNAVAILABLE",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "HISTORY_UNAVAILABLE"
+          }
+        },
+        "cloudflare": {
+          "firstRetainedFailure": {
+            "id": "4443b0ae-697e-498c-8006-8f0810af75c3",
+            "receivedAt": 1794414202053,
+            "lastStage": "TERMINAL",
+            "outcome": "UNCERTAIN",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794414205783,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "PROVIDER_FAILED"
+          },
+          "lastRetainedCompletion": null,
+          "firstFailureAfterLastRetainedCompletion": {
+            "id": "4443b0ae-697e-498c-8006-8f0810af75c3",
+            "receivedAt": 1794414202053,
+            "lastStage": "TERMINAL",
+            "outcome": "UNCERTAIN",
+            "reason": "PROVIDER_FAILED",
+            "stages": [
+              "CLICK_RECEIVED",
+              "ROUTE_RESOLVED",
+              "AUTH_CHECKED",
+              "ADMITTED",
+              "SOURCE_REQUEST",
+              "PROVIDER_WRITE",
+              "REMOTE_VERIFY",
+              "HISTORY_COMMIT",
+              "TERMINAL"
+            ],
+            "codes": [
+              {
+                "at": 1794414205783,
+                "code": "PROVIDER_FAILED",
+                "phase": "history"
+              }
+            ],
+            "queueCode": "PROVIDER_FAILED"
+          }
+        }
+      },
+      "bytes": 43132,
+      "collectedAt": 1794416850972,
+      "collectedISO": "2026-11-11T17:07:30.972Z",
+      "privacy": {
+        "scope": "Owner redacted ZIP, inspected as untrusted data; no raw extraction published",
+        "files": [
+          "SUMMARY.md",
+          "attempts.json",
+          "queue.json",
+          "history-reconciliation.json",
+          "environment.json",
+          "source-and-provider-failures.json",
+          "README.md"
+        ],
+        "rawUrlFieldsExported": false,
+        "tokenValuesExported": false,
+        "correlationIdentifiersPresent": true
+      },
+      "attemptCount": 100,
+      "counters": {
+        "dropbox/COMPLETED/OK": 23,
+        "onedrive/COMPLETED/OK": 23,
+        "google/COMPLETED/OK": 26,
+        "cloudflare/UNCERTAIN/PROVIDER_FAILED": 20,
+        "onedrive/BLOCKED/PROVIDER_FAILED": 3,
+        "dropbox/BLOCKED/PREFLIGHT_FAILED": 1,
+        "onedrive/BLOCKED/PREFLIGHT_FAILED": 1,
+        "google/OPEN/none": 1,
+        "dropbox/OPEN/none": 1,
+        "onedrive/OPEN/none": 1
+      },
+      "historyFailures": [
+        {
+          "attemptId": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+          "provider": "dropbox",
+          "at": 1794415178319,
+          "events": [
+            {
+              "stage": "CLICK_RECEIVED",
+              "at": 1794415175636
+            },
+            {
+              "stage": "ROUTE_RESOLVED",
+              "at": 1794415175682
+            },
+            {
+              "stage": "AUTH_CHECKED",
+              "at": 1794415177843
+            },
+            {
+              "stage": "TERMINAL",
+              "at": 1794415178037,
+              "outcome": "BLOCKED",
+              "reason": "PREFLIGHT_FAILED"
+            }
+          ],
+          "displayedState": "blocked",
+          "displayedCode": "HISTORY_UNAVAILABLE",
+          "exceptionName": "not captured",
+          "storageArea": "not captured"
+        },
+        {
+          "attemptId": "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+          "provider": "onedrive",
+          "at": 1794415181330,
+          "events": [
+            {
+              "stage": "CLICK_RECEIVED",
+              "at": 1794415180415
+            },
+            {
+              "stage": "ROUTE_RESOLVED",
+              "at": 1794415180416
+            },
+            {
+              "stage": "TERMINAL",
+              "at": 1794415181250,
+              "outcome": "BLOCKED",
+              "reason": "PREFLIGHT_FAILED"
+            }
+          ],
+          "displayedState": "blocked",
+          "displayedCode": "HISTORY_UNAVAILABLE",
+          "exceptionName": "not captured",
+          "storageArea": "not captured"
+        }
+      ],
+      "oldestRetainedAttempt": "c4bdeb3f-e2a0-49c4-a42d-1212b4fa617e",
+      "latestRetainedAttempts": [
+        {
+          "id": "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+          "provider": "dropbox",
+          "lastStage": "TERMINAL",
+          "at": 1794415178037
+        },
+        {
+          "id": "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+          "provider": "onedrive",
+          "lastStage": "TERMINAL",
+          "at": 1794415181250
+        },
+        {
+          "id": "b9649090-7bec-4cea-af4e-81aac03ed017",
+          "provider": "google",
+          "lastStage": "SOURCE_REQUEST",
+          "at": 1794415202399
+        },
+        {
+          "id": "d128e54e-47cc-45a4-a259-b41d21c06729",
+          "provider": "dropbox",
+          "lastStage": "SOURCE_REQUEST",
+          "at": 1794415201341
+        },
+        {
+          "id": "bf039ef5-4e0b-48c7-a518-ea540982c1e7",
+          "provider": "onedrive",
+          "lastStage": "ROUTE_RESOLVED",
+          "at": 1794415202035
+        }
+      ],
+      "cloudflareAuth": {
+        "credentialPresent": true,
+        "refreshAvailable": false,
+        "reconnectRequired": true,
+        "expired": true
+      },
+      "archive": {
+        "count": 713,
+        "state": "read"
+      },
+      "totals": {
+        "lifetime": "610",
+        "daily": "332",
+        "providers": {
+          "google": "139",
+          "dropbox": "119",
+          "onedrive": "123",
+          "cloudflare": "145"
+        }
+      },
+      "retainedReceiptLinks": 25,
+      "workerHttp200Observations": 20,
+      "attemptIds": [
+        "c4bdeb3f-e2a0-49c4-a42d-1212b4fa617e",
+        "b6271f5c-d48b-4507-8034-cc8ebf97b887",
+        "9d79de12-2297-4684-a8aa-9224de9cdd88",
+        "4443b0ae-697e-498c-8006-8f0810af75c3",
+        "ce20475b-a73c-429c-9f7e-ce97192317d1",
+        "3631f136-419c-49f7-9b11-3e1581382fa5",
+        "2e7f45c8-e497-462a-a16d-16b40929312b",
+        "eded25b5-978d-40c6-a045-8c9d4d6fde94",
+        "6a034f72-8fc2-4ae0-a0e8-96e0667424ba",
+        "6b5df287-9974-43b6-9246-3fb8dd55aaa5",
+        "92d44a88-8e5c-4790-a77e-eae25af8e0e9",
+        "81f37f3b-de14-4327-8270-bbd5f043b577",
+        "e9bea8b7-fb66-4d7a-bb47-d8d4589c74ce",
+        "8231d6df-82e0-443b-afc9-27245f74713a",
+        "3c7eeb42-1e9f-4655-80f4-1d71dab0412a",
+        "3ed55f24-227d-4f92-ac8c-3c69af7866a3",
+        "8eb8675f-6211-47fc-b21f-a3e0ec0124ce",
+        "e51578b8-a386-46d3-b80a-429aeb7698dd",
+        "3388fd0e-b286-47a6-ab18-ed81d21e374f",
+        "a8775152-5e4b-4510-ba18-9458ef380952",
+        "464f8e4f-f10f-4ab6-b253-4851e7428a36",
+        "c23ab2fd-75e8-4819-87b3-9d4c37a6a43b",
+        "b344f7b3-2183-48a3-be19-ce0bb91dbea1",
+        "70e867fb-ce43-4494-a580-f6fe9c0d701e",
+        "00518393-cf75-4544-bb18-976ba3b01e47",
+        "697e3759-4545-4072-9574-9b6d4b543419",
+        "a32f5810-1112-4bdc-b0a4-455cf69d6966",
+        "2db1d7af-fdc8-485a-b94b-d75406c166d0",
+        "9852168a-5a7c-4522-9f54-3a25bdd7d925",
+        "1bd854aa-af81-4248-969b-6ca27492353a",
+        "d79caee0-ee07-4caa-8b34-31e2d1eeed98",
+        "2566d55a-9dc2-49e6-ae65-a12ffbf64a65",
+        "5b091c0b-2920-4d6e-9472-b5609a7b1efb",
+        "485ba2f7-8df7-41ea-825e-c8da503dfe16",
+        "3a60490a-2459-477e-8ca6-49797b02f83d",
+        "2fbf40ae-d5b0-4bc1-b661-1d9dee165751",
+        "d86a1c28-fa9b-4a77-9f77-9930ea82accb",
+        "cf359c47-945a-4467-9e24-4809646ebbb6",
+        "38494fa0-7535-46b0-886a-0352d56c6184",
+        "7ec95390-1cd9-42d2-a18e-06dccbb2ed66",
+        "37ae0a0a-9f57-451d-97d6-91aa8d62d638",
+        "d480981c-9aee-4768-947b-d6c6d3c6a0be",
+        "616ebe67-5b93-4f96-95d7-66d76de2273b",
+        "766d59d8-eb5f-4b8a-8283-2f96473091b6",
+        "892866bf-b337-4537-ae36-61c61852b09f",
+        "b0975d48-1df9-4085-b376-42706a51dc2b",
+        "ca2ad8f0-e83e-465f-8660-1b8e8e0c480e",
+        "6037229a-724d-4dde-a9ac-6d3e7b6060d1",
+        "8eb32c91-683a-476a-a593-dcf049fe2a93",
+        "965f188f-a510-402c-b7ef-d37a78b408aa",
+        "53fbbfd9-6302-4cd2-af00-94c735033e44",
+        "d4a01b6b-1814-49b7-80aa-75499d05c56b",
+        "dbc9c6ef-e18d-461e-93a1-e6af93a4a14c",
+        "a231d55c-fc42-45f9-9da3-9064499048a5",
+        "08346101-8281-4a9e-883f-f7d0e0883ccd",
+        "4477241e-9583-4196-a4cd-dd3a29d8c3e0",
+        "2ddc766f-2472-4158-afcc-1e6f3102be4e",
+        "8db5beb0-8997-4bfb-8392-5cb267ba6a47",
+        "63967edd-1f5a-4a11-baad-0393f43c429d",
+        "9990a3a8-1433-4efc-bbbd-1e1465e79a14",
+        "87a0fb5b-89d5-4076-b90b-c03be4517f33",
+        "d52afdff-bea2-4315-8d3d-a00ca6c03d2b",
+        "b0492e9d-8ae0-40ea-9650-6bc4e8915b61",
+        "05885ceb-6d30-4633-8eee-10f3efc5927a",
+        "7fcc281a-8696-4203-a7c4-872a2a221b54",
+        "acd0642f-dcca-498f-a144-4036c3831351",
+        "30ca269d-c5ea-49e9-a3a4-c1c27e4bf7fc",
+        "b8a7298f-b159-449b-9f47-a233dbabefa2",
+        "2996a5ea-8698-49fa-8738-f645dfc21075",
+        "e2bc721c-a0cf-4b74-8d99-1e4ec1faba65",
+        "e1061cb8-1fbe-4c52-bdd2-7bfa1b727639",
+        "52d7bafc-8f66-46f3-bdd6-afea9c2bb09c",
+        "bccf02cc-4b8c-44ce-bf00-bfd0fc7a258b",
+        "2294986c-80e1-4784-8d03-4e5f243c2ea9",
+        "52e7575f-8ce3-4a31-a665-c1a9e81fe7d9",
+        "f0e086b9-7fa2-448b-b556-6cd3690af156",
+        "033241bf-2622-437c-9b02-837a0427ce82",
+        "05ff82ca-db8b-43ad-bac7-47ea3b592419",
+        "08b4429a-7a49-46cb-83f6-46e96e0fd9ca",
+        "76a115dc-c1b6-4d78-b41a-77638c57a85d",
+        "c0c789ea-9206-485a-87e8-e7bea79c54d2",
+        "5d70ad71-196a-4142-9616-69d033e758a1",
+        "07249efc-42c3-4a8e-bc4b-b1f9d5e47568",
+        "19c1833a-aad1-4731-844c-9302847ed750",
+        "c48d1952-6dc8-428f-b091-75cfa52c4ad6",
+        "5e701738-4433-4cbf-bae8-f5d4355880af",
+        "a620ea75-25aa-4f22-ba78-bb6dd17e06bc",
+        "ba7fed51-e389-4b1b-ae61-5915cb72c9c5",
+        "8ca9594d-1268-4432-adaf-a25f4bf28dcf",
+        "79f95765-00a8-4d51-87af-b117df9d9d63",
+        "2b76322f-dcd4-47ec-94ae-f857e7cb062b",
+        "7652a91e-f1f6-4696-9741-638ea7b39d57",
+        "9e068028-b6c6-4916-8ff0-0e4f601485f4",
+        "c9ce49d8-ba10-4b4a-a313-55b834cc22e8",
+        "f41ddbf0-6195-49b2-9b14-94d212819058",
+        "f0ac60a1-ec89-49de-90cb-4d7d16bf58df",
+        "32fa5273-eb4f-4a7f-9edb-2652581618ac",
+        "b9649090-7bec-4cea-af4e-81aac03ed017",
+        "d128e54e-47cc-45a4-a259-b41d21c06729",
+        "bf039ef5-4e0b-48c7-a518-ea540982c1e7"
+      ],
+      "attemptsDigest": "c40810caf3bbead376a31e1d82546318bd69295400bc3d54083bcb159ceb2ccc"
+    }
+  ],
+  "comparisons": [
+    {
+      "before": "REDOWN-BEFORE.zip",
+      "after": "REDOWN-DIAGNOSTIC-2026-11-11a.zip",
+      "sharedAttemptIds": 0,
+      "identicalAttempts": false
+    },
+    {
+      "before": "REDOWN-DIAGNOSTIC-2026-11-11a.zip",
+      "after": "REDOWN-DIAGNOSTIC-2026-11-11.zip",
+      "sharedAttemptIds": 100,
+      "identicalAttempts": true
+    }
+  ],
+  "conclusions": [
+    "HISTORY_UNAVAILABLE is an observation, not the terminal reason on these retained failures.",
+    "The last two captures retain identical attempt snapshots; elapsed time alone does not establish fresh progress.",
+    "OAuth callback/token exchange checkpoints, storage exception names/quota and OS free bytes were not captured.",
+    "Remote verification stage entry and Worker HTTP 200 do not establish a verified R2 object."
+  ]
+}

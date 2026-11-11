@@ -1,0 +1,327 @@
+✖ issued OAuth token survives separate account API HTTP 403 (59.528653ms)
+✖ issued OAuth token survives separate account API HTTP 500 (14.738626ms)
+✖ issued token persists while account API is still pending; duplicate callbacks do not exchange twice (11.745629ms)
+✖ token storage quota error never claims connected or leaks code/verifier through terminal state (10.37801ms)
+✔ cancelled or invalid-state OAuth callback cannot replace credentials (9.892573ms)
+✖ verified upload storage failure retains typed local cause; retry reconciles one archive row and one counter (8.252713ms)
+✖ archive-only abort preserves recent History; storage-read failure cannot claim unverified upload (19.740469ms)
+✖ Cloudflare verified upload with failed local commit never writes a false failure or repeats ingestion (22.681732ms)
+✖ History archive reopens after another context requests a version upgrade without deleting records (21.06176ms)
+✖ safe bundle exposes exact allowed storage causes and OAuth checkpoint, never arbitrary error text (18.738972ms)
+✖ verified accounting-pending attempts stay verified and visible for attention without a counter increment (10.490766ms)
+✖ pending Cloudflare receipt without retained trace remains inspectable and stale cleanup does not create pending again (9.371954ms)
+✖ verified History reconciliation reopens only an accounting-pending terminal, preserving one terminal (12.74927ms)
+✖ retry after local-commit failure upserts the identical durable archive receipt (10.159878ms)
+✖ account API rejects issued token: retain credential evidence and require reconnect without claiming readiness (19.692409ms)
+✖ optional OAuth checkpoint storage failure cannot discard an issued token (9.379265ms)
+✖ unreported Dropbox completion requires the exact account, namespace, revision and byte proof (7.12694ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 1
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 430.513558
+
+✖ failing tests:
+
+test at tests/windows-oauth-history.test.mjs:22:31
+✖ issued OAuth token survives separate account API HTTP 403 (59.528653ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'PRIVATE_TOKEN'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:23:74)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'PRIVATE_TOKEN',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:22:31
+✖ issued OAuth token survives separate account API HTTP 500 (14.738626ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'PRIVATE_TOKEN'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:23:74)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'PRIVATE_TOKEN',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:26:1
+✖ issued token persists while account API is still pending; duplicate callbacks do not exchange twice (11.745629ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'PRIVATE_TOKEN'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:28:122)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'PRIVATE_TOKEN',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:30:1
+✖ token storage quota error never claims connected or leaks code/verifier through terminal state (10.37801ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  2 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:31:245)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:44:1
+✖ verified upload storage failure retains typed local cause; retry reconciles one archive row and one counter (8.252713ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - true
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:46:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:49:1
+✖ archive-only abort preserves recent History; storage-read failure cannot claim unverified upload (19.740469ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+
+  Caught error:
+
+  UnknownError: PRIVATE
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:51:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: UnknownError: PRIVATE
+        at new DOMException (node:internal/per_context/domexception:76:18)
+        at Object.get (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:39:58)
+        at state (evalmachine.<anonymous>:12:34)
+        at evalmachine.<anonymous>:86:39
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:51:18)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:53:1
+✖ Cloudflare verified upload with failed local commit never writes a false failure or repeats ingestion (22.681732ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(notices.some(n=>n[0].includes('History pending')))
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:61:117)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:64:1
+✖ History archive reopens after another context requests a version upgrade without deleting records (21.06176ms)
+  Error: OLD_CONNECTION_BLOCKS_UPGRADE
+      at r.onblocked (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:66:259)
+      at invoke (file:///workspace/REDOWN/node_modules/fake-indexeddb/build/esm/lib/FakeEventTarget.js:14:16)
+      at invokeEventListeners (file:///workspace/REDOWN/node_modules/fake-indexeddb/build/esm/lib/FakeEventTarget.js:51:7)
+      at FDBOpenDBRequest.dispatchEvent (file:///workspace/REDOWN/node_modules/fake-indexeddb/build/esm/lib/FakeEventTarget.js:100:7)
+      at Immediate.<anonymous> (file:///workspace/REDOWN/node_modules/fake-indexeddb/build/esm/FDBFactory.js:145:17)
+      at process.processImmediate (node:internal/timers:574:21)
+
+test at tests/windows-oauth-history.test.mjs:70:1
+✖ safe bundle exposes exact allowed storage causes and OAuth checkpoint, never arbitrary error text (18.738972ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'QuotaExceededError'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:74:173)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'QuotaExceededError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:77:1
+✖ verified accounting-pending attempts stay verified and visible for attention without a counter increment (10.490766ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'verifying'
+  - 'verified'
+          ^
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:81:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'verifying',
+    expected: 'verified',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:84:1
+✖ pending Cloudflare receipt without retained trace remains inspectable and stale cleanup does not create pending again (9.371954ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:86:72)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/windows-oauth-history.test.mjs:88:1
+✖ verified History reconciliation reopens only an accounting-pending terminal, preserving one terminal (12.74927ms)
+  TypeError [Error]: a.reconcile is not a function
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:89:483)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/windows-oauth-history.test.mjs:91:1
+✖ retry after local-commit failure upserts the identical durable archive receipt (10.159878ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  2 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:92:143)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:95:1
+✖ account API rejects issued token: retain credential evidence and require reconnect without claiming readiness (19.692409ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'PRIVATE_TOKEN'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:96:78)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'PRIVATE_TOKEN',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:99:1
+✖ optional OAuth checkpoint storage failure cannot discard an issued token (9.379265ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'verified'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:100:152)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'verified',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/windows-oauth-history.test.mjs:102:1
+✖ unreported Dropbox completion requires the exact account, namespace, revision and byte proof (7.12694ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'verifying'
+  - 'verified'
+          ^
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/windows-oauth-history.test.mjs:105:90)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'verifying',
+    expected: 'verified',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

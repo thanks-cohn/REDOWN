@@ -33,7 +33,7 @@
         destination:{provider:'onedrive',accountId:job.accountId,driveId:job.driveId,rootId:job.rootId,
           itemId:item.itemId||'',root:'/'},bytes:ok?item.bytes:job.bytes||0,
         transport:'browser-mediated',error:ok?undefined:job.error};
-      if(ok)await chrome.storage.local.set({[pendingReceiptKey]:entry});
+      if(ok)await chrome.storage.local.set({[pendingReceiptKey]:entry}).catch(()=>{});
       try{
         await record(entry);
         if(ok)await chrome.storage.local.remove(pendingReceiptKey);
@@ -42,7 +42,7 @@
         // History/counter failed. Retain its receipt, expose the accounting
         // issue and allow the worker to reconcile without a second upload.
         console.warn('OneDrive receipt persistence needs retry:',String(error?.message||'storage error'));
-        await setTransfer({status:ok?'completed':'uncertain',
+        await setTransfer({status:ok?'completed':'uncertain',verified:ok,accountingPending:ok,attemptId:src.attemptId,id:job.id,bytes:ok?item.bytes:job.bytes,
           error:ok?'OneDrive saved the file, but REDOWN History is synchronizing.':job.error||'Transfer receipt unavailable.',
           ...(ok?{itemId:item.itemId,webUrl:item.webUrl||''}:{})}).catch(()=>{});
       }
@@ -65,7 +65,7 @@
           },controller.signal);
           if(ticket!==epoch)throw RedownOneDriveAPI.fail('ONEDRIVE_INTERRUPTED','OneDrive was disconnected.','uncertain');
           job.status='completed';job.bytes=job.item.bytes;
-          await setTransfer({status:'completed',phase:'verifying',id:job.id,attemptId:source.attemptId,name:job.item.name,bytes:job.item.bytes,total:job.item.bytes,
+          await setTransfer({status:'completed',verified:true,phase:'verifying',id:job.id,attemptId:source.attemptId,name:job.item.name,bytes:job.item.bytes,total:job.item.bytes,
             itemId:job.item.itemId,webUrl:job.item.webUrl||''}).catch(()=>{});
         }catch(e){
           const p=problem(e);

@@ -900,8 +900,9 @@ async function recordTransfer(entry) {
   else if(['uncertain','interrupted','blocked'].includes(entry?.status))indicateFailure();
   let outcome;
   try{outcome=await transferCounter.record(entry);}
-  catch(error){globalThis.RedownSaveEvidence?.note(id,{phase:'history',code:'HISTORY_UNAVAILABLE',decision:'uncertain'});attempts?.finish(id,'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
+  catch(error){globalThis.RedownSaveEvidence?.note(id,{phase:'history',code:'HISTORY_UNAVAILABLE',decision:'uncertain'});indicateFailure();attempts?.finish(id,error.remoteVerified?'COMPLETED':'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
   if(id&&['completed','failed','blocked','cancelled','uncertain','interrupted'].includes(entry.status)){
+    attempts?.reconcile?.(id);
     attempts?.stage(id,'HISTORY_COMMIT');
     if(outcome?.newVerified||outcome?.duplicate)attempts?.stage(id,'COUNTER_COMMIT');
     attempts?.finish(id,entry.ok===true&&(outcome?.newVerified||outcome?.duplicate)?'COMPLETED':entry.ok===true?'UNCERTAIN':entry.status.toUpperCase(),entry.ok===true?'OK':'PROVIDER_FAILED');
@@ -909,6 +910,32 @@ async function recordTransfer(entry) {
   if(outcome?.newVerified===true)void toolbarFeedback("success");
   return outcome;
 }
+// Cloudflare has no persistent upload job. Retain only its verified receipt for
+// local accounting replay; this path never fetches a source or writes remotely.
+const cloudflarePendingKey='cloudflare:verifiedReceiptPendingHistory';
+async function recordCloudflareCompletion(entry){
+  return navigator.locks.request('redown-cloudflare-receipts',async()=>{
+    let pending;try{pending=(await chrome.storage.local.get(cloudflarePendingKey))[cloudflarePendingKey]||{};}catch{return recordTransfer(entry);}
+    pending={...pending,[entry.deliveryId]:entry};
+    // If local storage is failing, still try the independent archive/counter path.
+    await chrome.storage.local.set({[cloudflarePendingKey]:pending}).catch(()=>{});
+    const outcome=await recordTransfer(entry);
+    delete pending[entry.deliveryId];
+    await chrome.storage.local.set({[cloudflarePendingKey]:pending}).catch(()=>{});
+    return outcome;
+  });
+}
+async function reconcileCloudflareReceipts(){
+  return navigator.locks.request('redown-cloudflare-receipts',async()=>{
+    const pending=(await chrome.storage.local.get(cloudflarePendingKey))[cloudflarePendingKey]||{};
+    for(const [id,entry] of Object.entries(pending)){
+      if(!transferCounter.isVerifiedReceipt(entry))continue;
+      await recordTransfer(entry);delete pending[id];
+      await chrome.storage.local.set({[cloudflarePendingKey]:pending});
+    }
+  });
+}
+void reconcileCloudflareReceipts().catch(()=>{});
 async function notify(title, message) {
   try {
     const { notificationsEnabled } = await chrome.storage.local.get("notificationsEnabled");
@@ -3041,14 +3068,19 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
   const {profile,owner,prefix}=resolved;
   const receipt={providerKind:"cloudflare",deliveryId:"cloudflare:"+crypto.randomUUID(),attemptId:globalThis.redownSaveAttempts?.forClick(info)};
   try{
+    try{await reconcileCloudflareReceipts();}catch{throw Error('An earlier verified Cloudflare save needs local History reconciliation before another save.');}
     const v3=String(info.menuItemId).startsWith('v3:');
     if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
     const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt,v3);
     globalThis.redownSaveAttempts?.stage(receipt.attemptId,'REMOTE_VERIFY');
     await verifyCloudflareReceipt(profile,sourceUrl,receipt);
-    await recordTransfer({pageUrl,ok:true,status:'completed',sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
+    await recordCloudflareCompletion({pageUrl,ok:true,status:'completed',sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
     await notify("REDOWN complete",location);
   }catch(error){
+    if(receipt.verified&&error?.remoteVerified){
+      await notify('REDOWN saved · History pending','The remote file was verified. Local History needs attention; the upload will not be repeated.');
+      return;
+    }
     const message=error?.message||String(error);
     const status=receipt.verified||receipt.destination||receipt.writeDispatched?'uncertain':'failed';
     await recordTransfer({pageUrl,ok:status==='failed'?false:undefined,status,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message,...receipt});

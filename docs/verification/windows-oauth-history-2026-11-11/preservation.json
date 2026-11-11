@@ -1,0 +1,437 @@
+{
+  "archive": "WORKING_EVIDENCE.tar.gz",
+  "sha256": "77b92c433a3119c795f511a15d50f0c5e09fe0e6dfa28a106b0773aa3eaee7f6",
+  "bytes": 4323902,
+  "contents": [
+    {
+      "path": "windows-oauth-history/after.json",
+      "bytes": 149390,
+      "sha256": "ef594ed4e16bf64e97cafd9240317abed0116bef538872540bd6e951d821b3ab"
+    },
+    {
+      "path": "windows-oauth-history/after.log",
+      "bytes": 45591,
+      "sha256": "54859c9730df16487606d500d7207a5d09e15efaed08227da7627dbfc21e5285"
+    },
+    {
+      "path": "windows-oauth-history/baseline-reproducer-delivered.log",
+      "bytes": 15048,
+      "sha256": "9eb74926ef482d60b3a168aa5188c82e4451f9888dd41e29817a84d9240e4d91"
+    },
+    {
+      "path": "windows-oauth-history/baseline-reproducer-delivery.log",
+      "bytes": 15093,
+      "sha256": "9406df6820843394d40661c5a4d738c5801f8ddbd4fb09b3b31ba196e0afe76d"
+    },
+    {
+      "path": "windows-oauth-history/baseline-reproducer-final.log",
+      "bytes": 13202,
+      "sha256": "b4a794704e9e031174d7a0ab9ec9addccf467151acc6f32cd62de7234cdf6d29"
+    },
+    {
+      "path": "windows-oauth-history/baseline.json",
+      "bytes": 147663,
+      "sha256": "1aedaeb27bee674c616c756329ba159094247ba2a7ba534d98b55cdbeba98ee7"
+    },
+    {
+      "path": "windows-oauth-history/baseline.log",
+      "bytes": 44801,
+      "sha256": "5a89abe1a0bd4dc0762199d7948af509b32fcc1f4bf724c2dd8c1f669782d585"
+    },
+    {
+      "path": "windows-oauth-history/boot-schema.log",
+      "bytes": 59,
+      "sha256": "467c2343816e137ff5858b3b2cd07daccecc766f1c4b713107bdc91afb01245b"
+    },
+    {
+      "path": "windows-oauth-history/browser/REDOWN-DIAGNOSTIC-2026-11-11.zip",
+      "bytes": 4472,
+      "sha256": "039a535488400c262a5e38b9fc589952fd2989d56c3a5e6782e488d5f5ded520"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-midnight-260.png",
+      "bytes": 110585,
+      "sha256": "38cdc3cfb128316455893dcc39f5b6b9a8c4be5537adeeed32f85295a5733ffd"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-midnight-320.png",
+      "bytes": 122432,
+      "sha256": "022514382041ea37cbd866771f92d3bab4424e8d5f49fbd30a6a1ae51bb40c7a"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-midnight-420.png",
+      "bytes": 147668,
+      "sha256": "71552373a441042e1982e36d35a79bd56eff14d7018616c104f26beff4be1fb1"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-neon-260.png",
+      "bytes": 113531,
+      "sha256": "f2c35b9a73724a446509b3a46b3b0c77620078bd9f15f217d82f6e8454ea3657"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-neon-320.png",
+      "bytes": 130001,
+      "sha256": "b335ccb5e758d9c3f2df7a69cf27662571acfc10d3657d51803f095e6ccfd068"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-neon-420.png",
+      "bytes": 155317,
+      "sha256": "057ddc80990108f9d48bfbb11933dfbb2c3dc47dd2b9ec2b2247a9b021449ab8"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-ocean-260.png",
+      "bytes": 123966,
+      "sha256": "2586cef52ff18d8da6239010702e44b24c3669590a36b5dabee86289943dc371"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-ocean-320.png",
+      "bytes": 138208,
+      "sha256": "20f19940cee7b065a00161d36de524417390566a7eaa2c0d02dd49fda682e93e"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-ocean-420.png",
+      "bytes": 171518,
+      "sha256": "3e6a4bb2a342b208f8126b66747cce78dcd10bb413c8153e3056da38ff54c304"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-porcelain-260.png",
+      "bytes": 70432,
+      "sha256": "30951ddbc2f18d3f45f6100f0aa93352fefe79a146ee71d6daa7e15e3adb5196"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-porcelain-320.png",
+      "bytes": 76238,
+      "sha256": "cb8017aa1413b338b4006c6dfde22b8959054e11a275460e53e304f348d247ac"
+    },
+    {
+      "path": "windows-oauth-history/browser/queue-porcelain-420.png",
+      "bytes": 92949,
+      "sha256": "36f4aab80bed0cb2345cadb8b4fcf0575a5fc01b61d3461488b66cbfdccfb9a0"
+    },
+    {
+      "path": "windows-oauth-history/browser/result.json",
+      "bytes": 4209,
+      "sha256": "ee02bf51303dd7bd78b6dfd027c767785a71a3b8aace9ce0249b513afd6cc805"
+    },
+    {
+      "path": "windows-oauth-history/browser/worker-unavailable/REDOWN-DIAGNOSTIC-2026-11-11.zip",
+      "bytes": 4513,
+      "sha256": "ff54707229cae8a14891482fc9bb4c56091d91abdd3a64422fb1400a99c6c9b1"
+    },
+    {
+      "path": "windows-oauth-history/browser.log",
+      "bytes": 4209,
+      "sha256": "ee02bf51303dd7bd78b6dfd027c767785a71a3b8aace9ce0249b513afd6cc805"
+    },
+    {
+      "path": "windows-oauth-history/delivered-regression.json",
+      "bytes": 148600,
+      "sha256": "6755a35a7420fc3f96a58c0a18f7fee111033adbb63cc9b056cfe2c714771cc0"
+    },
+    {
+      "path": "windows-oauth-history/delivered-regression.log",
+      "bytes": 44801,
+      "sha256": "aa480888712009604829dffbfd69724baaa08bde46e5ce53a752d5a4c3688a3f"
+    },
+    {
+      "path": "windows-oauth-history/delivery-regression.json",
+      "bytes": 148600,
+      "sha256": "f066f7496a69a5655276f4d3c2f4d7c0825dbdee7148cf1cd99ec6dad9aafd09"
+    },
+    {
+      "path": "windows-oauth-history/delivery-regression.log",
+      "bytes": 44801,
+      "sha256": "d7d500da262cfc4734dbc039b7a102d8c27b5a1a7b3ba2c49b67a4f9e265486a"
+    },
+    {
+      "path": "windows-oauth-history/explorer-schema-corrected.log",
+      "bytes": 119,
+      "sha256": "4bb7d3de29713402c1d138f8f0b508bbcf6fb84fd9f95d8cb65dd4842b630d50"
+    },
+    {
+      "path": "windows-oauth-history/explorer-schema.log",
+      "bytes": 147,
+      "sha256": "d77f182d5647f71025a1194c16372c4cb10b99a4c660faa2625e48f34be2c4af"
+    },
+    {
+      "path": "windows-oauth-history/extended-focused-delivered.log",
+      "bytes": 13372,
+      "sha256": "5d55a26a73e470aa0c479ed1ebfe762c4ed8e46857e205fcc5cf42f26089fc53"
+    },
+    {
+      "path": "windows-oauth-history/extended-focused-final.log",
+      "bytes": 13263,
+      "sha256": "d69b59925f20cc87099dac196a888acd04a4bf6b08a4662e64e9464f3b713d93"
+    },
+    {
+      "path": "windows-oauth-history/extended-focused.log",
+      "bytes": 13174,
+      "sha256": "8ee13fab4d529d781bb5e8f38b057edd567737cdb2762ee2c2d8ac9e7421c953"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/REDOWN-DIAGNOSTIC-2026-11-11.zip",
+      "bytes": 4485,
+      "sha256": "842636e77304ae17f493be5301084c769e35928563148d62b5e14c6e14bd0f8c"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-midnight-260.png",
+      "bytes": 110450,
+      "sha256": "c4008d1b7b36d7e6dae7560cb7a53e5e8f4481dbca228ba03eec9c658ae432f6"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-midnight-320.png",
+      "bytes": 122329,
+      "sha256": "d0d4f596072eb1cb95bab12f9c8601b795dc185f36880264df97870e64dc7eaf"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-midnight-420.png",
+      "bytes": 147492,
+      "sha256": "a810b5baffdf67e35234fc1cc036a562206717a8483de2cafa826e3143c8b3c8"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-neon-260.png",
+      "bytes": 113534,
+      "sha256": "b3e364c11aa0ec8e986ada374b6b5e48804b23d9bd523a5e39d0f0cea62e95bf"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-neon-320.png",
+      "bytes": 130051,
+      "sha256": "e43462cd89c89e35b97fbc7093acebae44ebc78bb75bbce07e3948d3112b889d"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-neon-420.png",
+      "bytes": 155314,
+      "sha256": "6de93999fab95c0bb422445ba8d0abcc4208a0494d879ca8f277a3594236d4a8"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-ocean-260.png",
+      "bytes": 123678,
+      "sha256": "d0b7d1811d4a1619b62867b7defe366f35d53122e6b9e8161dcd4c8ff1bcba73"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-ocean-320.png",
+      "bytes": 138096,
+      "sha256": "63f2d3b0db50f6564224ea543f5cec2ef4f905cc5efcdee3d7c7c854515248a5"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-ocean-420.png",
+      "bytes": 171347,
+      "sha256": "9e0ed4bda51526605e0414eca0866ee4346fb1081f953a1ba9a1ae8e159a3556"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-porcelain-260.png",
+      "bytes": 70426,
+      "sha256": "3e0377ceb6f38072a0fdfc40b5aea379453b8cc67d77ffb8c7b2aaf8478e2657"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-porcelain-320.png",
+      "bytes": 76241,
+      "sha256": "16df26c6e7a88320bfb61664b94a996910bf8d109bb185506b0e8b0626627ce7"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/queue-porcelain-420.png",
+      "bytes": 92896,
+      "sha256": "8ccf42ffea1b00d4cffc29290d931920dc8365bbfea043ed6e1085a512b28fcb"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/result.json",
+      "bytes": 4209,
+      "sha256": "ee02bf51303dd7bd78b6dfd027c767785a71a3b8aace9ce0249b513afd6cc805"
+    },
+    {
+      "path": "windows-oauth-history/final-browser/worker-unavailable/REDOWN-DIAGNOSTIC-2026-11-11.zip",
+      "bytes": 4524,
+      "sha256": "3f2fde9a4c984a6d94b5fbd0ebbebd4a10cb9d4e1fc8171606e23a8a93416e96"
+    },
+    {
+      "path": "windows-oauth-history/final-browser.log",
+      "bytes": 4209,
+      "sha256": "ee02bf51303dd7bd78b6dfd027c767785a71a3b8aace9ce0249b513afd6cc805"
+    },
+    {
+      "path": "windows-oauth-history/final-regression.json",
+      "bytes": 148600,
+      "sha256": "10319a48ee7779961e6b1213bdfe7fb66fb7b336c7a1ed11bb6e71a8e48c4cca"
+    },
+    {
+      "path": "windows-oauth-history/final-regression.log",
+      "bytes": 44801,
+      "sha256": "a8088b76301ecc608113dbb1769f85135db5cb6bc90af1acd741d9114d4a3a60"
+    },
+    {
+      "path": "windows-oauth-history/final-verified-regression.json",
+      "bytes": 149422,
+      "sha256": "1fb7d5802cd2633a65ff8a186eae42cd8c1594e94594cd640b2bde89204b173c"
+    },
+    {
+      "path": "windows-oauth-history/final-verified-regression.log",
+      "bytes": 45623,
+      "sha256": "73833b5773a32510e32726ffd0c6907f25c03e6d58f18e4cc067933ef67a44a2"
+    },
+    {
+      "path": "windows-oauth-history/focused-delivery.log",
+      "bytes": 13393,
+      "sha256": "a312b4b7f8f6a102ac00caa7a0eafbd0939d1d9482c4ffe7713e897eea8df509"
+    },
+    {
+      "path": "windows-oauth-history/focused-final.log",
+      "bytes": 8745,
+      "sha256": "822f6c261885222529d01bf9ab33f609fdf59972d6cb7cfd4c75f1c9e7feb283"
+    },
+    {
+      "path": "windows-oauth-history/focused.log",
+      "bytes": 11605,
+      "sha256": "e8508a55f03d91c7dd89be88021e755e82bb8c5408f69b72e01b1b6d0933a319"
+    },
+    {
+      "path": "windows-oauth-history/gateway-schema.log",
+      "bytes": 214,
+      "sha256": "491619f5238cf28d48e383bd24e06bcd88cffc1cc44e2d75c6b756f341f67c7c"
+    },
+    {
+      "path": "windows-oauth-history/getReleaseReadiness.json",
+      "bytes": 5061,
+      "sha256": "14a2b895e0743eab0451561ec1e9cc38c4b8591ff94f30300c3459ab18e90792"
+    },
+    {
+      "path": "windows-oauth-history/getStartGuide.json",
+      "bytes": 1320,
+      "sha256": "90bf4867a9a541df71a31c688411db3cd6c850452f3bac2cc4aeb6a383d2bf3a"
+    },
+    {
+      "path": "windows-oauth-history/initial-focused.log",
+      "bytes": 6994,
+      "sha256": "56f6f0d610abec3e2d6d754217b1a4f158a0fae6f7f381c99c3d2b016217abe2"
+    },
+    {
+      "path": "windows-oauth-history/installed-chrome.json",
+      "bytes": 705,
+      "sha256": "d9207fc3cc5091b04abcac13d1576f02707704ffd5a4587eb899ebac09478505"
+    },
+    {
+      "path": "windows-oauth-history/installed-chrome.log",
+      "bytes": 705,
+      "sha256": "d9207fc3cc5091b04abcac13d1576f02707704ffd5a4587eb899ebac09478505"
+    },
+    {
+      "path": "windows-oauth-history/listIssues.json",
+      "bytes": 24075,
+      "sha256": "e8ba5ac44b4c3da216332437969f6bd669b8c7f4e74e569705901eb604a32447"
+    },
+    {
+      "path": "windows-oauth-history/owner-comparison.json",
+      "bytes": 46538,
+      "sha256": "8f83010dcf193348c04066120a8e351140f3a8cc6b7362ac52ce780b4f14997f"
+    },
+    {
+      "path": "windows-oauth-history/package-audit-delivered.log",
+      "bytes": 203,
+      "sha256": "765aa0e64bb7dac2dc251bf1f314b7e4ad94455539a2c8d48198fa42a9304c66"
+    },
+    {
+      "path": "windows-oauth-history/package-audit.log",
+      "bytes": 203,
+      "sha256": "6d2d148e2f6bbf218cd0c4a4fd8e1bd0144957bce15d52f25cde02e11955e00a"
+    },
+    {
+      "path": "windows-oauth-history/package-delivery.log",
+      "bytes": 203,
+      "sha256": "ed660795c08add52c86a51ffd474c23f823a34b39563b6de15ada6f33543e3cf"
+    },
+    {
+      "path": "windows-oauth-history/reproducer-after.log",
+      "bytes": 1165,
+      "sha256": "fd4c4a001c0092cdfec631b97ea788bf3262598879206a90718dcbd48197f70d"
+    },
+    {
+      "path": "windows-oauth-history/reproducer-before.log",
+      "bytes": 8906,
+      "sha256": "1d1fb1a41523649e9f4459fe8770b2e570ae398288202138b70f38bb82f478a6"
+    },
+    {
+      "path": "windows-oauth-history/runtime-schema.log",
+      "bytes": 74,
+      "sha256": "a42c4e2875e55c6b44a58f2b3582abe61fd6eee21e6a440dbec0dbd47cef9251"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-final.json",
+      "bytes": 1732,
+      "sha256": "0180483e6ee881ee8acacd387de7e63dab9ba7647606ee1045dccc9d47708f57"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-final.log",
+      "bytes": 1732,
+      "sha256": "0180483e6ee881ee8acacd387de7e63dab9ba7647606ee1045dccc9d47708f57"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-observed.json",
+      "bytes": 1116,
+      "sha256": "a83044ffac1d05b48efde66277c374f2c3bcec57bbd1742a92f021523a61c675"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-observed.log",
+      "bytes": 1116,
+      "sha256": "a83044ffac1d05b48efde66277c374f2c3bcec57bbd1742a92f021523a61c675"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-random.json",
+      "bytes": 876,
+      "sha256": "c391ef18ac9c036a49a039e4303e024a7a2b45e463acf8e5bd7a84653c22ad8d"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-random.log",
+      "bytes": 876,
+      "sha256": "c391ef18ac9c036a49a039e4303e024a7a2b45e463acf8e5bd7a84653c22ad8d"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-transactions.json",
+      "bytes": 2257,
+      "sha256": "77d16e7cbafbbd275ebca741fddfd43f355d882d1bccb42e43ea0d7f34134f90"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser-transactions.log",
+      "bytes": 2257,
+      "sha256": "77d16e7cbafbbd275ebca741fddfd43f355d882d1bccb42e43ea0d7f34134f90"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser.json",
+      "bytes": 876,
+      "sha256": "f161971b85475f1bc22c739fef67491db8f00e68b9f6ba036496537b2de7617d"
+    },
+    {
+      "path": "windows-oauth-history/storage-browser.log",
+      "bytes": 876,
+      "sha256": "f161971b85475f1bc22c739fef67491db8f00e68b9f6ba036496537b2de7617d"
+    },
+    {
+      "path": "windows-oauth-history/storage-matrix-final.json",
+      "bytes": 2255,
+      "sha256": "95c3c5ba00a1ee483962c53e931451d63e1be388bd9bf4243f1bb9c0a1027ea7"
+    },
+    {
+      "path": "windows-oauth-history/storage-matrix-final.log",
+      "bytes": 2255,
+      "sha256": "95c3c5ba00a1ee483962c53e931451d63e1be388bd9bf4243f1bb9c0a1027ea7"
+    },
+    {
+      "path": "windows-oauth-history/ui-recheck.log",
+      "bytes": 22577,
+      "sha256": "ba82774e6ef23267260775c3ad962d1973c676bfa4f02bb9162345aec93efa89"
+    },
+    {
+      "path": "windows-oauth-history/validateRegistry.json",
+      "bytes": 1091,
+      "sha256": "df59a0f585b25ab14e3f8f9851469e2c9c1c7096cecc135088437ed2f6eda571"
+    },
+    {
+      "path": "package/chrome-package.json",
+      "bytes": 14052,
+      "sha256": "f708a4cab42f044295ad059500c03b54c450caf4c657e0b77bf97657693d438d"
+    },
+    {
+      "path": "package/redown-chrome-0.5.27.zip",
+      "bytes": 1145979,
+      "sha256": "9810415221dd21daf819f08fcec3b4c541056864703bc167a1ed4b64ad715dd7"
+    }
+  ]
+}
