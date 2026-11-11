@@ -58,6 +58,7 @@
         let r;
         try{r=await fetch('https://'+(binary?'content':'api')+'.dropboxapi.com/2/'+path,{method:'POST',headers,body:binary?body:JSON.stringify(body),credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}
         catch{throw fail(signal?.aborted?'Dropbox save cancelled.':'Dropbox request interrupted. Check Dropbox before retrying.',signal?.aborted?'cancelled':'uncertain');}
+        globalThis.RedownSaveEvidence?.note(identity?.source?.attemptId,{role:'provider',httpStatus:r.status,method:'POST',phase:identity?.phase,category:r.status===401?'auth':r.status===403?'permission':r.status===429?'rate-limit':r.status>=500?'server':'unknown'});
         const data=await r.json().catch(()=>null);
         if(r.ok)return data;
         if(r.status===401){await auth.invalidate();throw fail('Dropbox authorization expired. Reconnect Dropbox.');}
@@ -65,6 +66,7 @@
         if(attempt<2&&(r.status===429||retry&&r.status>=500)){
           const delay=Number(r.headers.get('Retry-After')||2**attempt);
           if(!Number.isFinite(delay)||delay>20)throw fail('Dropbox is busy. Try again later.','failed');
+          globalThis.RedownSaveEvidence?.note(identity?.source?.attemptId,{role:'provider',phase:identity?.phase,httpStatus:r.status,category:'rate-limit',retryAt:now()+Math.max(1,delay)*1000});
           await sleep(Math.max(1,delay)*1000);continue;
         }
         const e=fail(r.status===409?'Dropbox rejected the upload offset, path or session.':r.status===403?'Dropbox does not permit saving to this root.':r.status===429?'Dropbox is busy. Try again later.':'Dropbox could not complete the request.',r.status>=500?'uncertain':'failed');e.http=r.status;e.detail=data;throw e;
@@ -96,7 +98,7 @@
       try{response=await fetch(u.href,{credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',cache:'no-store',...(offset?{headers}:{}),signal:controller.signal});}
       catch{clearTimeout(timer);signal?.removeEventListener('abort',abort);throw fail(signal?.aborted?'Dropbox save cancelled.':'Source file could not be fetched. Check access, redirects or an expired link.',signal?.aborted?'cancelled':'blocked');}
       clearTimeout(timer);
-      const reader=response.body?.getReader();
+      const reader=globalThis.RedownSourceGuard?await RedownSourceGuard.open(response,{attemptId:job.source?.attemptId,signal,expectedMedia:job.source?.mediaType||'unknown'}):response.body?.getReader();
       try{
         if(!response.ok||!reader)throw fail('Source file is unavailable.');
         const mime=(response.headers.get('Content-Type')||'').toLowerCase();if(mime.includes('text/html')||mime.includes('application/xhtml'))throw fail('The clicked URL returned a web page instead of a file.');
@@ -143,6 +145,7 @@
         job.receipt=receipt;job.phase='verifying';await checkpoint(job);
         return await proof(receipt,job,signal);
       }catch(e){
+        globalThis.RedownSaveEvidence?.failure(job.source?.attemptId,e,job.phase==='source'?'source':job.phase);
         if(signal?.aborted)throw fail(['committing','verifying'].includes(job.phase)?'Dropbox commit was interrupted. Check Dropbox before retrying.':'Dropbox save cancelled.',['committing','verifying'].includes(job.phase)?'uncertain':'cancelled');
         if(e.status)throw e;throw fail('Source stream was interrupted. Retry as a new save if it cannot resume.','interrupted');
       }finally{controller.abort();signal?.removeEventListener('abort',abort);await reader?.cancel().catch(()=>{});}

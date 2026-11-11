@@ -8,7 +8,7 @@
     const seen=new WeakSet();let busy=false,running=null,controller=null,active=null,epoch=0,connecting=null;
     const connect=()=>connecting||(connecting=auth.connect().finally(()=>{connecting=null;}));
     const get=async key=>(await chrome.storage.local.get(key))[key];
-    const setTransfer=s=>chrome.storage.local.set({'onedrive:transfer':s});
+    const setTransfer=s=>chrome.storage.local.set({'onedrive:transfer':{updatedAt:Date.now(),...s}});
     const problem=e=>({code:e?.code||'ONEDRIVE_FAILED',error:e?.code?e.message:'OneDrive operation failed.',
       status:terminal.has(e?.status)?e.status:'failed',
       ...(e?.code==='ONEDRIVE_UPLOAD_HOST_PERMISSION'&&
@@ -25,7 +25,7 @@
     }
     async function saveRecord(job){
       const ok=job.status==='completed',item=job.item||{},src=job.source||{};
-      const entry={attemptId:src.attemptId,provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
+      const entry={code:job.code,attemptId:src.attemptId,provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
         profileName:'OneDrive root',deliveryId:'onedrive:'+job.id,transferId:job.id,filename:item.name||job.name,
         status:job.status,ok:ok?true:['failed','blocked'].includes(job.status)?false:undefined,
         verified:ok,sourceUrl:src.sourceUrl,pageUrl:src.pageUrl,srcUrl:src.srcUrl,
@@ -51,22 +51,22 @@
       if(busy)throw Object.assign(Error('Another OneDrive save is in progress.'),{code:'ONEDRIVE_BUSY',status:'blocked'});
       busy=true;const ticket=epoch,job={id:crypto.randomUUID(),attemptId:source.attemptId,name:source.name,source,
         accountId:identity.accountId,driveId:identity.driveId,rootId:identity.rootId,
-        status:'active',phase:'source',bytes:0,total:null};
+        status:'active',phase:'source',at:Date.now(),bytes:0,total:null};
       active=job;controller=new AbortController();
       running=(async()=>{
         try{
           globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');
-          await setTransfer({status:'active',phase:'source',name:job.name,bytes:0,total:null});
+          await setTransfer({status:'active',phase:'source',id:job.id,attemptId:source.attemptId,at:job.at,name:job.name,bytes:0,total:null});
           globalThis.redownSaveAttempts?.stage(source.attemptId,'SOURCE_REQUEST');
           job.item=await api.upload(source,identity,async p=>{
-            job.phase=p.phase;job.bytes=p.sent;job.total=p.total;
+            job.phase=p.phase;job.bytes=p.sent;job.total=p.total;job.sourceBytes=p.acquired??job.sourceBytes??null;
             globalThis.redownSaveAttempts?.phase(source.attemptId,p.phase);
-            await setTransfer({status:'active',phase:p.phase,name:job.name,bytes:p.sent,total:p.total});
+            await setTransfer({status:'active',phase:p.phase,id:job.id,attemptId:source.attemptId,name:job.name,bytes:p.sent,total:p.total,sourceBytes:job.sourceBytes});
           },controller.signal);
           if(ticket!==epoch)throw RedownOneDriveAPI.fail('ONEDRIVE_INTERRUPTED','OneDrive was disconnected.','uncertain');
           job.status='completed';job.bytes=job.item.bytes;
-          await setTransfer({status:'completed',name:job.item.name,bytes:job.item.bytes,total:job.item.bytes,
-            itemId:job.item.itemId,webUrl:job.item.webUrl||''});
+          await setTransfer({status:'completed',phase:'verifying',id:job.id,attemptId:source.attemptId,name:job.item.name,bytes:job.item.bytes,total:job.item.bytes,
+            itemId:job.item.itemId,webUrl:job.item.webUrl||''}).catch(()=>{});
         }catch(e){
           const p=problem(e);
           if(ticket!==epoch&&['committing','verifying'].includes(job.phase)){
@@ -74,7 +74,7 @@
             p.error='Final OneDrive commit may have succeeded. Check OneDrive before retrying.';
           }
           job.status=p.status;job.code=p.code;job.error=p.error;
-          await setTransfer({status:job.status,code:job.code,error:job.error,name:job.name,
+          await setTransfer({status:job.status,id:job.id,attemptId:source.attemptId,code:job.code,error:job.error,name:job.name,
             bytes:job.bytes,total:job.total,...(p.uploadOrigin?{uploadOrigin:p.uploadOrigin}:{})});
         }finally{
           try{await saveRecord(job);}
@@ -102,6 +102,7 @@
         if(state?.phase==='connecting'&&(connecting||!await get('onedrive:auth')))
           throw Object.assign(Error('OneDrive sign-in is pending or was interrupted. Finish or reconnect from Shelf, then click Save again.'),{code:'ONEDRIVE_AUTH_PENDING',status:'blocked'});
         if(!['connected','connecting'].includes(state?.phase)){
+          globalThis.RedownSaveEvidence?.note(globalThis.redownSaveAttempts?.forClick(info),{phase:'auth',code:'AUTH_PENDING'});
           await connect();
           throw Object.assign(Error('OneDrive sign-in completed. Click the file again to save.'),{code:'ONEDRIVE_CLICK_AGAIN',status:'blocked'});
         }
@@ -111,9 +112,9 @@
         await replayVerifiedReceipt();
         await begin(source,identity);
       }catch(e){
-        const p=problem(e);await setTransfer(p);
+        const p=problem(e);globalThis.RedownSaveEvidence?.failure(globalThis.redownSaveAttempts?.forClick(info),e,'auth');await setTransfer({...p,attemptId:globalThis.redownSaveAttempts?.forClick(info)});
         await record({provider:'OneDrive',providerKind:'onedrive',status:p.status,ok:false,
-          attemptId:globalThis.redownSaveAttempts?.forClick(info),error:p.error});
+          attemptId:globalThis.redownSaveAttempts?.forClick(info),code:p.code,error:p.error});
       }
     }
     const ownsMessage=m=>['onedriveConnect','onedriveDisconnect','onedriveStatus','onedriveCancel','onedriveDiagnostic'].includes(m?.type);

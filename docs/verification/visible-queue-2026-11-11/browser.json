@@ -1,0 +1,196 @@
+{
+  "scope": "real Chromium page rendering with mocked Chrome storage/runtime and simulated provider outcomes; NOT installed extension or real provider acceptance",
+  "state": "passed",
+  "assertions": [
+    {
+      "id": "keyboard-opens-real-queue",
+      "passed": true
+    },
+    {
+      "id": "home-position-and-action-label-unchanged",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-porcelain-260",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-porcelain-260",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-porcelain-320",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-porcelain-320",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-porcelain-420",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-porcelain-420",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-neon-260",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-neon-260",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-neon-320",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-neon-320",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-neon-420",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-neon-420",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-ocean-260",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-ocean-260",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-ocean-320",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-ocean-320",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-ocean-420",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-ocean-420",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-midnight-260",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-midnight-260",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-midnight-320",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-midnight-320",
+      "passed": true
+    },
+    {
+      "id": "no-horizontal-overflow-midnight-420",
+      "passed": true
+    },
+    {
+      "id": "nav-labels-fit-midnight-420",
+      "passed": true
+    },
+    {
+      "id": "back-is-remotes-not-external-home",
+      "passed": true
+    },
+    {
+      "id": "back-returns-to-settings",
+      "passed": true
+    },
+    {
+      "id": "queue-enters-at-top-with-home-visible",
+      "passed": true
+    },
+    {
+      "id": "browser-back-restores-section",
+      "passed": true
+    },
+    {
+      "id": "browser-forward-restores-queue",
+      "passed": true
+    },
+    {
+      "id": "queue-back-restores-focus-and-scroll",
+      "passed": true
+    },
+    {
+      "id": "only-failed-provider-two-pulses",
+      "passed": true
+    },
+    {
+      "id": "signal-opens-exact-attempt",
+      "passed": true
+    },
+    {
+      "id": "uncertain-is-amber",
+      "passed": true
+    },
+    {
+      "id": "reduced-motion-no-animation",
+      "passed": true
+    },
+    {
+      "id": "debug-off-no-card-signals",
+      "passed": true
+    },
+    {
+      "id": "one-click-zip-downloaded",
+      "passed": true
+    },
+    {
+      "id": "zip-seven-coherent-files",
+      "passed": true
+    },
+    {
+      "id": "bundle-distinguishes-html-length-and-stall",
+      "passed": true
+    },
+    {
+      "id": "worker-unavailable-still-downloads-partial-zip",
+      "passed": true
+    },
+    {
+      "id": "fallback-explicit-gap-and-safe-boot-evidence",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    "queue-porcelain-260.png",
+    "queue-porcelain-320.png",
+    "queue-porcelain-420.png",
+    "queue-neon-260.png",
+    "queue-neon-320.png",
+    "queue-neon-420.png",
+    "queue-ocean-260.png",
+    "queue-ocean-320.png",
+    "queue-ocean-420.png",
+    "queue-midnight-260.png",
+    "queue-midnight-320.png",
+    "queue-midnight-420.png"
+  ],
+  "browser": "Chrome/156.0.8078.79",
+  "navigationRestore": {
+    "focus": "drag-limit-mb",
+    "scrollY": 200,
+    "expectedScroll": 200
+  },
+  "bundle": "REDOWN-DIAGNOSTIC-2026-11-11.zip",
+  "fallbackBundle": "worker-unavailable/REDOWN-DIAGNOSTIC-2026-11-11.zip"
+}

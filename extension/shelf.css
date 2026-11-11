@@ -1253,3 +1253,37 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 #settings-view .explorer-theme-row>span,#settings-view .icon-background-row>span{display:block;width:100%}
 #settings-view .settings-choice-surface{width:100%;min-width:0}
 #settings-view .settings-collection h2{font-family:"DM Sans",system-ui,sans-serif;font-weight:650}
+
+/* Queue is a fifth native Shelf section; Home remains in the original header. */
+:root nav[aria-label="Shelf"]{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(2px,1vw,7px)}
+:root nav[aria-label="Shelf"] a,:root[data-shelf-theme] nav[aria-label="Shelf"] a{text-align:center;font-size:clamp(8px,2.35vw,10px);letter-spacing:.025em;min-width:0}
+#nav-queue{display:flex;align-items:center;justify-content:center;gap:3px}
+#nav-queue svg{width:13px;height:13px;flex:none}
+#queue-count{font-variant-numeric:tabular-nums;min-width:1.3em;border-radius:8px;padding:0 3px;background:var(--subtle);font-size:.85em}
+#queue-view{padding-top:16px;min-width:0}
+.queue-heading{gap:8px;justify-content:flex-start;align-items:center}
+.queue-heading h1{font-size:18px;margin:0;letter-spacing:.01em}
+#queue-back{display:grid;place-items:center;flex:none;border:1px solid var(--line);background:var(--surface);color:var(--text);width:36px;height:36px;border-radius:10px;font-size:24px;line-height:1}
+#queue-summary{margin-left:auto;font-size:10px;color:var(--muted);text-align:right}
+.queue-filter-label{display:flex;align-items:center;gap:8px;font-size:12px;margin:16px 0}
+#queue-filter{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px}
+.queue-row{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px;margin:12px 0;min-width:0;overflow-wrap:anywhere}
+.queue-row[data-selected]{outline:2px solid var(--accent);outline-offset:2px}
+.queue-row-heading{display:flex;gap:8px;justify-content:space-between;font-size:11px}
+.queue-row-state{font-size:9px;font-weight:750;color:var(--muted)}
+.queue-row h2{font-size:14px;margin:8px 0}.queue-row p{font-size:12px;margin:8px 0}.queue-row dl{display:grid;grid-template-columns:70px minmax(0,1fr);gap:4px;font-size:10px;color:var(--muted)}
+.queue-row dt{font-weight:650}.queue-row dd{margin:0}.queue-row pre{font-size:10px;white-space:pre-wrap;max-height:200px;overflow:auto}.queue-row summary{cursor:pointer;font-size:11px}
+.queue-row progress{width:100%;accent-color:var(--accent)}.queue-row-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.queue-row-actions button{border:1px solid var(--line);border-radius:8px;background:var(--subtle);color:var(--text);padding:6px 9px;font-size:11px}
+.queue-row[data-tone="red"]{border-color:#cf505e}.queue-row[data-tone="amber"]{border-color:#b38127}.queue-warning{color:var(--muted)}.queue-note,.queue-empty{color:var(--muted);font-size:11px}
+.queue-card-signal{max-width:100%;display:block;margin:8px auto 0;padding:4px 8px;border:1px solid currentColor;border-radius:8px;background:var(--surface);font-size:10px;line-height:1.4;overflow-wrap:anywhere;color:var(--muted)}
+.queue-card-signal[data-tone="red"]{color:#cb4354}.queue-card-signal[data-tone="amber"]{color:#af7a20}
+[data-provider][data-queue-state="red"]{outline:1px solid #cb4354;outline-offset:2px}[data-provider][data-queue-state="amber"]{outline:1px solid #b38127;outline-offset:2px}
+.queue-failure-flash{animation:queue-failure-pulse .55s ease-in-out 2}
+@keyframes queue-failure-pulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 2px #cb4354,0 0 12px #cb435459}}
+@media(prefers-reduced-motion:reduce){.queue-failure-flash{animation:none}}
+@media(max-width:300px){#nav-queue svg{display:none}:root nav[aria-label="Shelf"] a{font-size:8px;letter-spacing:0}#queue-summary{max-width:105px}.queue-row dl{grid-template-columns:58px minmax(0,1fr)}}
+
+#queue-back svg{display:block;width:21px;height:21px;stroke:currentColor}
+@media(max-width:300px){:root nav[aria-label="Shelf"]{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:0}:root nav[aria-label="Shelf"] a,:root[data-shelf-theme] nav[aria-label="Shelf"] a{font-size:10px;letter-spacing:.01em}#nav-queue{grid-column:1/-1;justify-self:end;padding:5px 8px;margin:4px 0;border:1px solid var(--line);border-radius:8px}#nav-queue svg{display:block}}
+
+.queue-controls{display:flex;flex-wrap:wrap;gap:4px 12px}.queue-controls .queue-filter-label{margin:12px 0 4px}#queue-group{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px}.queue-provider-heading{font-size:12px;margin:18px 2px 6px;color:var(--muted)}

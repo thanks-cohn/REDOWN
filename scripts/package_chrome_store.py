@@ -12,6 +12,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'extension'
 FILES = (
+    'vendor/fflate.LICENSE',
     'CHUTE-LICENSE.txt', 'local-demo.mjs', 'preview-navigation.mjs', 'settings-choices.js', 'assets/demo/chutey.png', 'assets/demo/PROVENANCE.md',
     'beta/dashboard.css', 'beta/standard-breadcrumbs.mjs', 'beta/url-list.mjs', 'beta/remote-dialog.mjs', 'beta/explorer.html', 'beta/explorer.css', 'beta/explorer.mjs', 'beta/file-api.mjs', 'beta/r2-adapter.mjs',
     'shelf.html', 'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',

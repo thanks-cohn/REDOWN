@@ -119,7 +119,7 @@
     return years;
   }
 
-  globalThis.RedownShelfHistory={group,describe,organize,open};
+  globalThis.RedownShelfHistory={group,describe,organize,open,focusAttempt};
   if(!$('history-timeline'))return;
   const archive=globalThis.RedownHistoryArchive?.create();
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
@@ -306,6 +306,7 @@
     for(const item of day.items){
       const info=describe(item.record),record=item.record;
       const row=create('li','','history-transfer');row.dataset.state=info.state;
+      if(typeof record.attemptId==='string'&&/^[a-f0-9-]{36}$/.test(record.attemptId)){row.dataset.attemptId=record.attemptId;row.tabIndex=-1;}
       const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
       const body=create('div','','history-transfer-body');
       const header=create('div','','history-entry-head');
@@ -449,6 +450,18 @@
     if(pageIndex!==0){pageIndex=0;dirty=true;}
     if(!loaded||dirty){await refresh({exposeToday:true});return;}
     if(loaded&&expandToday())render();
+  }
+  async function focusAttempt(id){
+    if(typeof id!=='string'||!/^[a-f0-9-]{36}$/.test(id))return;
+    await open();
+    for(let page=0;page<Math.min(5,pageCount());page++){
+      if(page!==pageIndex)await pageTo(page);
+      const row=document.querySelector('[data-attempt-id="'+id+'"]');
+      if(!row)continue;
+      for(let parent=row.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+      row.scrollIntoView?.({block:'center'});row.focus({preventScroll:true});return;
+    }
+    $('history-status').textContent='This receipt is outside the recent loaded pages. Its exact attempt remains available in Queue.';
   }
   async function pageTo(next){
     const max=pageCount()-1;

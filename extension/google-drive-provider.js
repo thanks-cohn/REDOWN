@@ -10,6 +10,7 @@
     const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
     const jobs=async()=>(await chrome.storage.local.get(KEY))[KEY]||[];
     async function save(job){
+      job.updatedAt=Date.now();
       globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase);
       return serial(async()=>{
       const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;
@@ -18,7 +19,7 @@
     });}
     async function receipt(job){
       const ok=job.status==='completed',r=job.result;
-      await record({attemptId:job.source?.attemptId,provider:'Google Drive',providerKind:'google',profileId:'google-drive:'+job.accountId,profileName:job.folderId?'Google Drive destination':'My Drive',deliveryId:'google:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:ok?true:['blocked','failed'].includes(job.status)?false:undefined,verified:ok,location:ok?'https://drive.google.com/file/d/'+r.fileId+'/view':'',destination:{provider:'google-drive',accountId:job.accountId,...r},sourceUrl:job.source?.url,pageUrl:job.source?.pageUrl,srcUrl:job.source?.srcUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,bytes:r?.bytes||job.offset||0,transport:'browser-mediated',error:job.error});
+      await record({code:job.code,attemptId:job.source?.attemptId,provider:'Google Drive',providerKind:'google',profileId:'google-drive:'+job.accountId,profileName:job.folderId?'Google Drive destination':'My Drive',deliveryId:'google:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:ok?true:['blocked','failed'].includes(job.status)?false:undefined,verified:ok,location:ok?'https://drive.google.com/file/d/'+r.fileId+'/view':'',destination:{provider:'google-drive',accountId:job.accountId,...r},sourceUrl:job.source?.url,pageUrl:job.source?.pageUrl,srcUrl:job.source?.srcUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,bytes:r?.bytes||job.offset||0,transport:'browser-mediated',error:job.error});
       job.reported=true;await save(job);
     }
     async function pump(){
@@ -30,7 +31,7 @@
           if(terminal.has(job.status)){if(!job.reported)await receipt(job);continue;}
           controller=new AbortController();
           try{job.status='active';await save(job);job.result=await api.upload(job,save,controller.signal);job.status='completed';job.error='';}
-          catch(e){job.error=e.message||'Google save interrupted. Check Drive.';job.status=terminal.has(e.status)?e.status:'interrupted';job.attempts=(job.attempts||0)+1;if(job.status==='interrupted'&&job.attempts>=3)job.status='uncertain';}
+          catch(e){globalThis.RedownSaveEvidence?.failure(job.source?.attemptId,e,job.phase);job.code=globalThis.RedownSaveEvidence?.classify(e);job.error=e.message||'Google save interrupted. Check Drive.';job.status=terminal.has(e.status)?e.status:'interrupted';job.attempts=(job.attempts||0)+1;if(job.status==='interrupted'&&job.attempts>=3)job.status='uncertain';}
           finally{controller=null;}
           await save(job);if(terminal.has(job.status))await receipt(job);
         }
@@ -43,7 +44,7 @@
     }
     async function enqueue(source,accountId){return serial(async()=>{
       const all=await jobs();if(all.filter(j=>!terminal.has(j.status)||!j.reported).length>=8)throw Error('Google Drive queue is full. Wait, then try again.');
-      const job={id:crypto.randomUUID(),accountId,source,status:'queued',offset:0,phase:'source',at:Date.now()};
+      const job={id:crypto.randomUUID(),accountId,source,status:'queued',offset:0,phase:'source',at:Date.now(),updatedAt:Date.now()};
       all.push(job);await chrome.storage.local.set({[KEY]:all});return job;
     });}
     async function connect(){
@@ -54,7 +55,7 @@
     async function dispatch(info){
       if(info.menuItemId!=='provider:google-drive'||clicks.has(info))return;clicks.add(info);
       try{
-        const source={url:RedownGoogleDriveStream.sourceURL(info.srcUrl||info.linkUrl||info.pageUrl||'').href,...(info.downloadFilename?{downloadFilename:String(info.downloadFilename)}:{}),attemptId:globalThis.redownSaveAttempts?.forClick(info),pageUrl:info.pageUrl||'',srcUrl:info.srcUrl||'',frameUrl:info.frameUrl||'',linkUrl:info.linkUrl||''};
+        const source={url:RedownGoogleDriveStream.sourceURL(info.srcUrl||info.linkUrl||info.pageUrl||'').href,...(info.downloadFilename?{downloadFilename:String(info.downloadFilename)}:{}),attemptId:globalThis.redownSaveAttempts?.forClick(info),mediaType:info.mediaType||'unknown',pageUrl:info.pageUrl||'',srcUrl:info.srcUrl||'',frameUrl:info.frameUrl||'',linkUrl:info.linkUrl||''};
         // Existing broad source grants normally make this unnecessary; request
         // new access only during the initiating browser gesture.
         globalThis.redownSaveAttempts?.stage(source.attemptId,'ROUTE_RESOLVED');
@@ -63,11 +64,14 @@
         const current=await chrome.storage.local.get('googleDriveState');
         // A persisted projection is not an active OAuth promise after MV3 restart.
         // connect() joins this worker's real in-flight authorization when present.
+        if(current.googleDriveState?.phase!=='connected')globalThis.RedownSaveEvidence?.note(source.attemptId,{phase:'auth',code:'AUTH_PENDING'});
         const identity=current.googleDriveState?.phase==='connected'&&current.googleDriveState.accountId?Promise.resolve(current.googleDriveState.accountId):connect();
         const [granted,accountId]=await Promise.all([permission,identity]);if(!granted)throw Error('Source access was not granted. Click again to retry.');
+        globalThis.RedownSaveEvidence?.note(source.attemptId,{phase:'auth',code:'OK'});
         globalThis.redownSaveAttempts?.stage(source.attemptId,'AUTH_CHECKED');
         await enqueue(source,accountId);globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');void wake().catch(()=>{});
       }catch(e){
+        globalThis.RedownSaveEvidence?.failure(globalThis.redownSaveAttempts?.forClick(info),e,'auth');
         const error=e.message||'Reconnect Google Drive and try again.';
         await chrome.storage.local.set({googleDriveTransfer:{status:'blocked',error}});
         await record({provider:'Google Drive',providerKind:'google',status:'blocked',ok:false,

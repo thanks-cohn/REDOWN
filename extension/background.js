@@ -894,12 +894,13 @@ async function recordTransfer(entry) {
   // Do not flash green from a URL, POST acknowledgement or decorative timer.
   // The counter commits a *new*, provider-verifier-backed receipt first.
   const attempts=globalThis.redownSaveAttempts,id=entry?.attemptId;
+  if(id&&entry?.ok!==true&&entry?.error)globalThis.RedownSaveEvidence?.failure(id,{code:entry.code,message:entry.error},'history');
   const indicateFailure=()=>{void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});};
   if(entry?.ok===false){indicateFailure();}
   else if(['uncertain','interrupted','blocked'].includes(entry?.status))indicateFailure();
   let outcome;
   try{outcome=await transferCounter.record(entry);}
-  catch(error){attempts?.finish(id,'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
+  catch(error){globalThis.RedownSaveEvidence?.note(id,{phase:'history',code:'HISTORY_UNAVAILABLE',decision:'uncertain'});attempts?.finish(id,'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
   if(id&&['completed','failed','blocked','cancelled','uncertain','interrupted'].includes(entry.status)){
     attempts?.stage(id,'HISTORY_COMMIT');
     if(outcome?.newVerified||outcome?.duplicate)attempts?.stage(id,'COUNTER_COMMIT');
@@ -962,6 +963,7 @@ importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
 importScripts("google-drive-menu.js");
+importScripts("save-evidence.js");
 importScripts("google-drive-stream.js");
 importScripts("google-drive-provider.js");
 RedownGoogleDriveProvider.install(recordTransfer);
@@ -988,6 +990,9 @@ importScripts("search-session.js");
 const runtimeDiagnostics = RedownRuntimeDiagnostics.create({build:chrome.runtime.getManifest().version});
 globalThis.redownRuntimeObserver=runtimeDiagnostics;
 globalThis.redownSaveAttempts=RedownRuntimeDiagnostics.createAttempts({storage:chrome.storage.local});
+importScripts('transfer-queue.js');
+importScripts('diagnostic-bundle.js');
+const transferQueue=RedownTransferQueue.create({storage:chrome.storage.local,alarms:chrome.alarms,attempts:globalThis.redownSaveAttempts});
 chrome.storage.local.get("debugModeEnabled").then(value=>runtimeDiagnostics.setEnabled(value.debugModeEnabled)).catch(()=>{});
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area==="local"&&changes.debugModeEnabled)runtimeDiagnostics.setEnabled(changes.debugModeEnabled.newValue);
@@ -2075,6 +2080,7 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
       publicBaseUrl: prepared.publicBaseUrl || `${prepared.workerUrl}/assets`
     })
   });
+  globalThis.RedownSaveEvidence?.note(receipt?.attemptId,{role:'provider',phase:'committing',method:'POST',httpStatus:response.status,acquisition:'worker-remote'});
   const text = await response.text();
   let body;
   try { body = JSON.parse(text); } catch { body = { ok:false, error:text }; }
@@ -3051,6 +3057,25 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
 }
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if(['transferQueueV1','diagnosticBundleV1'].includes(message?.type)){
+    const page=_sender?.url?.split(/[?#]/)[0];
+    const allowed=_sender?.id===chrome.runtime.id&&(_sender.frameId===undefined||_sender.frameId===0)&&['shelf.html','options.html'].some(p=>page===chrome.runtime.getURL(p));
+    if(!allowed){sendResponse({ok:false,code:'UNTRUSTED_SENDER'});return false;}
+    (async()=>{
+      if(message.type==='transferQueueV1'){
+        if(message.operation==='list')return {ok:true,result:await transferQueue.list(message.input||{})};
+        if(message.operation==='get')return {ok:true,result:await transferQueue.get(message.input?.id)};
+        if(message.operation==='eligibleActions'){const row=await transferQueue.get(message.input?.id);return {ok:true,result:row?transferQueue.eligibleActions(row):[]};}
+        if(message.operation==='acknowledge')return {ok:true,result:await transferQueue.acknowledge(message.input?.id)};
+        return {ok:false,code:'UNSUPPORTED_OPERATION'};
+      }
+      if(message.operation!=='export')return {ok:false,code:'UNSUPPORTED_OPERATION'};
+      const snapshot=await transferQueue.snapshot();let archiveCount=null,timer;
+      try{const page=await Promise.race([transferArchive.page(0,1),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('unavailable')),1000);})]);archiveCount=page.total;}catch{}finally{clearTimeout(timer);}
+      const browserVersion=globalThis.navigator?.userAgent?.match(/(?:Chrome|Chromium)\/[\d.]+/)?.[0]||'unknown';
+      return {ok:true,result:RedownDiagnosticBundle.build(snapshot,{extensionVersion:chrome.runtime.getManifest().version,browserVersion,archiveCount})};
+    })().then(sendResponse,()=>sendResponse({ok:false,code:'LOCAL_DIAGNOSTICS_UNAVAILABLE'}));return true;
+  }
   if(globalThis.RedownOneDriveProvider&&onedriveProvider.ownsMessage(message)){
     onedriveProvider.message(message,_sender).then(sendResponse,()=>sendResponse({ok:false,code:'ONEDRIVE_UNAVAILABLE'}));return true;
   }

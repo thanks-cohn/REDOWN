@@ -14,11 +14,12 @@ const a={accountId:'account-a',bucketName:'photos',prefix:''},b={accountId:'acco
 function stageFactory(indexedDB=new IDBFactory(),now=Date.now){return RedownChuteStage.createStage({indexedDB,now});}
 
 test('NAV-01/02: File Explorer is a first-class route and switching never opens a window',async()=>{
- const dom=new JSDOM(readFileSync('extension/shelf.html','utf8'),{url:'https://extension.test/shelf.html#explorer',runScripts:'outside-only'}),w=dom.window;let opened=0;
+ const dom=new JSDOM(readFileSync('extension/shelf.html','utf8'),{url:'https://extension.test/shelf.html#explorer',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;let opened=0;
+ w.scrollTo=()=>{};
  w.chrome={storage:{local:{get:async()=>({})},session:{get:async()=>({})},onChanged:{addListener(){}}},runtime:{getURL:p=>'https://extension.test/'+p,sendMessage:async()=>({ok:true,accounts:[]})},tabs:{create:()=>{opened++;}}};
  w.eval(readFileSync('extension/shelf.js','utf8'));
- assert.deepEqual([...w.document.querySelectorAll('nav[aria-label="Shelf"] a')].map(a=>a.hash),['#explorer','#clouds','#history','#settings']);
- for(const name of ['explorer','clouds','history','settings','explorer']){
+ assert.deepEqual([...w.document.querySelectorAll('nav[aria-label="Shelf"] a')].map(a=>a.hash),['#explorer','#clouds','#history','#settings','#queue']);
+ for(const name of ['explorer','clouds','history','settings','queue','explorer']){
   w.location.hash='#'+name;w.dispatchEvent(new w.Event('hashchange'));await settle();
   assert.equal(w.document.getElementById(name+'-view').hidden,false);assert.equal(w.document.querySelector('[aria-current="page"]').id,'nav-'+name);
  }
