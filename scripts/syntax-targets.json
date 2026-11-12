@@ -127,5 +127,7 @@
   "extension/shelf-queue.js",
   "scripts/visible-queue-browser.mjs",
   "scripts/compare-owner-windows.mjs",
-  "scripts/windows-storage-browser.mjs"
+  "scripts/windows-storage-browser.mjs",
+  "extension/forensic-diagnostics.js",
+  "extension/forensic-download.js"
 ]

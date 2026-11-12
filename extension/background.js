@@ -894,13 +894,14 @@ async function recordTransfer(entry) {
   // Do not flash green from a URL, POST acknowledgement or decorative timer.
   // The counter commits a *new*, provider-verifier-backed receipt first.
   const attempts=globalThis.redownSaveAttempts,id=entry?.attemptId;
+  globalThis.RedownForensicDiagnostics?.capture(id,'receipt',entry);
   if(id&&entry?.ok!==true&&entry?.error)globalThis.RedownSaveEvidence?.failure(id,{code:entry.code,message:entry.error},'history');
   const indicateFailure=()=>{void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});};
   if(entry?.ok===false){indicateFailure();}
   else if(['uncertain','interrupted','blocked'].includes(entry?.status))indicateFailure();
   let outcome;
-  try{outcome=await transferCounter.record(entry);}
-  catch(error){globalThis.RedownSaveEvidence?.note(id,{phase:'history',code:'HISTORY_UNAVAILABLE',decision:'uncertain'});indicateFailure();attempts?.finish(id,error.remoteVerified?'COMPLETED':'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
+  try{outcome=await transferCounter.record(entry);globalThis.RedownForensicDiagnostics?.capture(id,'accounting',outcome);}
+  catch(error){globalThis.RedownForensicDiagnostics?.capture(id,'error',{component:'runtime',phase:'history',error});globalThis.RedownSaveEvidence?.note(id,{phase:'history',code:'HISTORY_UNAVAILABLE',decision:'uncertain'});indicateFailure();attempts?.finish(id,error.remoteVerified?'COMPLETED':'UNCERTAIN','HISTORY_UNAVAILABLE');throw error;}
   if(id&&['completed','failed','blocked','cancelled','uncertain','interrupted'].includes(entry.status)){
     attempts?.reconcile?.(id);
     attempts?.stage(id,'HISTORY_COMMIT');
@@ -991,6 +992,8 @@ importScripts("destination-config.js");
 importScripts("right-click-v3.js");
 importScripts("google-drive-menu.js");
 importScripts("save-evidence.js");
+importScripts("forensic-diagnostics.js");
+globalThis.redownForensicLedger=RedownForensicDiagnostics.create();
 importScripts("google-drive-stream.js");
 importScripts("google-drive-provider.js");
 RedownGoogleDriveProvider.install(recordTransfer);
@@ -2107,6 +2110,7 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
       publicBaseUrl: prepared.publicBaseUrl || `${prepared.workerUrl}/assets`
     })
   });
+  globalThis.RedownForensicDiagnostics?.response(receipt?.attemptId,response,'provider','POST');
   globalThis.RedownSaveEvidence?.note(receipt?.attemptId,{role:'provider',phase:'committing',method:'POST',httpStatus:response.status,acquisition:'worker-remote'});
   const text = await response.text();
   let body;
@@ -3022,9 +3026,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if(saveAttemptId)await recordTransfer({attemptId:saveAttemptId,providerKind:'cloudflare',status:'blocked',ok:false,error:'That destination is inactive or was removed. Open Right-click setup in Explorer.'});
     return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
   }
+  globalThis.RedownForensicDiagnostics?.capture(saveAttemptId,'route',{provider:'cloudflare',routeChoice:String(info.menuItemId),destination:{accountId:resolved.profile?.accountId,accountName:resolved.profile?.accountName,bucketName:resolved.profile?.bucketName,prefix:resolved.prefix}});
   globalThis.redownSaveAttempts?.stage(saveAttemptId,'ROUTE_RESOLVED');
   return await saveResolvedRightClick(info,tab,resolved,profiles);
-  }catch{
+  }catch(error){
+    globalThis.RedownForensicDiagnostics?.capture(saveAttemptId,'error',{component:'unattributed',error});
     const dispatched=globalThis.redownSaveAttempts?.dispatched(saveAttemptId);
     globalThis.redownSaveAttempts?.finish(saveAttemptId,dispatched?'UNCERTAIN':'BLOCKED',dispatched?'UNCONFIRMED':'PREFLIGHT_FAILED');
     if(saveAttemptId)await recordTransfer({attemptId:saveAttemptId,status:dispatched?'uncertain':'blocked',ok:dispatched?undefined:false,error:'REDOWN could not start or record this save. Inspect Save attempts in Debug Mode.'}).catch(()=>{});
@@ -3054,6 +3060,7 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
     return;
   }
   const sourceUrl=selectedUrl(info);
+  globalThis.RedownForensicDiagnostics?.capture(globalThis.redownSaveAttempts?.forClick(info),'route',{actualSourceUrl:sourceUrl,pageUrl});
   // Explicitly block accidental HTML transfers from Hitomi pages.
   if(onHitomiGallery && chosenDestination && !info.srcUrl &&
       /^https:\/\/hitomi\.la\/[^?#]+\.html(?:[?#]|$)/i.test(sourceUrl)){
@@ -3077,6 +3084,7 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
     await recordCloudflareCompletion({pageUrl,ok:true,status:'completed',sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
     await notify("REDOWN complete",location);
   }catch(error){
+    globalThis.RedownForensicDiagnostics?.capture(receipt.attemptId,'error',{component:'unattributed',error});
     if(receipt.verified&&error?.remoteVerified){
       await notify('REDOWN saved · History pending','The remote file was verified. Local History needs attention; the upload will not be repeated.');
       return;
