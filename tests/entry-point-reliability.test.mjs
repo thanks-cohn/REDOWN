@@ -169,10 +169,10 @@ test('slow accepted Shelf cannot trigger a timeout popup or late duplicate',asyn
  resolve();await request;await h.ready();assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
  assert.ok(h.local.entryPointEvidence.some(e=>e.code==='SHELF_OPEN_PENDING'));
 });
-test('late rejected expired attempt cannot override a newer successful Shelf',async()=>{
+test('an expired unresolved Shelf blocks a competing open until its late rejection settles',async()=>{
  const h=worker();await h.ready();let reject;h.chrome.sidePanel.open=()=>new Promise((_,r)=>{reject=r;});
  const old=h.context.openToolbarInterface({id:1,windowId:7});await new Promise(r=>setTimeout(r,45));
- h.chrome.sidePanel.open=async()=>{};await h.context.openToolbarInterface({id:1,windowId:7});reject(Error('late rejection'));await old;
+ let newer=0;h.chrome.sidePanel.open=async()=>{newer++;};const joined=h.context.openToolbarInterface({id:1,windowId:7});assert.equal(joined,old);assert.equal(newer,0);reject(Error('late rejection'));await old;await h.context.openToolbarInterface({id:1,windowId:7});assert.equal(newer,1);
  assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
 });
 test('blocked popup registration produces native error evidence, no alternate windows',async()=>{
@@ -196,10 +196,10 @@ test('tab switch during failure abandons stale recovery instead of opening in an
  await h.context.openToolbarInterface({id:1,windowId:7});await h.ready();assert.ok(!h.calls.some(c=>c[0]==='attached'));
  assert.ok(h.local.entryPointEvidence.some(e=>e.code==='LAUNCH_SUPERSEDED'));
 });
-test('latest different-window click supersedes pending attempt without a stale popup',async()=>{
+test('different-window click joins an unresolved open instead of creating a competing surface',async()=>{
  const h=worker();await h.ready();let reject;
  h.chrome.sidePanel.open=()=>new Promise((_,r)=>{reject=r;});
- const old=h.context.openToolbarInterface({id:1,windowId:7});h.chrome.sidePanel.open=async()=>{};
- await h.context.openToolbarInterface({id:2,windowId:8});reject(Error('superseded'));await old;
+ const old=h.context.openToolbarInterface({id:1,windowId:7});await new Promise(r=>setTimeout(r,45));h.chrome.sidePanel.open=async()=>{};
+ const joined=h.context.openToolbarInterface({id:2,windowId:8});assert.equal(joined,old);assert.equal(h.calls.filter(c=>c[0]==='panel').length,0);reject(Error('superseded'));await old;
  assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
 });

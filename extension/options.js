@@ -796,7 +796,9 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
   const media=document.createElement("div");
   media.className="preview-media";
 
-  if(type.startsWith("image/")){
+  if(type.includes("gltf")||/\.(?:glb|gltf)$/i.test(key)){
+    const unavailable=document.createElement("p");unavailable.className="meta";unavailable.setAttribute("role","status");unavailable.textContent="3D preview temporarily unavailable in this Chrome extension. Download the file to view it locally.";media.append(unavailable);root.append(media);
+  }else if(type.startsWith("image/")){
     const img=document.createElement("img");
     img.src=url;img.alt=key;img.title="Open in lightbox";
     img.addEventListener("click",()=>setWorkspacePreviewLightbox(true));
@@ -838,10 +840,12 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
     const note=document.createElement("div");
     note.className="meta";
     note.textContent=type.includes("gltf")
-      ?"Interactive 3D preview · drag to orbit · wheel to zoom · use Reset view to reframe the model."
+      ?"3D preview temporarily unavailable in this Chrome extension. Download the file to view it locally."
       :"No inline renderer for this file type yet. Details and available URLs appear below.";
     media.append(note);
-    if(type.includes("gltf")){
+    // Preserved for future restoration; Chrome CSP-incompatible viewer stays disabled.
+    const modelPreviewEnabled=false;
+    if(modelPreviewEnabled&&type.includes("gltf")){
       const viewer=document.createElement("model-viewer");
       viewer.setAttribute("src",url);viewer.setAttribute("camera-controls","");viewer.setAttribute("auto-rotate","");viewer.setAttribute("shadow-intensity","1");viewer.setAttribute("interaction-prompt","none");
       viewer.style.cssText="display:block;width:100%;height:360px;background:radial-gradient(circle,#283041,#10131a)";

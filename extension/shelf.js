@@ -314,7 +314,7 @@ previewAxis?.addEventListener('change',async()=>{
 chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
   if(sender.id===chrome.runtime.id&&message.type==='redownShelfReady'){
     // Other windows must not win Chrome's first-response race with a false acknowledgement.
-    chrome.windows.getCurrent().then(win=>{if(win.id===message.windowId)respond({ready:true});}).catch(()=>{});
+    chrome.windows.getCurrent().then(win=>{if(win.id===message.windowId){globalThis.RedownStartupTrace?.record({component:'shelf',stage:'readiness',api:'runtime.sendMessage',code:'SHELF_ACKNOWLEDGED',status:'accepted',attemptId:message.attemptId});respond({ready:true});}}).catch(()=>{});
     return true;
   }
 });

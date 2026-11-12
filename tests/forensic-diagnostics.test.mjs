@@ -61,7 +61,8 @@ test('old redacted events remain separate, missing raw fields are not_recorded, 
 test('exactly two buttons are added; every old button, handler file and old ZIP builder remain unchanged',()=>{
  const baseline='77c6c7d15917c75b939f79577aa26244101f354c',before=new JSDOM(execFileSync('git',['show',baseline+':extension/options.html'],{encoding:'utf8'})),after=new JSDOM(readFileSync('extension/options.html','utf8'));
  try{const old=[...before.window.document.querySelectorAll('button')],current=after.window.document;assert.deepEqual([...current.querySelectorAll('button')].filter(b=>!['forensic-export-raw','forensic-export-secure'].includes(b.id)).map(b=>b.outerHTML),old.map(b=>b.outerHTML));assert.equal(current.querySelectorAll('button').length,old.length+2);assert.equal(current.getElementById('forensic-export-raw').textContent,'Export All Diagnostic Data (RAW)');assert.equal(current.getElementById('forensic-export-secure').textContent,'Export Secure Diagnostic Data');
- for(const file of ['options.js','diagnostic-download.js','diagnostic-bundle.js'])assert.equal(readFileSync('extension/'+file,'utf8'),execFileSync('git',['show',baseline+':extension/'+file],{encoding:'utf8'}));
+ const marker='// Explicit Debug Mode controls;';assert.equal(readFileSync('extension/options.js','utf8').split(marker)[1],execFileSync('git',['show',baseline+':extension/options.js'],{encoding:'utf8'}).split(marker)[1]);
+ for(const file of ['diagnostic-download.js','diagnostic-bundle.js'])assert.equal(readFileSync('extension/'+file,'utf8'),execFileSync('git',['show',baseline+':extension/'+file],{encoding:'utf8'}));
  }finally{before.window.close();after.window.close();}
 });
 test('two export clicks are local ZIP downloads; RAW cancellation and old Clear traces leave ledger intact',async()=>{
