@@ -1,0 +1,22 @@
+{
+  "base": "f074d164b880610f2bb1e7a5023d812fe7ee8feb",
+  "branch": "codex/p0-crash-root-cause-capless-2026-11-12",
+  "tagObject": "d1ccbd1739983d8267b1e3f4b2e7c31aec9c2482",
+  "tagCommit": "653ad9b5fdd59532df571514fc60053d8a7b13bb",
+  "mergeParents": [
+    "653ad9b5fdd59532df571514fc60053d8a7b13bb",
+    "00ccdc3bed7595c3310cbaf2a92be411cfc094d4"
+  ],
+  "extensionPathsChangedTagToDc1a": [
+    "extension/boot.js",
+    "extension/entry-bootstrap.js",
+    "extension/forensic-download.js",
+    "extension/options.html",
+    "extension/options.js",
+    "extension/service-worker.js",
+    "extension/shelf.html",
+    "extension/shelf.js",
+    "extension/startup-crash-trace.js"
+  ],
+  "extensionPathsChangedDc1aToBase": []
+}

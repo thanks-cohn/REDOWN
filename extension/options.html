@@ -2,7 +2,7 @@
 <html class="onboarding-pending storage-pending">
 <head>
   <meta charset="utf-8">
-  <script src="startup-crash-trace.js"></script>
+  <script src="capless-archive.js"></script><script src="flight-recorder.js"></script><script src="startup-crash-trace.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon32.png">
   <title>REDOWN Dashboard</title>
@@ -668,6 +668,22 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
 
 </div>
 <img class="settings-mascot" src="settings-mascot.png" alt="" aria-hidden="true" draggable="false" width="96">
+<section aria-label="Crash safety and archive settings">
+  <details id="capless-panel"><summary>Crash-safety flight recorder and CAPLESS LOGGING</summary>
+    <label><input type="checkbox" id="capless-logging" role="switch"> <strong>CAPLESS LOGGING</strong> — <span id="capless-state">OFF</span></label>
+    <p class="meta">OFF by default. Confirmed ON appends to browser disk storage without automatic retention/rotation. Quota, browser eviction and interrupted writes still apply. OFF preserves history. Previously accepted in-flight commits may finish.</p>
+    <label><input type="checkbox" id="capless-raw"> Include private RAW save details in the capless archive (plaintext; explicit confirmation required while ON)</label>
+    <p id="capless-warning" role="alert" hidden><strong>CAPTURE INCOMPLETE / ARCHIVE STALLED — inspect backlog, failures and gaps. Cloud saves continue independently.</strong></p>
+    <pre id="capless-status" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+    <label>Source website <select id="capless-site"><option value="">All observed sites</option><option value="google-search">Google Search</option><option value="bing">Bing</option><option value="yahoo">Yahoo</option><option value="yandex">Yandex</option><option value="other">Other</option><option value="unattributed">Unattributed</option></select></label>
+    <label>Cloud provider <select id="capless-provider"><option value="">All providers</option><option value="google">Google Drive</option><option value="dropbox">Dropbox</option><option value="onedrive">OneDrive</option><option value="cloudflare">Cloudflare R2</option></select></label>
+    <label>Account correlation (optional) <input id="capless-account" type="text" autocomplete="off"></label><label>From UTC date <input id="capless-from" type="date"></label><label>Through UTC date <input id="capless-to" type="date"></label>
+    <button id="capless-inspect" type="button" class="ghost">Inspect archive integrity and observed-attempt counts</button>
+    <button id="capless-export" type="button" class="ghost">Export complete CAPLESS archive</button><button id="capless-next-part" type="button" class="ghost" hidden>Export next archive part</button>
+    <button id="flight-inspect" type="button" class="ghost">Inspect pinned incidents and flight checkpoints</button><button id="flight-delete-incidents" type="button" class="ghost">Delete pinned incidents…</button>
+    <pre id="capless-output" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow:auto" role="status"></pre>
+  </details>
+</section>
 <section data-debug-detail hidden aria-label="Runtime diagnostics">
   <h2>Runtime diagnostics</h2>
   <p>Debug Mode collects a bounded, local trace. It excludes credentials, file names and URLs. Traces reset when the background restarts.</p>
@@ -692,6 +708,7 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
   <button id="forensic-export-raw" class="ghost" type="button" aria-describedby="forensic-privacy-warning">Export All Diagnostic Data (RAW)</button>
   <button id="forensic-export-secure" class="ghost" type="button">Export Secure Diagnostic Data</button>
   <p id="forensic-export-status" class="meta" role="status" aria-live="polite"></p>
+
   <details id="explorer-diagnostics-panel" style="margin-top:18px">
     <summary>File Explorer diagnostics</summary>
     <p class="meta">Redacted, bounded observations. Review the generated bundle before sharing. Read-only cloud probes run only when requested. Probes never copy, delete, deploy, or repair.</p>
@@ -747,6 +764,6 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
 <script src="history-navigation.js"></script><script src="options.js"></script>
 <script src="toolbar-preferences.js"></script>
 <script src="explorer-diagnostics-ui.js"></script>
-<script src="history-archive.js"></script><script src="save-evidence.js"></script><script src="transfer-queue.js"></script><script src="vendor/fflate.js"></script><script src="diagnostic-bundle.js"></script><script src="diagnostic-download.js"></script><script src="forensic-diagnostics.js"></script><script src="forensic-download.js"></script>
+<script src="history-archive.js"></script><script src="save-evidence.js"></script><script src="transfer-queue.js"></script><script src="vendor/fflate.js"></script><script src="diagnostic-bundle.js"></script><script src="diagnostic-download.js"></script><script src="forensic-diagnostics.js"></script><script src="forensic-download.js"></script><script src="capless-controls.js"></script>
 </body>
 </html>

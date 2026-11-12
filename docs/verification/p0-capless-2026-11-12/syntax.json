@@ -1,0 +1,127 @@
+{
+  "fingerprint": "cc717e24810c660371e210c59e56d6e36137c7c9f7563166d69f6533ecd4baa6",
+  "syntax": {
+    "state": "passed",
+    "results": [
+      {
+        "file": "extension/background.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/entry-bootstrap.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/forensic-diagnostics.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/forensic-download.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/service-worker.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/startup-crash-trace.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/capless-archive.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/flight-recorder.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "extension/capless-controls.js",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "scripts/flight-build.mjs",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "scripts/capless-browser.mjs",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "file": "scripts/capless-stress.mjs",
+        "state": "passed",
+        "exitCode": 0,
+        "error": null
+      }
+    ]
+  },
+  "startup": {
+    "state": "passed",
+    "files": [
+      "background.js",
+      "boot.js",
+      "brand-icon.js",
+      "capless-archive.js",
+      "chute-stage.js",
+      "chute-worker.js",
+      "click-feedback.js",
+      "cloudflare-api.js",
+      "cloudflare-auth.js",
+      "daily-save-badge.js",
+      "destination-config.js",
+      "diagnostic-bundle.js",
+      "dropbox-api.js",
+      "dropbox-auth.js",
+      "dropbox-menu.js",
+      "dropbox-provider.js",
+      "entry-bootstrap.js",
+      "explorer-diagnostics-bridge.js",
+      "explorer-diagnostics.js",
+      "flight-recorder.js",
+      "forensic-diagnostics.js",
+      "google-drive-menu.js",
+      "google-drive-provider.js",
+      "google-drive-stream.js",
+      "history-archive.js",
+      "nested-locations.js",
+      "onedrive-api.js",
+      "onedrive-auth.js",
+      "onedrive-menu.js",
+      "onedrive-oauth-diagnostic.js",
+      "onedrive-provider.js",
+      "rfis-index.js",
+      "right-click-current.js",
+      "right-click-v3.js",
+      "runtime-diagnostics.js",
+      "save-evidence.js",
+      "search-session.js",
+      "service-worker.js",
+      "startup-crash-trace.js",
+      "toolbar-appearance.js",
+      "transfer-counter.js",
+      "transfer-queue.js"
+    ]
+  }
+}

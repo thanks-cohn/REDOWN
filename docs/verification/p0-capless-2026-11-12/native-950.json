@@ -1,0 +1,109 @@
+{
+  "scope": "Production native listener/provider-independent verifier and in-memory disposable R2 fixture; NOT real provider or installed Chrome",
+  "saves": 950,
+  "writes": 950,
+  "independentFixtureHeads": 950,
+  "unexpectedNetworkCalls": 0,
+  "elapsedMs": 22522.851465,
+  "forensicHealthWrites": 1,
+  "archive": {
+    "id": "state",
+    "schemaVersion": 1,
+    "archiveId": "776f766a-05ba-4576-8326-fa2b50a20860",
+    "producer": {
+      "build": "cc717e24810c660371e210c59e56d6e36137c7c9f7563166d69f6533ecd4baa6",
+      "baseCommit": "f074d164b880610f2bb1e7a5023d812fe7ee8feb",
+      "extensionVersion": "0.5.27",
+      "installedCommit": "not-observable"
+    },
+    "startedAt": "2026-11-12T16:29:20.952Z",
+    "nextSequence": 16151,
+    "lastSequence": 16150,
+    "records": 16150,
+    "bytes": 8644409,
+    "segments": 286,
+    "lastDigest": "dcf6cdfde74e257d1dcb9ba8a222659b48daae977a0960dc6057e69841b2c7d8",
+    "rawRecords": 0,
+    "pendingSegments": 0,
+    "metrics": {
+      "maxBatch": 128,
+      "lastWriteMs": 50.01872600000206,
+      "lastLockWaitMs": 0.005799000002298271
+    },
+    "backend": "IndexedDB (Chrome profile; browser-managed quota)",
+    "retention": "append-only; no application TTL/rotation",
+    "durability": "IndexedDB strict when supported; no OS fsync guarantee"
+  },
+  "integrity": {
+    "state": "verified",
+    "records": 16150,
+    "segments": 286,
+    "lastSequence": 16150,
+    "manifestMatches": true,
+    "pendingSegments": 0
+  },
+  "attempts": {
+    "counts": {
+      "observedNativeAttempts": 950,
+      "partialAttempts": 0,
+      "verified": 950,
+      "failed": 0,
+      "unknown": 0
+    },
+    "filters": {},
+    "coverage": {
+      "count": 0,
+      "pendingSegments": 0,
+      "scope": "Only observed unique attempt IDs; source is hosting website, provider is cloud target; not a lifetime success rate",
+      "priorPrunedHistory": "not reconstructable"
+    },
+    "rates": null
+  },
+  "status": {
+    "requestedOn": true,
+    "on": true,
+    "raw": false,
+    "backend": "IndexedDB in Chrome extension profile (browser-managed quota; no arbitrary Windows folder)",
+    "archive": {
+      "schemaVersion": 1,
+      "archiveId": "776f766a-05ba-4576-8326-fa2b50a20860",
+      "lastSequence": 16150,
+      "nextSequence": 16151,
+      "records": 16150,
+      "bytes": 8644409,
+      "segments": 286,
+      "rawRecords": 0,
+      "pendingSegments": 0,
+      "backend": "IndexedDB (Chrome profile; browser quota applies)",
+      "metrics": {
+        "lastWriteMs": 50.01872600000206,
+        "lastLockWaitMs": 0.005799000002298271,
+        "maxBatch": 128
+      }
+    },
+    "health": {
+      "backlog": 0,
+      "maxBacklog": 134,
+      "maxBufferedBytes": 41274,
+      "writeFailures": 0,
+      "dropped": 0,
+      "unconfirmed": 0,
+      "incomplete": false,
+      "stalled": false,
+      "incidentFailure": false,
+      "lastError": null,
+      "lastErrorCode": null
+    },
+    "lastConfirmedCoreSequence": 26,
+    "core": {
+      "epoch": "d3190ef3-99af-4b0b-b056-5455445a64e9",
+      "headKey": "redownFlightEpochV1:d3190ef3-99af-4b0b-b056-5455445a64e9"
+    },
+    "captureIncomplete": false,
+    "cachedAt": null,
+    "backlogScope": "Largest reported collector backlog, not proof of all contexts",
+    "location": "Chrome profile; exact OS path not exposed",
+    "limits": "Capless persisted segments have no app retention/TTL; memory queue 256 events / 1 MiB",
+    "encryption": "Default capless records are SECURE. Optional RAW is plaintext in the local browser profile; not independently encrypted."
+  }
+}

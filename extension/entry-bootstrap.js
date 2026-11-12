@@ -2,6 +2,7 @@ importScripts("toolbar-appearance.js");
 // Shelf-first toolbar. Opening is independent of storage, menus and providers.
 let toolbarAttempt=null,toolbarGeneration=0,toolbarTarget=null,toolbarPhase='idle',pendingPanelOpen=null;
 let entryEvidenceQueue=Promise.resolve();
+function observeEntryJournal(operation,api){const actual=Promise.resolve(operation);void boundedEntry(actual,1000,api,undefined,{diagnostic:true}).catch(()=>{});return actual;}
 function entryEvidence(component,operation,stage,code,recovery,attemptId,details={}){
   if(operation!=='click'&&!['WORKER_UPDATE','WORKER_INSTALL','BROWSER_START'].includes(code))globalThis.RedownStartupTrace?.record({component,api:component==='context-menu'?'contextMenus':undefined,stage:operation==='register'?'register':operation==='configure'?'configure':operation==='lifecycle'?'lifecycle':stage==='shelf'?'readiness':'recovery',code,status:/FAILED|BLOCKED|UNAVAILABLE|REJECTED/.test(code)?'rejected':/READY|ACKNOWLEDGED|CONFIGURED|ACCEPTED/.test(code)?'accepted':/STARTED|WORKER_LOAD/.test(code)?'started':'unknown',attemptId,durationMs:details.durationMs});
   const status=/FAILED|BLOCKED|UNAVAILABLE|REJECTED|DEGRADED/.test(code)?'failed':/STARTED|LOAD|INSTALL|UPDATE|START$/.test(code)?'started':/READY|ACKNOWLEDGED|CONFIGURED|ACCEPTED/.test(code)?'acknowledged':'unknown';
@@ -10,9 +11,9 @@ function entryEvidence(component,operation,stage,code,recovery,attemptId,details
     recovery:{attempted:!!recovery,status:recovery||'not-needed'},
     attemptId:attemptId||crypto.randomUUID(),version:chrome.runtime.getManifest().version};
   entryEvidenceQueue=entryEvidenceQueue.catch(()=>{}).then(async()=>{
-    const data=await boundedEntry(chrome.storage.local.get(['entryPointEvidence','rightClickV3']),1000,'storage.local.get');
+    const data=await observeEntryJournal(chrome.storage.local.get(['entryPointEvidence','rightClickV3']),'storage.local.get');
     if(component==='context-menu')event.configurationRevision=data.rightClickV3?.revision??null;
-    await boundedEntry(chrome.storage.local.set({entryPointEvidence:[...(Array.isArray(data.entryPointEvidence)?data.entryPointEvidence:[]).slice(-63),event]}),1000,'storage.local.set');
+    await observeEntryJournal(chrome.storage.local.set({entryPointEvidence:[...(Array.isArray(data.entryPointEvidence)?data.entryPointEvidence:[]).slice(-63),event]}),'storage.local.set');
   }).catch(()=>console.warn('REDOWN local entry-point evidence unavailable'));
 }
 // One authority: no Chrome-managed parallel panel opening and no detached surfaces.
@@ -42,9 +43,9 @@ function applyToolbarOpenMode(clearTabs=false){
   const observed=operation.catch(error=>{entryEvidence('toolbar','configure','popup','TOOLBAR_CONFIGURATION_FAILED',false);throw error;});
   toolbarConfiguration=observed;return observed;
 }
-function boundedEntry(operation,ms=150,api='entry.unspecified',attemptId){
+function boundedEntry(operation,ms=150,api='entry.unspecified',attemptId,detail={}){
   let timer,timedOut=false;const start=performance.now(),requestId=crypto.randomUUID();
-  const trace=(code,status,error)=>globalThis.RedownStartupTrace?.record({component:'entry',stage:'api',api,code,status,error,requestId,attemptId,budgetMs:ms,durationMs:performance.now()-start});
+  const trace=(code,status,error)=>{if(detail.diagnostic&&['API_STARTED','API_ACCEPTED'].includes(code))return;globalThis.RedownStartupTrace?.record({component:'entry',stage:'api',api,code,status,error,requestId,attemptId,budgetMs:ms,durationMs:performance.now()-start});};
   trace('API_STARTED','started');
   let promise;try{promise=typeof operation==='function'?operation():operation;}catch(error){promise=Promise.reject(error);}
   const observed=Promise.resolve(promise).then(value=>{trace(timedOut?'API_LATE_ACCEPTED':'API_ACCEPTED',timedOut?'late-accepted':'accepted');return value;},error=>{trace(timedOut?'API_LATE_REJECTED':'API_REJECTED',timedOut?'late-rejected':'rejected',error);throw error;});

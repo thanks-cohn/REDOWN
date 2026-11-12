@@ -29,7 +29,8 @@
     const bounds={...LIMITS,...limits},lastStages=new Map();let connection,lane=Promise.resolve(),pending=0,failed=0,skipped=0,priorFailed=0,priorSkipped=0,lastFailureAt=null,healthUnknown=!healthStorage?.get;
     const bounded=promise=>{let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('FORENSIC_STORAGE_TIMEOUT')),2000);})]).finally(()=>clearTimeout(timer));};
     const ready=bounded(Promise.resolve().then(()=>healthStorage?.get(HEALTH))).then(v=>{priorFailed=Number.isSafeInteger(v?.[HEALTH]?.pendingFailures)?v[HEALTH].pendingFailures:0;priorSkipped=Number.isSafeInteger(v?.[HEALTH]?.pendingDropped)?v[HEALTH].pendingDropped:0;lastFailureAt=Math.max(lastFailureAt||0,v?.[HEALTH]?.lastFailureAt||0)||null;}).catch(()=>{healthUnknown=true;});
-    function health(){try{void ready.then(()=>healthStorage?.set({[HEALTH]:{version:1,pendingFailures:Math.max(priorFailed,failed),pendingDropped:Math.max(priorSkipped,skipped),lastFailureAt,storageFailure:failed>0||priorFailed>0}})).catch(()=>{healthUnknown=true;});}catch{healthUnknown=true;}}
+    let healthBusy=false,healthDirty=false,lastHealthSignature=null;
+    function health(){healthDirty=true;if(healthBusy)return;healthBusy=true;void ready.then(async()=>{while(healthDirty){healthDirty=false;const value={version:1,pendingFailures:Math.max(priorFailed,failed),pendingDropped:Math.max(priorSkipped,skipped),lastFailureAt,storageFailure:failed>0||priorFailed>0};const signature=JSON.stringify(value);if(signature!==lastHealthSignature){await healthStorage?.set({[HEALTH]:value});lastHealthSignature=signature;}}}).catch(()=>{healthUnknown=true;}).finally(()=>{healthBusy=false;});}
     function failure(reason='storage'){if(reason==='queue')skipped++;else failed++;lastFailureAt=now();health();console.warn('REDOWN forensic recording unavailable; evidence may be incomplete.');}
     async function open(){
       if(connection)return connection;
@@ -63,8 +64,9 @@
     function record(attemptId,kind,input={}){
       if(!uuid(attemptId))return;
       try{
-        const event={attemptId,kind,at:now(),workerEpoch:epoch,data:evidence(input)};
+        const event={id:crypto.randomUUID(),attemptId,kind,at:now(),workerEpoch:epoch,data:evidence(input)};
         if(event.data.stage){const previous=lastStages.get(attemptId);event.data.durationMs=previous===undefined?'not_recorded':Math.max(0,event.at-previous);lastStages.set(attemptId,event.at);if(lastStages.size>bounds.records)lastStages.delete(lastStages.keys().next().value);}
+        try{globalThis.RedownFlightRecorder?.save(event);}catch{console.warn("REDOWN capless observer incomplete; existing forensic capture continues.");}
         event.recordBytes=new TextEncoder().encode(JSON.stringify(event)).length+64;
         if(pending>=bounds.queue){failure('queue');return;}
         pending++;
@@ -107,5 +109,5 @@
     const date=new Date(snapshot.collectedAt).toISOString().slice(0,10);
     return {filename:'REDOWN-FORENSIC-'+mode+'-'+date+'.zip',files:{'forensics.json':JSON.stringify(payload,null,2)+'\n','README.md':'# REDOWN '+mode+' save diagnostics\n\n'+(mode==='RAW'?'PRIVATE: literal URLs, signed query secrets, account/destination identifiers and original errors may be present. Review locally before sharing.':'Redacted copy of the same locally stored forensic evidence. HMAC correlations do not expose literal URLs, destination identifiers or original errors.')+'\n\nNo cloud requests, repairs or upload retries. A stage entry is not independent remote proof. Bounded retention and storage failures prevent a completeness guarantee. Legacy raw details are not_recorded.\n'}};
   }
-  globalThis.RedownForensicDiagnostics={create,capture,response,build,DB,HEALTH,LIMITS};
+  globalThis.RedownForensicDiagnostics={create,capture,response,build,evidence,DB,HEALTH,LIMITS};
 })();

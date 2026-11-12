@@ -1,0 +1,97 @@
+{
+  "scope": "100000 synthetic metadata events through production append-only archive; fake IndexedDB stores corpus in Node RAM",
+  "elapsedMs": 7363.287294,
+  "checkpoints": [
+    {
+      "atEvents": 50048,
+      "stats": {
+        "id": "state",
+        "schemaVersion": 1,
+        "archiveId": "15c28d3a-ec21-42e4-b57c-18a2ca0bcda6",
+        "producer": {
+          "build": "unavailable",
+          "baseCommit": "unavailable",
+          "extensionVersion": "unavailable",
+          "installedCommit": "not-observable"
+        },
+        "startedAt": "2026-11-12T16:23:46.002Z",
+        "nextSequence": 50049,
+        "lastSequence": 50048,
+        "records": 50048,
+        "bytes": 21748664,
+        "segments": 391,
+        "lastDigest": "0f36c190678bf84bbb3ccd7b8c0f4add6c6aa2b33fe66556dfc9d0fb48701f48",
+        "rawRecords": 0,
+        "pendingSegments": 0,
+        "metrics": {
+          "maxBatch": 128,
+          "lastWriteMs": 4.88315700000021,
+          "lastLockWaitMs": 0.0013720000001740118
+        },
+        "backend": "IndexedDB (Chrome profile; browser-managed quota)",
+        "retention": "append-only; no application TTL/rotation",
+        "durability": "IndexedDB strict when supported; no OS fsync guarantee"
+      },
+      "integrity": {
+        "state": "verified",
+        "records": 50048,
+        "segments": 391,
+        "lastSequence": 50048,
+        "manifestMatches": true,
+        "pendingSegments": 0
+      },
+      "oldestDigestPreserved": true,
+      "nodeHeapBytes": 73308328
+    },
+    {
+      "atEvents": 100000,
+      "stats": {
+        "id": "state",
+        "schemaVersion": 1,
+        "archiveId": "15c28d3a-ec21-42e4-b57c-18a2ca0bcda6",
+        "producer": {
+          "build": "unavailable",
+          "baseCommit": "unavailable",
+          "extensionVersion": "unavailable",
+          "installedCommit": "not-observable"
+        },
+        "startedAt": "2026-11-12T16:23:46.002Z",
+        "nextSequence": 100001,
+        "lastSequence": 100000,
+        "records": 100000,
+        "bytes": 43477785,
+        "segments": 782,
+        "lastDigest": "0dc878c571d68254a6c78172a32812031533a74afb07df6ed09a0ad931685621",
+        "rawRecords": 0,
+        "pendingSegments": 0,
+        "metrics": {
+          "maxBatch": 128,
+          "lastWriteMs": 1.8218889999998282,
+          "lastLockWaitMs": 0.0012120000001232256
+        },
+        "backend": "IndexedDB (Chrome profile; browser-managed quota)",
+        "retention": "append-only; no application TTL/rotation",
+        "durability": "IndexedDB strict when supported; no OS fsync guarantee"
+      },
+      "integrity": {
+        "state": "verified",
+        "records": 100000,
+        "segments": 782,
+        "lastSequence": 100000,
+        "manifestMatches": true,
+        "pendingSegments": 0
+      },
+      "oldestDigestPreserved": true,
+      "nodeHeapBytes": 126350640
+    }
+  ],
+  "maxBatch": 128,
+  "limits": {
+    "inMemoryProducerBatch": 128,
+    "noAppHistoryRetentionCap": true
+  },
+  "limitations": [
+    "Node heap includes the entire fake database; this is not stable physical Chrome heap or process-crash acceptance.",
+    "Real Chrome memory/GPU behavior and installed extension acceptance must be measured separately."
+  ]
+}

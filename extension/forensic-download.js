@@ -14,6 +14,7 @@
       let startup={schemaVersion:1,status:'unavailable',events:[],completeness:{traceIncomplete:true}};
       try{if(globalThis.RedownStartupTrace)startup=await RedownStartupTrace.snapshot();}catch{}
       files['startup-crash-trace.json']=new TextEncoder().encode(JSON.stringify(startup,null,2)+'\n');
+      if(globalThis.RedownFlightRecorder){try{files['flight-recorder.json']=new TextEncoder().encode(JSON.stringify(await RedownFlightRecorder.snapshot(),null,2)+'\n');}catch{files['flight-recorder.json']=new TextEncoder().encode('{"captureIncomplete":true}');}}
       const bytes=fflate.zipSync(files,{level:6}),url=URL.createObjectURL(new Blob([bytes],{type:'application/zip'})),link=document.createElement('a');
       link.href=url;link.download=bundle.filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
       output.textContent=`Saved ${bundle.filename}. ${snapshot.completeness.storedRecords} recorded events; at least ${snapshot.completeness.droppedRecords} dropped/expired; storage failures (at least) ${snapshot.completeness.storageFailureCount}. Evidence is bounded and may be incomplete.`;

@@ -1,0 +1,41 @@
+✖ click creates a visible window before network navigation; repeated clicks focus it (37.918961ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 139.014199
+
+✖ failing tests:
+
+test at tests/cloudflare-login.test.mjs:107:1
+✖ click creates a visible window before network navigation; repeated clicks focus it (37.918961ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:108:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

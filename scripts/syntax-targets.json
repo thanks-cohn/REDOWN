@@ -130,5 +130,11 @@
   "scripts/windows-storage-browser.mjs",
   "extension/forensic-diagnostics.js",
   "extension/forensic-download.js",
-  "extension/startup-crash-trace.js"
+  "extension/startup-crash-trace.js",
+  "extension/capless-archive.js",
+  "extension/flight-recorder.js",
+  "extension/capless-controls.js",
+  "scripts/capless-stress.mjs",
+  "scripts/capless-browser.mjs",
+  "scripts/flight-build.mjs"
 ]

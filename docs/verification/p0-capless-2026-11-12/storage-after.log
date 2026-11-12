@@ -1,0 +1,11 @@
+✔ a slow diagnostic write keeps serialization ownership until actual settlement, never overwriting later events (52.565695ms)
+✔ unchanged forensic health does not generate one chrome.storage.local write per recorded event (201.605121ms)
+✔ entry journal also keeps a timed-out set serialized until it truly settles (42.607586ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 372.143642

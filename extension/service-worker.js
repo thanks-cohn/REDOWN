@@ -4,6 +4,8 @@
  * precedes the core import or synchronous listener registration. */
 (() => {
   'use strict';
+  try { importScripts('capless-archive.js');importScripts('flight-recorder.js');RedownFlightRecorderAPI.install('worker'); }
+  catch { console.warn('REDOWN flight safety core incomplete.'); }
   try { importScripts('startup-crash-trace.js');RedownStartupCrashTrace.install('worker'); }
   catch { console.warn('REDOWN early startup trace incomplete.'); }
   globalThis.RedownStartupTrace?.record({component:'worker',stage:'evaluation',code:'WORKER_EVALUATION',status:'started'});

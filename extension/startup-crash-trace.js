@@ -18,18 +18,23 @@
     out.sourceFrames=(Array.isArray(e?.sourceFrames)?e.sourceFrames:[]).filter(f=>files.has(f?.file)&&Number.isSafeInteger(f.line)&&Number.isSafeInteger(f.column)).slice(0,4).map(f=>({file:f.file,line:f.line,column:f.column}));
     return out;
   }
-  function create({chrome=globalThis.chrome,context='worker',now=()=>Date.now(),monotonic=()=>globalThis.performance?.now?.()||0,locks=globalThis.navigator?.locks,limits={}}={}){
-    const bounds={...LIMITS,...limits},epoch=crypto.randomUUID(),started=monotonic();let pending=[],lane=Promise.resolve(),writing=false,scheduled=false,failed=0,dropped=0,uncertain=0,lastStorageErrorName=null;
+  function create({chrome=globalThis.chrome,context='worker',now=()=>Date.now(),monotonic=()=>globalThis.performance?.now?.()||0,locks=globalThis.navigator?.locks,limits={},coalesceMs=50}={}){
+    const bounds={...LIMITS,...limits},epoch=crypto.randomUUID(),started=monotonic();let pending=[],lane=Promise.resolve(),writing=false,scheduled=false,failed=0,dropped=0,uncertain=0,lastStorageErrorName=null,slowOperations=0,lastStorageLatencyMs=null,lastLockWaitMs=null;
     const version=chrome?.runtime?.getManifest?.().version||'unknown';
     const bounded=p=>{let timer;return Promise.race([p,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(Error('trace incomplete'),{code:'TRACE_TIMEOUT'})),1000);})]).finally(()=>clearTimeout(timer));};
-    const status=()=>({storageFailures:failed,uncommitted:pending.length,droppedBeforeCommit:dropped,unconfirmedWrites:uncertain,lastStorageErrorName});
+    const status=()=>({storageFailures:failed,uncommitted:pending.length,droppedBeforeCommit:dropped,unconfirmedWrites:uncertain,lastStorageErrorName,slowOperations,lastStorageLatencyMs,lastLockWaitMs});
     const warn=()=>{console.warn('REDOWN startup trace incomplete: local diagnostic storage unavailable.',lastStorageErrorName||'UnknownError');};
+    async function storageOperation(promise){
+      const started=monotonic();let expired=false;
+      const timer=setTimeout(()=>{expired=true;slowOperations++;uncertain++;},1000);
+      try{return await promise;}finally{clearTimeout(timer);lastStorageLatencyMs=monotonic()-started;if(expired)uncertain=Math.max(0,uncertain-1);}
+    }
     async function write(){
       if(writing)return;writing=true;
       try{while(pending.length){
         const batch=pending.splice(0),lost=dropped,failures=failed,unconfirmed=uncertain;
         const commit=async()=>{
-          const s=(await bounded(chrome.storage.local.get(KEY)))[KEY]||{},events=(Array.isArray(s.events)?s.events:[]).map(clean),existing=new Set(events.map(e=>e.id));
+          const s=(await storageOperation(chrome.storage.local.get(KEY)))[KEY]||{},events=(Array.isArray(s.events)?s.events:[]).map(clean),existing=new Set(events.map(e=>e.id));
           const additions=batch.filter(e=>!existing.has(e.id));
           if(context==='worker'&&s.lastWorker?.epoch!==epoch){
             if(uuid(s.lastWorker?.epoch)&&!s.lastWorker.graceful)events.push(clean({id:crypto.randomUUID(),at:new Date(now()).toISOString(),workerEpoch:epoch,contextEpoch:epoch,previousEpoch:s.lastWorker.epoch,component:'worker',stage:'lifecycle',code:'PREVIOUS_EPOCH_STOPPED_REASON_UNKNOWN',status:'unknown',version}));
@@ -40,21 +45,22 @@
           let bytes=JSON.stringify(kept).length;while(bytes>bounds.bytes&&kept.length){const e=kept.shift();bytes-=JSON.stringify(e).length+1;evicted++;}
           const total=k=>Number.isSafeInteger(s[k])&&s[k]>=0?s[k]:0;
           const lastWorker=context==='worker'?{epoch,at:new Date(now()).toISOString(),graceful:false}:uuid(s.lastWorker?.epoch)?{epoch:s.lastWorker.epoch,at:Number.isFinite(Date.parse(s.lastWorker.at))?new Date(Date.parse(s.lastWorker.at)).toISOString():null,graceful:s.lastWorker.graceful===true}:null;
-          await bounded(chrome.storage.local.set({[KEY]:{schemaVersion:1,events:kept,lastWorker,dropped:total('dropped')+evicted+lost,expired:total('expired')+expired,storageFailures:total('storageFailures')+failures,unconfirmedWrites:total('unconfirmedWrites')+unconfirmed,...(lastStorageErrorName?{lastStorageErrorName}:{})}}));
+          await storageOperation(chrome.storage.local.set({[KEY]:{schemaVersion:1,events:kept,lastWorker,dropped:total('dropped')+evicted+lost,expired:total('expired')+expired,storageFailures:total('storageFailures')+failures,unconfirmedWrites:total('unconfirmedWrites')+unconfirmed,...(lastStorageErrorName?{lastStorageErrorName}:{})}}));
         };
-        try{await (locks?.request?locks.request('redown-startup-crash-trace-v1',commit):commit());dropped=Math.max(0,dropped-lost);failed=Math.max(0,failed-failures);uncertain=Math.max(0,uncertain-unconfirmed);}
+        try{const queued=monotonic();const locked=()=>{lastLockWaitMs=monotonic()-queued;return commit();};await (locks?.request?locks.request('redown-startup-crash-trace-v1',locked):locked());dropped=Math.max(0,dropped-lost);failed=Math.max(0,failed-failures);uncertain=Math.max(0,uncertain-unconfirmed);}
         catch(error){lastStorageErrorName=names.has(error?.name)?error.name:'UnknownError';failed++;if(error?.code==='TRACE_TIMEOUT')uncertain+=batch.length;else dropped+=batch.length;record({component:'storage',stage:'fault',code:'TRACE_STORAGE_FAILED',status:'rejected',error});warn();break;}
       }}finally{writing=false;}
     }
     function record(input={}){
       try{const event=clean({...input,id:crypto.randomUUID(),at:new Date(now()).toISOString(),contextEpoch:epoch,workerEpoch:context==='worker'?epoch:undefined,version,elapsedMs:monotonic()-started,monotonicMs:monotonic(),errorName:input.error?.name||input.errorName,sourceFrames:frames(input.error).length?frames(input.error):input.sourceFrames});
+        try{globalThis.RedownFlightRecorder?.startup(event);}catch{console.warn("REDOWN flight observer incomplete; startup trace continues.");}
         if(pending.length>=bounds.pending){dropped++;return;}pending.push(event);
-        if(!scheduled&&!writing){scheduled=true;lane=lane.catch(()=>{}).then(async()=>{scheduled=false;await write();});}
+        if(!scheduled&&!writing){scheduled=true;lane=lane.catch(()=>{}).then(async()=>{if(coalesceMs)await new Promise(r=>setTimeout(r,coalesceMs));scheduled=false;await write();});}
       }catch{dropped++;}
     }
     async function snapshot(){
       try{const stored=(await bounded(chrome.storage.local.get(KEY)))[KEY]||{},all=(Array.isArray(stored.events)?stored.events:[]).map(clean),recent=all.filter(e=>e.at&&Date.parse(e.at)>=now()-bounds.retentionMs),events=recent.slice(-bounds.records);
-        return {schemaVersion:1,scope:'Private startup observations; no browser crash confirmation or provider proof',collectedAt:new Date(now()).toISOString(),status:'partial',limits:bounds,events,lastWorker:uuid(stored.lastWorker?.epoch)?{epoch:stored.lastWorker.epoch,at:Number.isFinite(Date.parse(stored.lastWorker.at))?new Date(Date.parse(stored.lastWorker.at)).toISOString():null,graceful:stored.lastWorker.graceful===true}:null,completeness:{droppedLowerBound:(Number(stored.dropped)||0)+dropped,expired:(Number(stored.expired)||0)+all.length-recent.length,unconfirmedWritesLowerBound:(Number(stored.unconfirmedWrites)||0)+uncertain,storageFailuresLowerBound:(Number(stored.storageFailures)||0)+failed,uncommitted:pending.length,lastStorageErrorName:names.has(stored.lastStorageErrorName)?stored.lastStorageErrorName:lastStorageErrorName,limitations:['A hard kill can lose uncommitted events; no crash cause can be inferred from missing evidence.','Pending counts cover this collector only; other contexts may have uncommitted events.','Unobserved epoch endings have unknown reasons; idle, reload, update and browser restart can look alike.','Counts are best-effort lower bounds; an interrupted or timed-out write might settle later.']}};
+        return {schemaVersion:1,scope:'Private startup observations; no browser crash confirmation or provider proof',collectedAt:new Date(now()).toISOString(),status:'partial',limits:bounds,events,lastWorker:uuid(stored.lastWorker?.epoch)?{epoch:stored.lastWorker.epoch,at:Number.isFinite(Date.parse(stored.lastWorker.at))?new Date(Date.parse(stored.lastWorker.at)).toISOString():null,graceful:stored.lastWorker.graceful===true}:null,completeness:{droppedLowerBound:(Number(stored.dropped)||0)+dropped,expired:(Number(stored.expired)||0)+all.length-recent.length,unconfirmedWritesLowerBound:(Number(stored.unconfirmedWrites)||0)+uncertain,storageFailuresLowerBound:(Number(stored.storageFailures)||0)+failed,uncommitted:pending.length,lastStorageErrorName:names.has(stored.lastStorageErrorName)?stored.lastStorageErrorName:lastStorageErrorName,slowOperations,lastStorageLatencyMs,lastLockWaitMs,limitations:['A hard kill can lose uncommitted events; no crash cause can be inferred from missing evidence.','Pending counts cover this collector only; other contexts may have uncommitted events.','Unobserved epoch endings have unknown reasons; idle, reload, update and browser restart can look alike.','Counts are best-effort lower bounds; an interrupted or timed-out write might settle later.']}};
       }catch(error){lastStorageErrorName=names.has(error?.name)?error.name:'UnknownError';warn();return {schemaVersion:1,scope:'Startup observations',status:'unavailable',events:[],completeness:{traceIncomplete:true,...status()}};}
     }
     return {epoch,record,snapshot,async flush(){await lane;},get health(){return status();}};
@@ -76,5 +82,5 @@
     return trace;
   }
   globalThis.RedownStartupCrashTrace={create,install,KEY,LIMITS,clean};
-  if(typeof document!=='undefined'&&/\/(options|shelf)\.html$/.test(globalThis.location?.pathname||''))install('page');
+  if(typeof document!=='undefined'&&/\/(options|shelf)\.html$/.test(globalThis.location?.pathname||'')){globalThis.RedownFlightRecorderAPI?.install('page');install('page');}
 })();

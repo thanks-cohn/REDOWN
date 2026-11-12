@@ -895,6 +895,7 @@ async function recordTransfer(entry) {
   // The counter commits a *new*, provider-verifier-backed receipt first.
   const attempts=globalThis.redownSaveAttempts,id=entry?.attemptId;
   globalThis.RedownForensicDiagnostics?.capture(id,'receipt',entry);
+  try{globalThis.RedownFlightRecorder?.proof(id,entry,transferCounter.isVerifiedReceipt(entry));}catch{console.warn("REDOWN flight receipt evidence incomplete.");}
   if(id&&entry?.ok!==true&&entry?.error)globalThis.RedownSaveEvidence?.failure(id,{code:entry.code,message:entry.error},'history');
   const indicateFailure=()=>{void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});};
   if(entry?.ok===false){indicateFailure();}
