@@ -1,8 +1,8 @@
-# P0 — Provider ↻ reconnect controls do not produce expected OAuth recovery; feedback is ambiguous
+# P0 — Google Drive, Dropbox and OneDrive ↻ recovery problems; Cloudflare R2 still works
 
 **Owner report:** 2026-11-12 (America/Chicago), Windows Chrome, after `main` fast-forward to `7b7f6d1` (REDOWN `0.5.27` source).  
 **Status:** **OPEN / owner-observed, installed revision and provider session state not independently verified; root cause not established.**  
-**Priority:** P0 — reported failure of basic cross-provider recovery following the November 12 reconnect implementation.  
+**Priority:** P0 — reported failure of recovery across the three non-Cloudflare providers following the November 12 reconnect implementation. **Cloudflare R2 remains functional according to the owner's direct retest.**  
 **Do not:** uninstall, wipe extension storage, revoke working credentials, disconnect other providers to reproduce, blind-retry uncertain jobs, recreate destination/root bindings, or claim success based on a cache flag.
 
 ## Latest owner observation, quoted and normalized
@@ -12,6 +12,8 @@
 > Dropbox: **"Dropbox temporarily unavailable. Try again later."** and ↻; repeated card layout changes after reconnect (see separate P1 UI bug).  
 > OneDrive: **"Temporarily unavailable · ONEDRIVE_NETWORK"** and Queue **"blocked · ONEDRIVE_GRAPH_503"**; no observed OAuth popup on refresh.  
 > Owner reports **all three refresh controls** fail to open the expected OAuth permission window, and basic recovery appears broken.
+
+**Critical owner clarification:** **Cloudflare R2 still works just as before.** Do not classify this as an across-the-board REDOWN failure or claim every provider's save pipeline is broken. The working Cloudflare path is a valuable in-product negative control: inspect the specific Google/Dropbox/OneDrive auth and status flows and their new shared reconnect UI while protecting Cloudflare's known-good behavior. Working R2 alone does not rule out unrelated browser/worker or shared-interface defects; determine exact scope by observing calls and outcomes.
 
 The owner pasted text with HTML entities and concatenated card labels, so do not treat those snippets as precise DOM output. No screenshot, button-response payload, browser extension error, identity API error, account token grant state or network trace was supplied. Cross-provider no-popup symptoms must not be assumed to share one cause.
 
@@ -35,6 +37,8 @@ The owner pasted text with HTML entities and concatenated card labels, so do not
 7. Require source-level focused tests **plus installed Windows Chrome evidence**. Neither simulated identity APIs nor screenshot-only success certifies real OAuth.
 
 ## Acceptance
+
+- **Cloudflare regression guard:** Before/after any fix, prove the owner's existing Cloudflare R2 login, true-remote save, native context menus, verified result and ordinary Shelf controls remain unchanged and functional. Avoid modifying its provider pipeline to solve independent OAuth-provider issues.
 
 - Every ↻ button works as an actual interactive *recovery entry point* when fresh consent is needed, using existing provider-specific authorized methods, preserving existing account bindings and operations.
 - Status text precisely distinguishes *authorization verified*, *authorization required*, *provider temporarily unavailable*, *user cancelled*, and *authorization check failed*. **Never imply refresh/authorization success merely from an `ok:true` envelope when actual grant readiness is unknown.**
