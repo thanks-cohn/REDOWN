@@ -104,3 +104,67 @@ test("CAPLESS settings are accessible without enabling Debug Mode", () => {
   );
   dom.window.close();
 });
+
+test("multipart complete export includes all incident-history pages beyond the 16-slot index even without a capless archive", async () => {
+  const f = fixture(),
+    w = f.w,
+    blobs = [],
+    downloads = [];
+  f.setAccept(true);
+  delete w.showSaveFilePicker;
+  w.Blob = Blob;
+  w.URL.createObjectURL = (blob) => {
+    blobs.push(blob);
+    return "blob:fixture-" + blobs.length;
+  };
+  w.URL.revokeObjectURL = () => {};
+  w.HTMLAnchorElement.prototype.click = function () {
+    downloads.push(this.download);
+  };
+  w.RedownCaplessArchive = {
+    digest: async (text) =>
+      (await import("node:crypto"))
+        .createHash("sha256")
+        .update(text)
+        .digest("hex"),
+  };
+  w.RedownFlightRecorder.reader = async () => ({
+    exportPart: async () => {
+      throw Error("ARCHIVE_NOT_INITIALIZED");
+    },
+  });
+  w.RedownFlightRecorder.incidentPage = async (after = 0, boundary = 70) => {
+    const count = Math.min(64, 70 - after),
+      rows = Array.from({ length: count }, (_, n) => ({
+        sequence: after + n + 1,
+        trigger: { code: "WORKER_ERROR" },
+      }));
+    return {
+      rows,
+      boundary,
+      nextAfter: after + count,
+      more: after + count < 70,
+      metadata: { durableIncidents: 70 },
+    };
+  };
+  w.document.getElementById("capless-export").click();
+  await pause();
+  await pause();
+  for (let n = 0; n < 2; n++) {
+    assert.equal(w.document.getElementById("capless-next-part").hidden, false);
+    w.document.getElementById("capless-next-part").click();
+    await pause();
+    await pause();
+  }
+  assert.equal(w.document.getElementById("capless-next-part").hidden, true);
+  assert.equal(downloads.length, 3);
+  let rows = 0;
+  for (const blob of blobs) {
+    const files = fflate.unzipSync(new Uint8Array(await blob.arrayBuffer()));
+    for (const [name, data] of Object.entries(files))
+      if (name.startsWith("incident-history/"))
+        rows += new TextDecoder().decode(data).trim().split("\n").length;
+  }
+  assert.equal(rows, 70);
+  w.close();
+});

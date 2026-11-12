@@ -21,7 +21,19 @@
     if (!rawTouched) $("capless-raw").checked = s.raw;
     $("capless-state").textContent = s.on ? "ON" : "OFF";
     $("capless-status").textContent = JSON.stringify(s, null, 2);
-    $("capless-warning").hidden = !s.captureIncomplete;
+    $("capless-warning").hidden =
+      !s.captureIncomplete && !s.incidentStore?.legacyCacheFull;
+    const warningText = s.archiveStalled
+      ? "ARCHIVE_STALLED — new capless commits are blocked; previous evidence is preserved."
+      : s.health?.incidentFailure
+        ? "INCIDENT_STORAGE_UNAVAILABLE — fault persistence failed; archive status is separate."
+        : s.incidentStore?.legacyCacheFull
+          ? "PINNED_CACHE_FULL — legacy 16-slot cache preserved. New faults use durable incident history; archive is not stalled."
+          : s.historicCaptureIncomplete
+            ? "HISTORIC_CAPTURE_INCOMPLETE — earlier evidence was incomplete; this does not mean current archive writes are stalled."
+            : "Capture has unconfirmed observations; inspect recorder health.";
+    if ($("capless-warning").textContent !== warningText)
+      $("capless-warning").textContent = warningText;
     if (s.captureIncomplete) $("capless-panel").open = true;
   }
   toggle.addEventListener("change", async () => {
@@ -104,36 +116,93 @@
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   }
-  async function part() {
-    const reader = await flight.reader(),
-      result = await reader.exportPart(cursor || {});
-    if (!cursor)
-      result.files["pinned-incidents.json"] = JSON.stringify(
+  async function nextPart(state = {}) {
+    if (state.phase === "incidents") {
+      const result = await flight.incidentPage(
+          state.incidentAfter || 0,
+          state.incidentBoundary,
+        ),
+        jsonl = result.rows.map((row) => JSON.stringify(row) + "\n").join("");
+      const files = {
+        "incident-manifest.json": JSON.stringify(
+          {
+            ...result,
+            rows: undefined,
+            sha256: await RedownCaplessArchive.digest(jsonl),
+          },
+          null,
+          2,
+        ),
+      };
+      if (jsonl)
+        files[
+          "incident-history/" +
+            (result.rows[0]?.sequence || 0) +
+            "-" +
+            result.nextAfter +
+            ".jsonl"
+        ] = jsonl;
+      return {
+        files,
+        more: result.more,
+        nextState: result.more
+          ? {
+              phase: "incidents",
+              incidentAfter: result.nextAfter,
+              incidentBoundary: result.boundary,
+            }
+          : null,
+      };
+    }
+    let r;
+    try {
+      const reader = await flight.reader();
+      r = await reader.exportPart(state);
+    } catch (error) {
+      if (error?.message !== "ARCHIVE_NOT_INITIALIZED") throw error;
+      r = {
+        files: {
+          "archive-state.json": JSON.stringify({
+            state: "not-started",
+            scope:
+              "No capless archive initialized; incident history exported independently",
+          }),
+        },
+        more: false,
+      };
+    }
+    if (!state.after)
+      r.files["pinned-incidents.json"] = JSON.stringify(
         await flight.listIncidents(),
         null,
         2,
       );
-    download(
-      result.files,
-      "REDOWN-CAPLESS-PART-" + (cursor?.partNumber || 1) + ".zip",
-    );
-    cursor = result.more
+    const nextState = r.more
       ? {
-          after: result.nextAfter,
-          boundary: result.boundary,
-          gapAfter: result.nextGapAfter,
-          gapsDone: result.gapsDone,
-          snapshot: result.snapshot,
-          pendingAfter: result.nextPendingAfter,
-          pendingDone: result.pendingDone,
-          nextAfter: result.nextAfter,
-          partNumber: (cursor?.partNumber || 1) + 1,
+          after: r.nextAfter,
+          boundary: r.boundary,
+          gapAfter: r.nextGapAfter,
+          gapsDone: r.gapsDone,
+          snapshot: r.snapshot,
+          pendingAfter: r.nextPendingAfter,
+          pendingDone: r.pendingDone,
         }
+      : typeof flight.incidentPage === "function"
+        ? { phase: "incidents" }
+        : null;
+    return { files: r.files, more: !!nextState, nextState };
+  }
+  async function part() {
+    const result = await nextPart(cursor || {}),
+      partNumber = cursor?.partNumber || 1;
+    download(result.files, "REDOWN-CAPLESS-PART-" + partNumber + ".zip");
+    cursor = result.nextState
+      ? { ...result.nextState, partNumber: partNumber + 1 }
       : null;
     $("capless-next-part").hidden = !cursor;
-    $("capless-output").textContent = result.more
-      ? "Archive part generated. Keep every part; click Export next part until finished. No download completion is assumed."
-      : "All parts for the selected durable snapshot were generated. Retain every ZIP and verify segment checksums. Newer/in-flight writes are outside that snapshot.";
+    $("capless-output").textContent = cursor
+      ? "Archive part generated. Keep every part; export next part until archive and incident history are complete. Download completion is not assumed."
+      : "All parts for the durable archive/incident snapshots were generated. Retain every ZIP and verify hashes. Newer/in-flight writes are outside those snapshots.";
   }
   $("capless-export").addEventListener("click", async () => {
     if (busy) return;
@@ -171,7 +240,7 @@
             partNumber = 0;
           do {
             partNumber++;
-            const result = await reader.exportPart(state || {});
+            const result = await nextPart(state || {});
             for (const [name, value] of Object.entries(result.files)) {
               const entry = new fflate.ZipPassThrough(
                 "parts/" + String(partNumber).padStart(6, "0") + "/" + name,
@@ -181,17 +250,7 @@
               await output;
               if (failure) throw failure;
             }
-            state = result.more
-              ? {
-                  after: result.nextAfter,
-                  boundary: result.boundary,
-                  gapAfter: result.nextGapAfter,
-                  gapsDone: result.gapsDone,
-                  snapshot: result.snapshot,
-                  pendingAfter: result.nextPendingAfter,
-                  pendingDone: result.pendingDone,
-                }
-              : null;
+            state = result.nextState;
           } while (state);
           const pins = new fflate.ZipPassThrough("pinned-incidents.json");
           zip.add(pins);
@@ -244,12 +303,12 @@
   $("flight-delete-incidents").addEventListener("click", async () => {
     if (
       confirm(
-        "Delete the pinned incident envelopes only? Save history, capless segments and other diagnostics will remain.",
+        "Clear the fast incident index only? Durable incident history, original pinned evidence and capless segments will remain.",
       )
     ) {
       await flight.deleteIncidents(true);
       $("capless-output").textContent =
-        "Pinned incident envelopes explicitly deleted. Other data preserved.";
+        "Fast incident index cleared. Durable incident history and original pinned evidence preserved.";
     }
   });
   window.addEventListener("redown-flight-status", () => {

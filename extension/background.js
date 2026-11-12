@@ -1,4 +1,5 @@
 importScripts("entry-bootstrap.js");
+importScripts("provider-connection.js");
 const ROOT_MENU_ID = "redown";
 const menuDiagnosticSalt=crypto.randomUUID(); // Never exported: private native IDs are not dictionary hashes.
 const CF_CLIENT_ID = "d9db0f71eb24cd2eed86b50a650a045e";
@@ -907,7 +908,7 @@ async function recordTransfer(entry) {
     attempts?.reconcile?.(id);
     attempts?.stage(id,'HISTORY_COMMIT');
     if(outcome?.newVerified||outcome?.duplicate)attempts?.stage(id,'COUNTER_COMMIT');
-    attempts?.finish(id,entry.ok===true&&(outcome?.newVerified||outcome?.duplicate)?'COMPLETED':entry.ok===true?'UNCERTAIN':entry.status.toUpperCase(),entry.ok===true?'OK':'PROVIDER_FAILED');
+    attempts?.finish(id,entry.ok===true&&(outcome?.newVerified||outcome?.duplicate)?'COMPLETED':entry.ok===true?'UNCERTAIN':entry.status.toUpperCase(),entry.ok===true?'OK':entry.code||'PROVIDER_FAILED');
   }
   if(outcome?.newVerified===true)void toolbarFeedback("success");
   return outcome;

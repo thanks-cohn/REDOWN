@@ -13,6 +13,18 @@ test("950 sequential native saves preserve one exact verified receipt and counte
     sessionId: "session",
     expiresAt: Date.now() + 3600000,
   };
+  h.local.googleDriveState = {
+    phase: "reconnect",
+    accountKnown: true,
+    accountId: "synthetic-google",
+    code: "GOOGLE_AUTH_REQUIRED",
+  };
+  h.local["onedrive:state"] = {
+    phase: "unavailable",
+    accountKnown: true,
+    accountId: "synthetic-ms",
+    code: "ONEDRIVE_GRAPH_503",
+  };
   await h.ready();
   await h.context.RedownFlightRecorder.setConsent(true, { confirmed: true });
   h.context.launchSaveDroplet = () => {};
@@ -115,7 +127,27 @@ test("950 sequential native saves preserve one exact verified receipt and counte
   );
 });
 
-test('a throwing optional flight observer cannot block existing History or forensic persistence',async()=>{
- const h=worker();await h.ready();h.context.RedownFlightRecorder={proof(){throw Error('synthetic observer failure');},save(){throw Error('synthetic observer failure');}};
- const attemptId=h.context.crypto.randomUUID();await h.context.recordTransfer({attemptId,providerKind:'cloudflare',ok:false,status:'failed',error:'synthetic transfer failure'});await h.context.redownForensicLedger.flush();assert.ok(h.local.transferHistory.some(row=>row.attemptId===attemptId));const snapshot=await h.context.redownForensicLedger.snapshot();assert.ok(snapshot.records.some(row=>row.attemptId===attemptId));
+test("a throwing optional flight observer cannot block existing History or forensic persistence", async () => {
+  const h = worker();
+  await h.ready();
+  h.context.RedownFlightRecorder = {
+    proof() {
+      throw Error("synthetic observer failure");
+    },
+    save() {
+      throw Error("synthetic observer failure");
+    },
+  };
+  const attemptId = h.context.crypto.randomUUID();
+  await h.context.recordTransfer({
+    attemptId,
+    providerKind: "cloudflare",
+    ok: false,
+    status: "failed",
+    error: "synthetic transfer failure",
+  });
+  await h.context.redownForensicLedger.flush();
+  assert.ok(h.local.transferHistory.some((row) => row.attemptId === attemptId));
+  const snapshot = await h.context.redownForensicLedger.snapshot();
+  assert.ok(snapshot.records.some((row) => row.attemptId === attemptId));
 });

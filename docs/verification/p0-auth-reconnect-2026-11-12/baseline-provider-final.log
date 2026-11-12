@@ -1,0 +1,75 @@
+✖ Graph 503 preserves credentials and identity, separates unavailable from revoked, and backs off before recovery (24.151223ms)
+✖ Google revoked grant becomes a specific blocked authorization result and preserves known navigation/account (5.440786ms)
+✔ healthy Dropbox verified accounting remains isolated from Google revoked and OneDrive unavailable states (88.398938ms)
+✖ Google native admission verifies OAuth instead of reporting AUTH_CHECKED from a stored connected flag (8.734472ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 456.931386
+
+✖ failing tests:
+
+test at tests/provider-reconnect.test.mjs:141:1
+✖ Graph 503 preserves credentials and identity, separates unavailable from revoked, and backs off before recovery (24.151223ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'reconnect'
+  - 'unavailable'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/provider-reconnect.test.mjs:149:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'reconnect',
+    expected: 'unavailable',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/provider-reconnect.test.mjs:196:1
+✖ Google revoked grant becomes a specific blocked authorization result and preserves known navigation/account (5.440786ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+
+  Caught error:
+
+  Error: OAuth2 not granted or revoked.
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/provider-reconnect.test.mjs:235:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: OAuth2 not granted or revoked.
+        at Object.getAuthToken (file:///workspace/REDOWN/tests/provider-reconnect.test.mjs:222:15)
+        at authorize (evalmachine.<anonymous>:12:37)
+        at identity (evalmachine.<anonymous>:28:13)
+        at Object.connect (evalmachine.<anonymous>:34:73)
+        at TestContext.<anonymous> (file:///workspace/REDOWN/tests/provider-reconnect.test.mjs:236:9)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/provider-reconnect.test.mjs:573:1
+✖ Google native admission verifies OAuth instead of reporting AUTH_CHECKED from a stored connected flag (8.734472ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/provider-reconnect.test.mjs:643:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

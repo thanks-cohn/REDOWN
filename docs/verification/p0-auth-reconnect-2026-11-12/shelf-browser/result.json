@@ -1,0 +1,143 @@
+{
+  "scope": "Real Linux Chromium DOM/keyboard/AX at 320px, production Shelf markup/CSS/provider UI; mocked extension/OAuth/tabs APIs; no provider writes",
+  "state": "passed",
+  "assertions": [
+    {
+      "id": "google-go-to",
+      "passed": true
+    },
+    {
+      "id": "dropbox-go-to",
+      "passed": true
+    },
+    {
+      "id": "onedrive-go-to",
+      "passed": true
+    },
+    {
+      "id": "navigation-never-authorizes",
+      "passed": true
+    },
+    {
+      "id": "keyboard-reconnect-independent-and-busy",
+      "passed": true
+    },
+    {
+      "id": "go-to-remains-available-during-refresh",
+      "passed": true
+    },
+    {
+      "id": "cancelled-auth-is-not-a-save-or-signout",
+      "passed": true
+    },
+    {
+      "id": "503-preserves-navigation-and-other-providers",
+      "passed": true
+    },
+    {
+      "id": "accessible-button-names",
+      "passed": true
+    },
+    {
+      "id": "320px-distinct-visible-touch-targets",
+      "passed": true
+    },
+    {
+      "id": "labels-and-reconnect-fit-400",
+      "passed": true
+    },
+    {
+      "id": "labels-and-reconnect-fit-480",
+      "passed": true
+    },
+    {
+      "id": "labels-and-reconnect-fit-640",
+      "passed": true
+    },
+    {
+      "id": "forced-colors-keyboard-focus-and-busy",
+      "passed": true
+    },
+    {
+      "id": "focus-restored-after-authorization",
+      "passed": true
+    }
+  ],
+  "browser": "Chrome/156.0.8078.79",
+  "navigationSnapshot": {
+    "tabs": [
+      {
+        "url": "https://drive.google.com/drive/u/0/my-drive"
+      },
+      {
+        "url": "https://www.dropbox.com/home"
+      },
+      {
+        "url": "https://onedrive.live.com/"
+      }
+    ],
+    "auth": [],
+    "active": "shelf-onedrive"
+  },
+  "bounds": [
+    {
+      "provider": "google",
+      "primary": {
+        "left": 15,
+        "right": 231
+      },
+      "refresh": {
+        "left": 231,
+        "right": 263,
+        "width": 32,
+        "height": 32
+      },
+      "separate": true,
+      "visible": true
+    },
+    {
+      "provider": "dropbox",
+      "primary": {
+        "left": 15,
+        "right": 231
+      },
+      "refresh": {
+        "left": 231,
+        "right": 263,
+        "width": 32,
+        "height": 32
+      },
+      "separate": true,
+      "visible": true
+    },
+    {
+      "provider": "onedrive",
+      "primary": {
+        "left": 15,
+        "right": 231
+      },
+      "refresh": {
+        "left": 231,
+        "right": 263,
+        "width": 32,
+        "height": 32
+      },
+      "separate": true,
+      "visible": true
+    }
+  ],
+  "responsive": [
+    {
+      "width": 400,
+      "fits": true
+    },
+    {
+      "width": 480,
+      "fits": true
+    },
+    {
+      "width": 640,
+      "fits": true
+    }
+  ]
+}

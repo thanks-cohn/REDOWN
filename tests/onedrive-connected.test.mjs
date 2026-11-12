@@ -240,6 +240,7 @@ test('connected Shelf GO TO opens home without prompts or restarting Microsoft l
     tabs:{create:async options=>opened.push(options)},
     storage:{local:{get:async()=>state},onChanged:{addListener:()=>{}}}
   };
+  dom.window.eval(readFileSync('extension/provider-connection.js','utf8'));
   dom.window.eval(readFileSync('extension/shelf-onedrive.js','utf8'));
   await new Promise(r=>setImmediate(r));
   dom.window.document.getElementById('shelf-onedrive').click();
@@ -379,6 +380,7 @@ test('Shelf exposes no upload-host permission button or trusted-origin persisten
     permissions:{request:async()=>{throw Error('No permission requests in Shelf');}},
     storage:{local:{get:async()=>local},onChanged:{addListener:()=>{}}}
   };
+  dom.window.eval(readFileSync('extension/provider-connection.js','utf8'));
   dom.window.eval(readFileSync('extension/shelf-onedrive.js','utf8'));
   await new Promise(r=>setImmediate(r));
   assert.match(dom.window.document.getElementById('shelf-onedrive-status').textContent,/Saved image.png/);

@@ -49,6 +49,7 @@
   const stages=new Set(['CLICK_RECEIVED','ROUTE_RESOLVED','AUTH_CHECKED','ADMITTED','SOURCE_REQUEST','PROVIDER_WRITE','REMOTE_VERIFY','HISTORY_COMMIT','COUNTER_COMMIT','TERMINAL']);
   const terminals=new Set(['COMPLETED','FAILED','BLOCKED','CANCELLED','UNCERTAIN','INTERRUPTED']);
   const reasons=new Set(['OK','ROUTE_REJECTED','PREFLIGHT_FAILED','PROVIDER_FAILED','AUTH_PENDING','QUEUE_FULL','HISTORY_UNAVAILABLE','STORAGE_UNAVAILABLE','WORKER_RESTART','UNCONFIRMED','DIAGNOSTICS_UNAVAILABLE']);
+  const reasonAllowed=value=>reasons.has(value)||globalThis.RedownSaveEvidence?.code(value)!==undefined&&globalThis.RedownSaveEvidence.code(value)!=='PROVIDER_FAILED';
   const uuid=v=>typeof v==='string'&&/^[a-f0-9-]{36}$/.test(v);
   function createAttempts({storage,now=()=>Date.now(),id=()=>crypto.randomUUID(),timeoutMs=1000}={}){
     const key='redownSaveAttempts',clicks=new WeakMap();let attempts=[],unavailable=false,lane=Promise.resolve(),writing=false,dirty=false;
@@ -56,7 +57,7 @@
     const signal=()=>{unavailable=true;console.warn('REDOWN save attempt diagnostics unavailable; inspect extension Errors.');};
     const clean=a=>{
       if(!uuid(a?.id)||!['cloudflare','google','dropbox','onedrive','unknown'].includes(a.provider))return null;
-      const events=(Array.isArray(a.events)?a.events:[]).filter(e=>stages.has(e.stage)&&Number.isFinite(e.at)).slice(-24).map(e=>({stage:e.stage,at:e.at,...(Number.isFinite(e.durationMs)?{durationMs:Math.max(0,Math.min(86400000,e.durationMs))}:{}),...(terminals.has(e.outcome)?{outcome:e.outcome}:{}),...(reasons.has(e.reason)?{reason:e.reason}:{})}));
+      const events=(Array.isArray(a.events)?a.events:[]).filter(e=>stages.has(e.stage)&&Number.isFinite(e.at)).slice(-24).map(e=>({stage:e.stage,at:e.at,...(Number.isFinite(e.durationMs)?{durationMs:Math.max(0,Math.min(86400000,e.durationMs))}:{}),...(terminals.has(e.outcome)?{outcome:e.outcome}:{}),...(reasonAllowed(e.reason)?{reason:e.reason}:{})}));
       return {id:a.id,provider:a.provider,events,...(/^[a-f0-9]{64}$/.test(a.sourceId||'')?{sourceId:a.sourceId}:{}),sourceEvidence:globalThis.RedownSaveEvidence?.sanitize(a.sourceEvidence)||{},observations:(Array.isArray(a.observations)?a.observations:[]).slice(-20).filter(o=>Number.isFinite(o.at)).map(o=>({at:o.at,...(globalThis.RedownSaveEvidence?.sanitize(o)||{})}))};
     };
     const ready=(async()=>{
@@ -78,7 +79,7 @@
       if(!a||!stages.has(stage)||a.events.at(-1)?.stage==='TERMINAL')return;
       if(a.events.at(-1)?.stage===stage)return;
       const at=now(),previous=a.events.at(-1)?.at??at;
-      a.events.push({stage,at,durationMs:Math.max(0,Math.min(86400000,at-previous)),...(terminals.has(extra.outcome)?{outcome:extra.outcome}:{}),...(reasons.has(extra.reason)?{reason:extra.reason}:{})});
+      a.events.push({stage,at,durationMs:Math.max(0,Math.min(86400000,at-previous)),...(terminals.has(extra.outcome)?{outcome:extra.outcome}:{}),...(reasonAllowed(extra.reason)?{reason:extra.reason}:{})});
       if(a.events.length>24)a.events=[a.events[0],...a.events.slice(-23)];persist();
     }
     let sourceKey;

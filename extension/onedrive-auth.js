@@ -11,12 +11,15 @@
   const AUTH='https://login.microsoftonline.com/common/oauth2/v2.0/authorize';
   const TOKEN='https://login.microsoftonline.com/common/oauth2/v2.0/token';
   const GRAPH='https://graph.microsoft.com/v1.0/';
-  const fail=(code,message,status='blocked')=>Object.assign(Error(message),{code,status});
+  const fail=(code,message,status='blocked')=>Object.assign(Error(message),{code,status,phase:'auth'});
   const b64=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   function create({chrome=globalThis.chrome,fetch=globalThis.fetch,crypto=globalThis.crypto,now=Date.now}={}){
-    let cached=null,connecting=null,refreshing=null,epoch=0;
+    let cached=null,connecting=null,refreshing=null,epoch=0,verifyPromise=null,verifiedAt=0,retryAt=0,lastTransient=null;
     const get=async key=>(await chrome.storage.local.get(key))[key];
-    const setState=s=>chrome.storage.local.set({'onedrive:state':s});
+    const temporary=e=>/^(?:ONEDRIVE_NETWORK|ONEDRIVE_(?:GRAPH|TOKEN)_(?:429|5\d\d))$/.test(e?.code||'');
+    const setState=async s=>{const old=await get('onedrive:state')||{};return chrome.storage.local.set({'onedrive:state':s.phase==='disconnected'?s:{...old,...s,accountKnown:!!(old.accountKnown||old.accountId||old.phase==='connected'||s.accountId)}});};
+    async function connectionFailure(e){const temp=temporary(e);if(temp){lastTransient=e;retryAt=now()+Math.min(300000,Math.max(15000,e.retryAfterMs||30000));}await setState({phase:temp?'unavailable':'reconnect',code:e.code||'ONEDRIVE_VERIFY_FAILED',oauthGrantState:temp?'unknown':'required',providerReachability:temp?'unavailable':'unknown',retryAt:temp?retryAt:null,error:temp?'Microsoft is temporarily unavailable. Your saved connection is preserved; try again later.':e.message||'Reconnect OneDrive to verify the original account.'});}
+
     const random=()=>b64(crypto.getRandomValues(new Uint8Array(32)));
     async function secure(){
       await chrome.storage.local.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});
@@ -40,6 +43,8 @@
       const res=await request(TOKEN,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
         body:new URLSearchParams({client_id:CLIENT,...params})});
       const data=await res.json().catch(()=>({}));
+      if(res.status===429||res.status>=500)throw Object.assign(fail('ONEDRIVE_TOKEN_'+res.status,'Microsoft authorization service is temporarily unavailable (HTTP '+res.status+').'),{retryAfterMs:Math.min(300000,(Number(res.headers?.get('Retry-After'))||30)*1000)});
+      if(data.error==='invalid_grant')throw fail('ONEDRIVE_INVALID_GRANT','Microsoft authorization must be renewed. Reconnect OneDrive.');
       if(!res.ok||typeof data.access_token!=='string'||!data.access_token||!Number.isFinite(data.expires_in)||data.expires_in<=0)
         throw fail('ONEDRIVE_TOKEN_REJECTED','Microsoft could not complete authentication. '+(aadsts(data)||('HTTP '+res.status)));
       if(data.scope){
@@ -51,7 +56,7 @@
     }
     async function graph(token,path){
       const res=await request(GRAPH+path,{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
-      if(!res.ok)throw fail('ONEDRIVE_GRAPH_'+res.status,'Microsoft Graph could not verify this OneDrive account (HTTP '+res.status+').');
+      if(!res.ok)throw Object.assign(fail('ONEDRIVE_GRAPH_'+res.status,'Microsoft Graph could not verify this OneDrive account (HTTP '+res.status+').'),{retryAfterMs:Math.min(300000,(Number(res.headers?.get('Retry-After'))||30)*1000)});
       return res.json().catch(()=>{throw fail('ONEDRIVE_GRAPH_INVALID','Microsoft returned invalid account information.');});
     }
     async function verify(token,expected){
@@ -106,16 +111,16 @@
             redirect_uri:url,scope:SCOPES.join(' ')});
           if(typeof token.refresh_token!=='string'||!token.refresh_token)
             throw fail('ONEDRIVE_OFFLINE_ACCESS','Microsoft did not grant the offline access required for reliable saves.');
-          const identity=await verify(token.access_token);
+          const prior=await get('onedrive:auth');const identity=await verify(token.access_token,prior||undefined);
           if(ticket!==epoch)throw fail('ONEDRIVE_DISCONNECTED','OneDrive was disconnected during login.');
-          const auth={...identity,refreshToken:token.refresh_token,connectionId:crypto.randomUUID()};
+          const auth={...identity,refreshToken:token.refresh_token,connectionId:prior?.connectionId||crypto.randomUUID()};
           await chrome.storage.local.set({'onedrive:auth':auth});
-          cached={value:token.access_token,until:now()+token.expires_in*1000,connectionId:auth.connectionId};
-          const state={...identity,connectionId:auth.connectionId,phase:'connected',checkedAt:now()};
+          cached={value:token.access_token,until:now()+token.expires_in*1000,connectionId:auth.connectionId};verifiedAt=now();retryAt=0;lastTransient=null;
+          const state={...identity,connectionId:auth.connectionId,phase:'connected',code:'',error:'',oauthGrantState:'verified',providerReachability:'reachable',checkedAt:now()};
           await setState(state);return state;
         }catch(e){
           cached=null;
-          if(ticket===epoch)await setState({phase:'reconnect',code:e.code||'ONEDRIVE_CONNECT_FAILED',error:e.code?e.message:'OneDrive sign-in failed. Reconnect.'});
+          if(ticket===epoch)await connectionFailure(e);
           throw e;
         }finally{await chrome.storage.session.remove('onedrive:oauth').catch(()=>{});}
       })().finally(()=>{connecting=null;});
@@ -123,9 +128,11 @@
     }
     async function ready(expected=null,force=false){
       await secure();
+      if(lastTransient&&now()<retryAt)throw lastTransient;
       const auth=await get('onedrive:auth');
       if(!auth||!auth.connectionId||!auth.refreshToken||!auth.rootReady)
         throw fail('ONEDRIVE_NOT_CONNECTED','Log in to OneDrive from the Shelf before saving.');
+      const projection=await get('onedrive:state')||{};if(!projection.accountId)await setState({phase:projection.phase||'checking',accountKnown:true,accountId:auth.accountId,driveId:auth.driveId,rootId:auth.rootId,connectionId:auth.connectionId,rootReady:auth.rootReady,driveType:auth.driveType,oauthGrantState:'unknown'});
       if(expected&&['accountId','driveId','rootId','connectionId'].some(key=>auth[key]!==expected[key]))
         throw fail('ONEDRIVE_ACCOUNT_CHANGED','The OneDrive account changed. Reconnect before trying this save.');
       if(!cached||cached.connectionId!==auth.connectionId||cached.until<now()+60000){
@@ -133,39 +140,40 @@
           const ticket=epoch;
           try{
             const token=await exchange({grant_type:'refresh_token',refresh_token:auth.refreshToken,scope:SCOPES.join(' ')});
-            const identity=await verify(token.access_token,auth);
+            const identity=await verify(token.access_token,auth);verifiedAt=now();retryAt=0;lastTransient=null;
             if(ticket!==epoch)throw fail('ONEDRIVE_DISCONNECTED','OneDrive was disconnected.');
             const current=await get('onedrive:auth');
             if(current?.connectionId!==auth.connectionId)throw fail('ONEDRIVE_ACCOUNT_CHANGED','OneDrive connection changed.');
             await chrome.storage.local.set({'onedrive:auth':{...auth,...identity,refreshToken:token.refresh_token||auth.refreshToken}});
             cached={value:token.access_token,until:now()+token.expires_in*1000,connectionId:auth.connectionId};
           }catch(e){
-            cached=null;
-            if(ticket===epoch)await setState({phase:'reconnect',code:e.code||'ONEDRIVE_REFRESH_FAILED',error:'Reconnect OneDrive to renew and verify access.'});
+            if(!temporary(e))cached=null;
+            if(ticket===epoch)await connectionFailure(e);
             throw e;
           }
         })().finally(()=>{refreshing=null;});
         await refreshing;
       }
-      if(force){
-        try{await verify(cached.value,auth);}
-        catch(e){cached=null;await setState({phase:'reconnect',code:e.code||'ONEDRIVE_VERIFY_FAILED',error:'Reconnect OneDrive to verify the original drive.'});throw e;}
+      if(force&&now()-verifiedAt>5000){
+        if(!verifyPromise)verifyPromise=verify(cached.value,auth).then(()=>{verifiedAt=now();retryAt=0;lastTransient=null;}).finally(()=>{verifyPromise=null;});
+        try{await verifyPromise;}
+        catch(e){if(!temporary(e))cached=null;await connectionFailure(e);throw e;}
       }
       const current=await get('onedrive:auth');
       if(current?.connectionId!==auth.connectionId)throw fail('ONEDRIVE_ACCOUNT_CHANGED','OneDrive connection changed.');
       const state={provider:'onedrive',accountId:auth.accountId,driveId:auth.driveId,rootId:auth.rootId,root:'/',
-        rootReady:true,driveType:auth.driveType,connectionId:auth.connectionId,phase:'connected',checkedAt:now()};
+        rootReady:true,driveType:auth.driveType,connectionId:auth.connectionId,phase:'connected',code:'',error:'',oauthGrantState:'verified',providerReachability:'reachable',checkedAt:now()};
       const old=await get('onedrive:state');
       if(force||old?.phase!=='connected'||old?.connectionId!==auth.connectionId)await setState(state);
       return {...state,token:cached.value};
     }
     async function disconnect(){
-      epoch++;cached=null;
+      epoch++;cached=null;lastTransient=null;retryAt=0;verifiedAt=0;
       await chrome.storage.local.remove(['onedrive:auth','onedrive:transfer','onedrive:trustedUploadOrigins']);
       await chrome.storage.session.remove('onedrive:oauth').catch(()=>{});
       await setState({phase:'disconnected'});
     }
-    return {connect,ready,disconnect,verify,fail,ORIGINS};
+    return {connect,ready,disconnect,verify,fail,temporary,ORIGINS};
   }
   globalThis.RedownOneDriveAuth={create,fail,ORIGINS,SCOPES};
 })();

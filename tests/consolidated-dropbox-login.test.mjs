@@ -86,6 +86,7 @@ test('P0 Shelf LOGIN does not remain disabled in a stale connecting state',async
   const chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'connecting'},'dropbox:transfer':{}})},
     onChanged:{addListener:()=>{}}},runtime:{sendMessage:async msg=>{sent.push(msg.type);return {ok:true};}}};
   dom.window.chrome=chrome;
+  dom.window.eval(await read('provider-connection.js'));
   dom.window.eval(await read('shelf-dropbox.js'));
   await Promise.resolve();await Promise.resolve();
   const button=dom.window.document.getElementById('shelf-dropbox');
@@ -111,19 +112,20 @@ test('P0 PKCE failure cannot leave Dropbox forever connecting',async()=>{
   assert.equal(data['dropbox:state'].phase,'reconnect');
 });
 
-test('P0 Shelf RETRY visibly explains authorization failure in the provider card',async()=>{
+test('P0 Shelf preserves GO TO and visibly explains an ambiguous legacy authorization failure',async()=>{
   const dom=new JSDOM(`<div class="destination-tile">
     <button id="shelf-dropbox"><span class="destination-action-copy"><span id="shelf-dropbox-label"></span></span></button>
     <a id="shelf-dropbox-open"></a><button id="shelf-dropbox-disconnect"></button>
     <button id="shelf-dropbox-cancel"></button><small id="shelf-dropbox-status"></small>
     </div>`,{url:'https://example.invalid/',runScripts:'outside-only'});
   dom.window.chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'reconnect',error:'Dropbox root could not be verified.'},'dropbox:transfer':{}})},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async msg=>({ok:msg.type!=='dropboxConnect',error:'Dropbox root could not be verified.'})}};
+  dom.window.eval(await read('provider-connection.js'));
   dom.window.eval(await read('shelf-dropbox.js'));
   await Promise.resolve();await Promise.resolve();
   const button=dom.window.document.getElementById('shelf-dropbox');
   const error=dom.window.document.querySelector('.dropbox-inline-login-error');
   assert.equal(button.disabled,false);
-  assert.equal(dom.window.document.getElementById('shelf-dropbox-label').textContent,'RETRY');
+  assert.equal(dom.window.document.getElementById('shelf-dropbox-label').textContent,'GO TO');
   assert.equal(error.hidden,false);
   assert.match(error.textContent,/root could not be verified/);
   dom.window.close();

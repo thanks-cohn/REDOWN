@@ -3,11 +3,11 @@
   'use strict';
   const KEY='dropbox:jobs',LIMIT=8,terminal=new Set(['completed','failed','blocked','cancelled','uncertain','interrupted']);
   function create({chrome=globalThis.chrome,auth=RedownDropboxAuth.create(),api,record=async()=>{}}={}){
-    api=api||RedownDropboxAPI.create({auth});let lane=Promise.resolve(),running=null,controller=null,stopping=false;const seenClicks=new WeakSet();const pendingAuth=new Set();
+    api=api||RedownDropboxAPI.create({auth});let lane=Promise.resolve(),running=null,controller=null,stopping=false;let checking=null,lastCheck=0;const seenClicks=new WeakSet();const pendingAuth=new Set();
     const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
     const get=async key=>(await chrome.storage.local.get(key))[key];
     const jobs=async()=>await get(KEY)||[];
-    async function save(job){job.updatedAt=Date.now();globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase,job);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
+    async function save(job){job.updatedAt=Date.now();globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase,job);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||'',code:job.code||'',phase:job.errorPhase||job.phase,at:job.at,updatedAt:job.updatedAt}});});}
     async function receipt(job){
       const r=job.result;
       if(job.status==='completed'&&!(r?.proofVersion===1&&/^dbid:[\w-]+$/.test(job.accountId||'')&&!!job.connectionId&&/^\d+$/.test(job.namespace||'')&&r.accountId===job.accountId&&r.connectionId===job.connectionId&&r.namespace===job.namespace&&r.root==='/'&&r.path==='/'+r.name&&/^id:[\w-]+$/.test(r.fileId||'')&&r.revision&&/^[a-f0-9]{64}$/.test(r.contentHash||'')&&r.bytes===job.offset)){
@@ -89,7 +89,7 @@
             identity=await auth.ready(undefined,false);
             if(identity.accountId!==s.accountId||identity.connectionId!==s.connectionId||identity.namespace!==s.namespace)
               throw RedownDropboxAuth.fail('Dropbox account state changed. Reconnect before saving.');
-          }catch{identity=null;}
+          }catch(e){if(/^DROPBOX_(NETWORK|HTTP_(429|5\d\d))$/.test(e.code||''))throw e;identity=null;}
         }
         if(identity){
           globalThis.redownSaveAttempts?.stage(source.attemptId,'AUTH_CHECKED');
@@ -121,9 +121,9 @@
     }
     const ownsMessage=m=>['dropboxConnect','dropboxDisconnect','dropboxStatus','dropboxCancel'].includes(m?.type);
     async function message(m,sender){
-      if(sender.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false};
+      if(sender?.id!==chrome.runtime.id||!['shelf.html','options.html','popup.html'].some(p=>sender.url?.split(/[?#]/)[0]===chrome.runtime.getURL(p))||!['dropboxConnect','dropboxStatus'].includes(m.type)&&sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false};
       try{
-        if(m.type==='dropboxConnect'){await auth.connect();return {ok:true};}
+        if(m.type==='dropboxConnect'){if(await get('dropbox:auth')){try{await auth.ready(undefined,true);return {ok:true};}catch(e){if(/^DROPBOX_(NETWORK|HTTP_(429|5\d\d))$/.test(e.code||''))throw e;/* Explicit user reconnect reuses the existing PKCE owner. */}}await auth.connect();return {ok:true};}
         if(m.type==='dropboxDisconnect'){
           stopping=true;controller?.abort();await running?.catch(()=>{});
           for(const job of await jobs())if(!terminal.has(job.status)){job.status='cancelled';job.error='Dropbox disconnected.';await save(job);await receipt(job);}
@@ -135,16 +135,20 @@
           return {ok:true};
         }
         if(m.type==='dropboxStatus'){
+          if(!checking&&(m.passive!==true||Date.now()-lastCheck>30000)){lastCheck=Date.now();checking=(async()=>{
           const a=await get('dropbox:auth');if(a){await auth.ready(undefined,true);
             // Explicit Shelf refresh reconciles known commits by ID only, never uploads again.
             for(const job of await jobs())if(job.status==='uncertain'&&job.receipt){
               try{await auth.ready(job,true);job.result=await api.proof(job.receipt,job);job.status='completed';job.error='';job.reported=false;await receipt(job);}catch{/* Retain uncertain evidence. */}
             }
           }
-          else if(['connecting','connected'].includes((await get('dropbox:state'))?.phase))await chrome.storage.local.set({'dropbox:state':{phase:'reconnect',error:'Reconnect Dropbox to verify your account.'}});
-          void wake();return {ok:true};
+          else{const old=await get('dropbox:state')||{};if(old.phase==='connected'||old.accountKnown&&old.phase!=='connecting')await chrome.storage.local.set({'dropbox:state':{...old,phase:'reconnect',accountKnown:true,oauthGrantState:'required',code:'AUTH_REQUIRED',error:'Reconnect Dropbox to verify your original account. Previous destinations are preserved.'}});}
+          void wake();
+          })().finally(()=>{checking=null;});checking.catch(()=>{});}
+          if(m.passive!==true&&checking)await checking;
+          const s=await get('dropbox:state')||{};return {ok:true,verificationPending:!!checking,connection:globalThis.RedownProviderConnection?.project('dropbox',s)};
         }
-      }catch(e){return {ok:false,error:e.status?e.message:'Dropbox connection needs attention. Reconnect or try again.'};}
+      }catch(e){return {ok:false,code:e.code,error:e.status?e.message:'Dropbox connection needs attention. Reconnect or try again.'};}
       return {ok:false};
     }
     function install(){

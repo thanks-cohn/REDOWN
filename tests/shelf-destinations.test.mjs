@@ -22,6 +22,7 @@ async function mount(provider,state){
     runtime:{sendMessage:async m=>{messages.push(m.type);return {ok:true};}},
     storage:{local:{get:async()=>storage},onChanged:{addListener:()=>{}}}
   };
+  dom.window.eval(await read('extension/provider-connection.js'));
   dom.window.eval(await read('extension/shelf-'+provider+'.js'));
   await tick();
   return {dom,button:dom.window.document.getElementById('shelf-'+provider),opened,messages};

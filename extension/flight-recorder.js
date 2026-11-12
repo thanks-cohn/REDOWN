@@ -6,9 +6,9 @@
     PREFIX = "redownFlightEpochV1:",
     INCIDENT_DB = "redown-flight-incidents-v1";
   const BUILD = {
-    fingerprint: "cc717e24810c660371e210c59e56d6e36137c7c9f7563166d69f6533ecd4baa6",
-    tag: "p0-flight-capless-2026-11-12-v1",
-    baseline: "f074d164b880610f2bb1e7a5023d812fe7ee8feb",
+    fingerprint: "87890e8ab432291d744acbb2877e2385aa204ea25d131b8b1acd2170db618751",
+    tag: "p0-auth-reconnect-incidents-2026-11-12-v2",
+    baseline: "f9f6d0d50fa7a9b75e7c48dd9a37d58812d879cf",
     installedCommit: "not-observable",
   };
   const valid = (c) =>
@@ -63,6 +63,8 @@
         "writeFailures",
         "dropped",
         "unconfirmed",
+        "slowOperations",
+        "lastCoreWriteMs",
       ].map((k) => [k, number(v?.[k]) || 0]),
     ),
     ...Object.fromEntries(
@@ -148,7 +150,12 @@
       lastConfirmed = 0,
       lastSaveCheckpoint = 0,
       incidentConnection,
-      lastPinAt = -Infinity;
+      lastPinAt = -Infinity,
+      lastPinCode = null,
+      incidentWarning = false,
+      incidentMetadata = null,
+      historicalIncomplete = false,
+      historicalHealth = null;
     const recent = [];
     let head = {
       schemaVersion: 1,
@@ -187,6 +194,12 @@
       .then(async (s) => {
         consent = s[CONSENT] || null;
         cached = s[CACHE] || null;
+        historicalIncomplete = !!(
+          cached?.historicCaptureIncomplete || cached?.health?.incomplete
+        );
+        historicalHealth = historicalIncomplete
+          ? safeHealth(cached?.historicalHealth || cached?.health)
+          : null;
         enabled = valid(consent);
         loaded = true;
         if (enabled) {
@@ -194,6 +207,8 @@
             archive = archiveFactory();
             await archive.ensure(consent.archiveId);
             await archive.recover(consent.archiveId);
+            cached = await archive.stats();
+            cache(true);
             schedule();
           } catch (e) {
             stall(e);
@@ -202,6 +217,10 @@
           queue = [];
           queueBytes = 0;
         }
+        if (historicalIncomplete)
+          void incidentStats()
+            .then(notify)
+            .catch(() => {});
         notify();
       })
       .catch((e) => {
@@ -230,9 +249,12 @@
         health: { ...health },
         lastConfirmedSequence: lastConfirmed,
       };
+      let expired = false;
+      const writeStarted = performance.now();
       let timer = setTimeout(() => {
+        expired = true;
         health.unconfirmed++;
-        health.incomplete = true;
+        health.slowOperations = (health.slowOperations || 0) + 1;
         notify();
       }, 1000);
       try {
@@ -249,6 +271,8 @@
         console.warn("REDOWN flight breadcrumb incomplete.");
       } finally {
         clearTimeout(timer);
+        if (expired) health.unconfirmed = Math.max(0, health.unconfirmed - 1);
+        health.lastCoreWriteMs = performance.now() - writeStarted;
         headWriting = false;
         if (headDirty)
           headTimer = setTimeout(() => {
@@ -298,15 +322,6 @@
             reason: "previous epoch stopped; reason unknown",
           };
           checkpoint("RECOVERED_UNKNOWN");
-          void pin(
-            {
-              code: "PREVIOUS_EPOCH_STOPPED_REASON_UNKNOWN",
-              at: new Date(now()).toISOString(),
-              component: "worker",
-              status: "unknown",
-            },
-            previous,
-          );
         }
         if (keys.length > 16) await chrome.storage.local.remove(keys.slice(16));
       } catch {
@@ -340,6 +355,9 @@
           .set({
             [CACHE]: {
               ...cached,
+              collectorEpoch: epoch,
+              historicCaptureIncomplete: historicalIncomplete,
+              historicalHealth,
               health: { ...health },
               cachedAt: new Date(now()).toISOString(),
             },
@@ -459,10 +477,45 @@
       if (!database) throw Error("INCIDENT_STORAGE_UNAVAILABLE");
       if (!incidentConnection)
         incidentConnection = new Promise((resolve, reject) => {
-          const r = database.open(INCIDENT_DB, 1);
-          r.onupgradeneeded = () =>
-            r.result.createObjectStore("incidents", { keyPath: "id" });
-          r.onsuccess = () => resolve(r.result);
+          const r = database.open(INCIDENT_DB, 2);
+          r.onupgradeneeded = () => {
+            const db = r.result,
+              tx = r.transaction;
+            if (!db.objectStoreNames.contains("incidents"))
+              db.createObjectStore("incidents", { keyPath: "id" });
+            if (!db.objectStoreNames.contains("incidentHistory")) {
+              const history = db.createObjectStore("incidentHistory", {
+                keyPath: "sequence",
+                autoIncrement: true,
+              });
+              history.createIndex("byId", "id", { unique: true });
+              const index = db.createObjectStore("incidentIndex", {
+                keyPath: "sequence",
+              });
+              const rows = tx.objectStore("incidents").openCursor();
+              rows.onsuccess = () => {
+                const c = rows.result;
+                if (!c) return;
+                const add = history.add(c.value);
+                add.onsuccess = () =>
+                  index.put({
+                    sequence: add.result,
+                    id: c.value.id,
+                    at: c.value.at,
+                    code: c.value.trigger?.code || "UNKNOWN",
+                  });
+                c.continue();
+              };
+            }
+          };
+          r.onsuccess = () => {
+            const db = r.result;
+            db.onversionchange = () => {
+              db.close();
+              incidentConnection = null;
+            };
+            resolve(db);
+          };
           r.onerror = () => reject(r.error);
           r.onblocked = () => reject(Error("INCIDENT_STORAGE_BLOCKED"));
         }).catch((e) => {
@@ -471,9 +524,73 @@
         });
       return incidentConnection;
     }
+    function incidentWrite(db, names) {
+      try {
+        return db.transaction(names, "readwrite", { durability: "strict" });
+      } catch (e) {
+        if (!["TypeError", "NotSupportedError"].includes(e?.name)) throw e;
+        return db.transaction(names, "readwrite");
+      }
+    }
+    async function incidentStats() {
+      const db = await incidentsDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(
+            ["incidents", "incidentHistory", "incidentIndex"],
+            "readonly",
+          ),
+          legacy = tx.objectStore("incidents").count(),
+          history = tx.objectStore("incidentHistory").count(),
+          index = tx.objectStore("incidentIndex").count(),
+          last = tx.objectStore("incidentHistory").openCursor(null, "prev");
+        tx.oncomplete = () => {
+          incidentMetadata = {
+            legacyPinned: legacy.result,
+            durableIncidents: history.result,
+            fastIndex: index.result,
+            indexCapacity: 16,
+            lastSequence: last.result?.value.sequence || 0,
+            legacyCacheFull: legacy.result >= 16,
+          };
+          resolve(incidentMetadata);
+        };
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+    async function incidentPage(after = 0, boundary) {
+      const meta = await incidentStats(),
+        end = boundary ?? meta.lastSequence,
+        db = await incidentsDB();
+      const rows = await new Promise((resolve, reject) => {
+        const tx = db.transaction("incidentHistory", "readonly"),
+          out = [],
+          r = tx
+            .objectStore("incidentHistory")
+            .openCursor(IDBKeyRange.lowerBound(after, true));
+        r.onsuccess = () => {
+          const c = r.result;
+          if (!c || c.value.sequence > end || out.length >= 64)
+            return resolve(out);
+          out.push(c.value);
+          c.continue();
+        };
+        r.onerror = () => reject(r.error);
+      });
+      return {
+        schemaVersion: 1,
+        rows,
+        boundary: end,
+        nextAfter: rows.at(-1)?.sequence || after,
+        more: !!rows.length && rows.at(-1).sequence < end,
+        metadata: meta,
+        scope:
+          "Append-only privacy-safe incident history; legacy pinned evidence preserved",
+      };
+    }
     async function pin(event, previous = null) {
-      if (now() - lastPinAt < 1000) return;
+      if (now() - lastPinAt < 1000 && lastPinCode === event.code) return;
       lastPinAt = now();
+      lastPinCode = event.code;
       const envelope = {
         schemaVersion: 1,
         id: event.id || crypto.randomUUID(),
@@ -489,7 +606,7 @@
           code: "UNKNOWN",
         },
         before: recent.slice(-16),
-        health: { ...health },
+        health: safeHealth(health),
         recoveredCheckpoint: previous
           ? {
               epoch: uid(previous.epoch) ? previous.epoch : null,
@@ -499,33 +616,58 @@
             }
           : null,
         reason:
-          "Observed fault/unknown epoch ending; normal idle can look the same; not proof of browser crash",
+          "Observed actionable fault/readiness failure; not proof of browser crash",
       };
       accept({ collector: "flight", kind: "incident", data: envelope });
       try {
         const db = await incidentsDB();
         await new Promise((resolve, reject) => {
-          const tx = db.transaction("incidents", "readwrite"),
-            s = tx.objectStore("incidents"),
-            count = s.count();
-          count.onsuccess = () => {
-            if (count.result >= 16) {
-              tx.abort();
-              return;
-            }
-            s.add(envelope);
+          const tx = incidentWrite(db, ["incidentHistory", "incidentIndex"]),
+            history = tx.objectStore("incidentHistory"),
+            index = tx.objectStore("incidentIndex"),
+            existing = history.index("byId").get(envelope.id);
+          existing.onsuccess = () => {
+            if (existing.result) return;
+            const add = history.add(envelope);
+            add.onsuccess = () => {
+              index.put({
+                sequence: add.result,
+                id: envelope.id,
+                at: envelope.at,
+                code: envelope.trigger.code,
+              });
+              const count = index.count();
+              count.onsuccess = () => {
+                let excess = count.result - 16;
+                if (excess <= 0) return;
+                const r = index.openCursor();
+                r.onsuccess = () => {
+                  const c = r.result;
+                  if (!c || excess-- <= 0) return;
+                  c.delete();
+                  c.continue();
+                };
+              };
+            };
           };
           tx.oncomplete = resolve;
           tx.onabort = tx.onerror = () =>
-            reject(Error("PINNED_INCIDENTS_FULL_OR_UNAVAILABLE"));
+            reject(tx.error || Error("INCIDENT_HISTORY_UNAVAILABLE"));
         });
+        incidentWarning = false;
+        health.incidentFailure = false;
+        await incidentStats();
+        notify();
       } catch {
         health.incidentFailure = true;
-        health.incomplete = true;
+        historicalIncomplete = true;
         checkpoint("INCIDENT_PERSISTENCE_FAILED");
-        console.warn(
-          "REDOWN pinned incident capture incomplete; inspect recorder status.",
-        );
+        if (!incidentWarning) {
+          incidentWarning = true;
+          console.warn(
+            "REDOWN incident history unavailable; capless archive status is separate.",
+          );
+        }
         notify();
       }
     }
@@ -701,6 +843,7 @@
     chrome?.storage?.onChanged?.addListener((changes, area) => {
       if (area === "local" && changes[CACHE]) {
         cached = changes[CACHE].newValue;
+        historicalIncomplete ||= cached?.historicCaptureIncomplete === true;
         notify();
       }
       if (area === "local" && changes[CONSENT]) {
@@ -713,11 +856,25 @@
     async function listIncidents() {
       try {
         const db = await incidentsDB();
+        await incidentStats();
         return await new Promise((resolve, reject) => {
-          const tx = db.transaction("incidents", "readonly"),
-            r = tx.objectStore("incidents").getAll();
-          r.onsuccess = () => resolve(r.result);
-          r.onerror = () => reject(r.error);
+          const tx = db.transaction(
+              ["incidentIndex", "incidentHistory"],
+              "readonly",
+            ),
+            out = [],
+            r = tx.objectStore("incidentIndex").openCursor(null, "prev");
+          r.onsuccess = () => {
+            const c = r.result;
+            if (!c) return;
+            const q = tx.objectStore("incidentHistory").get(c.value.sequence);
+            q.onsuccess = () => {
+              if (q.result) out.push(q.result);
+              c.continue();
+            };
+          };
+          tx.oncomplete = () => resolve(out);
+          tx.onerror = () => reject(tx.error);
         });
       } catch {
         return { state: "unavailable", captureIncomplete: true };
@@ -726,12 +883,13 @@
     async function deleteIncidents(confirmed) {
       if (!confirmed) throw Error("CONFIRM_DELETION_REQUIRED");
       const db = await incidentsDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction("incidents", "readwrite");
-        tx.objectStore("incidents").clear();
+      await new Promise((resolve, reject) => {
+        const tx = incidentWrite(db, "incidentIndex");
+        tx.objectStore("incidentIndex").clear();
         tx.oncomplete = resolve;
         tx.onerror = () => reject(tx.error);
       });
+      await incidentStats();
     }
     async function snapshot() {
       let heads = [];
@@ -842,7 +1000,29 @@
     }
     async function status() {
       await ready;
+      const freshCached =
+        enabled &&
+        cached?.collectorEpoch !== epoch &&
+        now() - Date.parse(cached?.cachedAt) < 30000;
+      const archiveStalled =
+        health.stalled === true ||
+        (freshCached && cached?.health?.stalled === true);
+      const activeCaptureIncomplete =
+        health.incomplete === true ||
+        health.unconfirmed > 0 ||
+        (freshCached && cached?.health?.incomplete === true);
       return {
+        archiveStalled,
+        activeCaptureIncomplete,
+        historicCaptureIncomplete: historicalIncomplete,
+        historicalHealth,
+        incidentStore: incidentMetadata || { state: "not-inspected" },
+        signals: [
+          ...(archiveStalled ? ["ARCHIVE_STALLED"] : []),
+          ...(health.incidentFailure ? ["INCIDENT_STORAGE_UNAVAILABLE"] : []),
+          ...(incidentMetadata?.legacyCacheFull ? ["PINNED_CACHE_FULL"] : []),
+          ...(historicalIncomplete ? ["HISTORIC_CAPTURE_INCOMPLETE"] : []),
+        ],
         requestedOn: valid(consent),
         on: enabled,
         raw: consent?.raw === true,
@@ -857,15 +1037,17 @@
             cached?.health?.writeFailures || 0,
           ),
           dropped: Math.max(health.dropped || 0, cached?.health?.dropped || 0),
-          incomplete: health.incomplete || cached?.health?.incomplete,
-          stalled: health.stalled || cached?.health?.stalled,
+          incomplete: activeCaptureIncomplete,
+          stalled: archiveStalled,
           lastError: health.lastError || cached?.health?.lastError,
           lastErrorCode: health.lastErrorCode || cached?.health?.lastErrorCode,
         }),
         lastConfirmedCoreSequence: lastConfirmed,
         core: { epoch, headKey },
         captureIncomplete:
-          health.incomplete || cached?.health?.incomplete === true,
+          activeCaptureIncomplete ||
+          historicalIncomplete ||
+          health.incidentFailure === true,
         cachedAt: instant(cached?.cachedAt),
         backlogScope:
           "Largest reported collector backlog, not proof of all contexts",
@@ -911,6 +1093,8 @@
       status,
       snapshot,
       listIncidents,
+      incidentStats,
+      incidentPage,
       deleteIncidents,
       reader,
       ready,

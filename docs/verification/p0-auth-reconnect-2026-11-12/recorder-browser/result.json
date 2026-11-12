@@ -1,0 +1,457 @@
+{
+  "scope": "Real Linux Chromium IndexedDB / production CAPLESS modules; Chrome extension APIs are explicitly mocked; no cloud transfers or installed-extension claim",
+  "state": "passed",
+  "assertions": [
+    {
+      "id": "off-by-default",
+      "passed": true
+    },
+    {
+      "id": "off-does-not-open-capless-db",
+      "passed": true
+    },
+    {
+      "id": "cancelled-confirmation-stays-off",
+      "passed": true
+    },
+    {
+      "id": "confirmed-keyboard-enable",
+      "passed": true
+    },
+    {
+      "id": "legacy-full-cache-preserved-and-new-fault-durable",
+      "passed": true
+    },
+    {
+      "id": "100000-events-retained-without-pruning",
+      "passed": true
+    },
+    {
+      "id": "checksums-and-sequences-verified",
+      "passed": true
+    },
+    {
+      "id": "bounded-runtime-queue",
+      "passed": true
+    },
+    {
+      "id": "no-archive-loss",
+      "passed": true
+    },
+    {
+      "id": "off-preserves-count",
+      "passed": true
+    },
+    {
+      "id": "off-persists-across-reload",
+      "passed": true
+    },
+    {
+      "id": "archive-id-survives-reload",
+      "passed": true
+    }
+  ],
+  "measurements": [
+    {
+      "atSyntheticEvents": 0,
+      "heap": [
+        {
+          "name": "TaskDuration",
+          "value": 0.096805
+        },
+        {
+          "name": "JSHeapUsedSize",
+          "value": 835460
+        },
+        {
+          "name": "JSHeapTotalSize",
+          "value": 1310720
+        }
+      ],
+      "stats": {
+        "id": "state",
+        "schemaVersion": 1,
+        "archiveId": "d604cf8c-93fc-499c-9e5b-e47ed3ee9474",
+        "producer": {
+          "build": "87890e8ab432291d744acbb2877e2385aa204ea25d131b8b1acd2170db618751",
+          "baseCommit": "f9f6d0d50fa7a9b75e7c48dd9a37d58812d879cf",
+          "extensionVersion": "0.5.27",
+          "installedCommit": "not-observable"
+        },
+        "startedAt": "2026-11-12T21:18:20.342Z",
+        "nextSequence": 3,
+        "lastSequence": 2,
+        "records": 2,
+        "bytes": 1085,
+        "segments": 1,
+        "lastDigest": "fb071d48aac148c90eea6305944b614caa7046491724cae72f4e29e3c31643bc",
+        "rawRecords": 0,
+        "pendingSegments": 0,
+        "metrics": {
+          "maxBatch": 2,
+          "lastWriteMs": 9.299999997019768,
+          "lastLockWaitMs": 2.8999999910593033
+        },
+        "backend": "IndexedDB (Chrome profile; browser-managed quota)",
+        "retention": "append-only; no application TTL/rotation",
+        "durability": "IndexedDB strict when supported; no OS fsync guarantee"
+      },
+      "integrity": {
+        "state": "verified",
+        "records": 2,
+        "segments": 1,
+        "lastSequence": 2,
+        "manifestMatches": true,
+        "pendingSegments": 0
+      },
+      "status": {
+        "archiveStalled": false,
+        "activeCaptureIncomplete": false,
+        "historicCaptureIncomplete": false,
+        "historicalHealth": null,
+        "incidentStore": {
+          "legacyPinned": 16,
+          "durableIncidents": 17,
+          "fastIndex": 16,
+          "indexCapacity": 16,
+          "lastSequence": 17,
+          "legacyCacheFull": true
+        },
+        "signals": [
+          "PINNED_CACHE_FULL"
+        ],
+        "requestedOn": true,
+        "on": true,
+        "raw": false,
+        "backend": "IndexedDB in Chrome extension profile (browser-managed quota; no arbitrary Windows folder)",
+        "archive": {
+          "schemaVersion": 1,
+          "archiveId": "d604cf8c-93fc-499c-9e5b-e47ed3ee9474",
+          "lastSequence": 2,
+          "nextSequence": 3,
+          "records": 2,
+          "bytes": 1085,
+          "segments": 1,
+          "rawRecords": 0,
+          "pendingSegments": 0,
+          "backend": "IndexedDB (Chrome profile; browser quota applies)",
+          "metrics": {
+            "lastWriteMs": 9.299999997019768,
+            "lastLockWaitMs": 2.8999999910593033,
+            "maxBatch": 2
+          }
+        },
+        "health": {
+          "backlog": 0,
+          "maxBacklog": 2,
+          "maxBufferedBytes": 2257,
+          "writeFailures": 0,
+          "dropped": 0,
+          "unconfirmed": 0,
+          "slowOperations": 0,
+          "lastCoreWriteMs": 0.6000000089406967,
+          "incomplete": false,
+          "stalled": false,
+          "incidentFailure": false,
+          "lastError": null,
+          "lastErrorCode": null
+        },
+        "lastConfirmedCoreSequence": 3,
+        "core": {
+          "epoch": "c612a81a-54de-4cc1-9b32-c8bac6428309",
+          "headKey": "redownFlightEpochV1:c612a81a-54de-4cc1-9b32-c8bac6428309"
+        },
+        "captureIncomplete": false,
+        "cachedAt": "2026-11-12T21:18:20.387Z",
+        "backlogScope": "Largest reported collector backlog, not proof of all contexts",
+        "location": "Chrome profile; exact OS path not exposed",
+        "limits": "Capless persisted segments have no app retention/TTL; memory queue 256 events / 1 MiB",
+        "encryption": "Default capless records are SECURE. Optional RAW is plaintext in the local browser profile; not independently encrypted."
+      }
+    },
+    {
+      "atSyntheticEvents": 50000,
+      "heap": [
+        {
+          "name": "TaskDuration",
+          "value": 4.74299
+        },
+        {
+          "name": "JSHeapUsedSize",
+          "value": 947844
+        },
+        {
+          "name": "JSHeapTotalSize",
+          "value": 1572864
+        }
+      ],
+      "stats": {
+        "id": "state",
+        "schemaVersion": 1,
+        "archiveId": "d604cf8c-93fc-499c-9e5b-e47ed3ee9474",
+        "producer": {
+          "build": "87890e8ab432291d744acbb2877e2385aa204ea25d131b8b1acd2170db618751",
+          "baseCommit": "f9f6d0d50fa7a9b75e7c48dd9a37d58812d879cf",
+          "extensionVersion": "0.5.27",
+          "installedCommit": "not-observable"
+        },
+        "startedAt": "2026-11-12T21:18:20.342Z",
+        "nextSequence": 50003,
+        "lastSequence": 50002,
+        "records": 50002,
+        "bytes": 24278877,
+        "segments": 392,
+        "lastDigest": "48e79ac86255cf3ef66dbcc31f602e48c8dac048dfaa9cf97bb51ff51eb6271e",
+        "rawRecords": 0,
+        "pendingSegments": 0,
+        "metrics": {
+          "maxBatch": 128,
+          "lastWriteMs": 14.400000005960464,
+          "lastLockWaitMs": 1.5999999940395355
+        },
+        "backend": "IndexedDB (Chrome profile; browser-managed quota)",
+        "retention": "append-only; no application TTL/rotation",
+        "durability": "IndexedDB strict when supported; no OS fsync guarantee"
+      },
+      "integrity": {
+        "state": "verified",
+        "records": 50002,
+        "segments": 392,
+        "lastSequence": 50002,
+        "manifestMatches": true,
+        "pendingSegments": 0
+      },
+      "status": {
+        "archiveStalled": false,
+        "activeCaptureIncomplete": false,
+        "historicCaptureIncomplete": false,
+        "historicalHealth": null,
+        "incidentStore": {
+          "legacyPinned": 16,
+          "durableIncidents": 17,
+          "fastIndex": 16,
+          "indexCapacity": 16,
+          "lastSequence": 17,
+          "legacyCacheFull": true
+        },
+        "signals": [
+          "PINNED_CACHE_FULL"
+        ],
+        "requestedOn": true,
+        "on": true,
+        "raw": false,
+        "backend": "IndexedDB in Chrome extension profile (browser-managed quota; no arbitrary Windows folder)",
+        "archive": {
+          "schemaVersion": 1,
+          "archiveId": "d604cf8c-93fc-499c-9e5b-e47ed3ee9474",
+          "lastSequence": 50002,
+          "nextSequence": 50003,
+          "records": 50002,
+          "bytes": 24278877,
+          "segments": 392,
+          "rawRecords": 0,
+          "pendingSegments": 0,
+          "backend": "IndexedDB (Chrome profile; browser quota applies)",
+          "metrics": {
+            "lastWriteMs": 14.400000005960464,
+            "lastLockWaitMs": 1.5999999940395355,
+            "maxBatch": 128
+          }
+        },
+        "health": {
+          "backlog": 0,
+          "maxBacklog": 128,
+          "maxBufferedBytes": 28288,
+          "writeFailures": 0,
+          "dropped": 0,
+          "unconfirmed": 0,
+          "slowOperations": 0,
+          "lastCoreWriteMs": 0.6000000089406967,
+          "incomplete": false,
+          "stalled": false,
+          "incidentFailure": false,
+          "lastError": null,
+          "lastErrorCode": null
+        },
+        "lastConfirmedCoreSequence": 3,
+        "core": {
+          "epoch": "c612a81a-54de-4cc1-9b32-c8bac6428309",
+          "headKey": "redownFlightEpochV1:c612a81a-54de-4cc1-9b32-c8bac6428309"
+        },
+        "captureIncomplete": false,
+        "cachedAt": "2026-11-12T21:18:31.060Z",
+        "backlogScope": "Largest reported collector backlog, not proof of all contexts",
+        "location": "Chrome profile; exact OS path not exposed",
+        "limits": "Capless persisted segments have no app retention/TTL; memory queue 256 events / 1 MiB",
+        "encryption": "Default capless records are SECURE. Optional RAW is plaintext in the local browser profile; not independently encrypted."
+      }
+    },
+    {
+      "atSyntheticEvents": 100000,
+      "heap": [
+        {
+          "name": "TaskDuration",
+          "value": 9.376358
+        },
+        {
+          "name": "JSHeapUsedSize",
+          "value": 983860
+        },
+        {
+          "name": "JSHeapTotalSize",
+          "value": 1310720
+        }
+      ],
+      "stats": {
+        "id": "state",
+        "schemaVersion": 1,
+        "archiveId": "d604cf8c-93fc-499c-9e5b-e47ed3ee9474",
+        "producer": {
+          "build": "87890e8ab432291d744acbb2877e2385aa204ea25d131b8b1acd2170db618751",
+          "baseCommit": "f9f6d0d50fa7a9b75e7c48dd9a37d58812d879cf",
+          "extensionVersion": "0.5.27",
+          "installedCommit": "not-observable"
+        },
+        "startedAt": "2026-11-12T21:18:20.342Z",
+        "nextSequence": 100003,
+        "lastSequence": 100002,
+        "records": 100002,
+        "bytes": 48578880,
+        "segments": 783,
+        "lastDigest": "448b7504d06e821e2d668abf915e7c19ef84ea42dd3af631a82f098b01317852",
+        "rawRecords": 0,
+        "pendingSegments": 0,
+        "metrics": {
+          "maxBatch": 128,
+          "lastWriteMs": 18.700000002980232,
+          "lastLockWaitMs": 1.7999999970197678
+        },
+        "backend": "IndexedDB (Chrome profile; browser-managed quota)",
+        "retention": "append-only; no application TTL/rotation",
+        "durability": "IndexedDB strict when supported; no OS fsync guarantee"
+      },
+      "integrity": {
+        "state": "verified",
+        "records": 100002,
+        "segments": 783,
+        "lastSequence": 100002,
+        "manifestMatches": true,
+        "pendingSegments": 0
+      },
+      "status": {
+        "archiveStalled": false,
+        "activeCaptureIncomplete": false,
+        "historicCaptureIncomplete": false,
+        "historicalHealth": null,
+        "incidentStore": {
+          "legacyPinned": 16,
+          "durableIncidents": 17,
+          "fastIndex": 16,
+          "indexCapacity": 16,
+          "lastSequence": 17,
+          "legacyCacheFull": true
+        },
+        "signals": [
+          "PINNED_CACHE_FULL"
+        ],
+        "requestedOn": true,
+        "on": true,
+        "raw": false,
+        "backend": "IndexedDB in Chrome extension profile (browser-managed quota; no arbitrary Windows folder)",
+        "archive": {
+          "schemaVersion": 1,
+          "archiveId": "d604cf8c-93fc-499c-9e5b-e47ed3ee9474",
+          "lastSequence": 100002,
+          "nextSequence": 100003,
+          "records": 100002,
+          "bytes": 48578880,
+          "segments": 783,
+          "rawRecords": 0,
+          "pendingSegments": 0,
+          "backend": "IndexedDB (Chrome profile; browser quota applies)",
+          "metrics": {
+            "lastWriteMs": 18.700000002980232,
+            "lastLockWaitMs": 1.7999999970197678,
+            "maxBatch": 128
+          }
+        },
+        "health": {
+          "backlog": 0,
+          "maxBacklog": 128,
+          "maxBufferedBytes": 28288,
+          "writeFailures": 0,
+          "dropped": 0,
+          "unconfirmed": 0,
+          "slowOperations": 0,
+          "lastCoreWriteMs": 0.6000000089406967,
+          "incomplete": false,
+          "stalled": false,
+          "incidentFailure": false,
+          "lastError": null,
+          "lastErrorCode": null
+        },
+        "lastConfirmedCoreSequence": 3,
+        "core": {
+          "epoch": "c612a81a-54de-4cc1-9b32-c8bac6428309",
+          "headKey": "redownFlightEpochV1:c612a81a-54de-4cc1-9b32-c8bac6428309"
+        },
+        "captureIncomplete": false,
+        "cachedAt": "2026-11-12T21:18:42.683Z",
+        "backlogScope": "Largest reported collector backlog, not proof of all contexts",
+        "location": "Chrome profile; exact OS path not exposed",
+        "limits": "Capless persisted segments have no app retention/TTL; memory queue 256 events / 1 MiB",
+        "encryption": "Default capless records are SECURE. Optional RAW is plaintext in the local browser profile; not independently encrypted."
+      }
+    }
+  ],
+  "browser": "Chrome/156.0.8078.79",
+  "processInfo": {
+    "processInfo": [
+      {
+        "type": "browser",
+        "id": 228578,
+        "cpuTime": 21.52
+      },
+      {
+        "type": "renderer",
+        "id": 228703,
+        "cpuTime": 0.04
+      },
+      {
+        "type": "renderer",
+        "id": 228676,
+        "cpuTime": 14.55
+      },
+      {
+        "type": "renderer",
+        "id": 228679,
+        "cpuTime": 0.07
+      },
+      {
+        "type": "renderer",
+        "id": 228656,
+        "cpuTime": 0.69
+      },
+      {
+        "type": "GPU",
+        "id": 228618,
+        "cpuTime": 0.91
+      },
+      {
+        "type": "network.mojom.NetworkService",
+        "id": 228621,
+        "cpuTime": 0.17
+      },
+      {
+        "type": "storage.mojom.StorageService",
+        "id": 228631,
+        "cpuTime": 0.11
+      }
+    ]
+  },
+  "limitations": [
+    "Not an installed extension; real unpacked loading is tested separately.",
+    "JS heap is measured for this isolated production-recorder page fixture, not Windows Task Manager RSS or GPU pressure.",
+    "Browser launched with the existing test harness GPU-disabled flag; this cannot validate a GPU-related incident."
+  ]
+}

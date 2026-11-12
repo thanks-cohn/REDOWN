@@ -192,3 +192,15 @@ test("entry journal also keeps a timed-out set serialized until it truly settles
   await vm.runInContext("entryEvidenceQueue", c);
   assert.equal(local.entryPointEvidence.length, 2);
 });
+
+test('five-second late Chrome API acceptance remains diagnostic evidence, never another listener or automatic reload',async()=>{
+ const {worker}=await import('./helpers/background-worker.mjs');const h=worker(undefined,{backgroundSource:readFileSync('extension/service-worker.js','utf8')});await h.ready();
+ const late=()=>new Promise(resolve=>setTimeout(resolve,5150));
+ const one=h.context.boundedEntry(late(),1000,'sidePanel.setPanelBehavior'),two=h.context.boundedEntry(late(),1000,'storage.local.get');await Promise.all([assert.rejects(one),assert.rejects(two)]);await new Promise(resolve=>setTimeout(resolve,4250));await h.context.RedownStartupTrace.flush();const trace=await h.context.RedownStartupTrace.snapshot();
+ for(const api of ['sidePanel.setPanelBehavior','storage.local.get']){assert.ok(trace.events.some(e=>e.api===api&&e.code==='API_TIMED_OUT'));assert.ok(trace.events.some(e=>e.api===api&&e.code==='API_LATE_ACCEPTED'&&e.durationMs>=5000));}
+ assert.equal(h.chrome.action.onClicked.listeners.length,1);assert.equal(h.chrome.contextMenus.onClicked.listeners.length,1);
+});
+
+test('privacy-safe startup frames retain new recorder module locations but reject arbitrary source names',()=>{
+ const c=vm.createContext({});vm.runInContext(readFileSync('extension/startup-crash-trace.js','utf8'),c);const event=c.RedownStartupCrashTrace.clean({code:'WORKER_ERROR',sourceFrames:[{file:'flight-recorder.js',line:526,column:8},{file:'PRIVATE_FILENAME.js',line:1,column:1}]});assert.equal(event.sourceFrames.length,1);assert.equal(event.sourceFrames[0].file,'flight-recorder.js');assert.doesNotMatch(JSON.stringify(event),/PRIVATE/);
+});

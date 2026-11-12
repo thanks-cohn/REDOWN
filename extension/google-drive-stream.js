@@ -6,32 +6,36 @@
   function sourceURL(value){const u=new URL(value);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)throw fail('Choose an HTTP(S) file link without embedded credentials.');u.hash='';return u;}
   function create({chrome=globalThis.chrome,fetch=globalThis.fetch,resolveName=(r,s)=>RedownDropboxAPI.selectFilename(r,s)}={}){
     let token;
+    async function state(patch){const old=(await chrome.storage.local.get('googleDriveState')).googleDriveState||{};await chrome.storage.local.set({googleDriveState:{...old,...patch,accountKnown:!!(old.accountKnown||old.accountId||old.phase==='connected'||patch.accountId)}});}
+    async function authFailure(error){const text=String(error?.message||'');const required=/OAuth2 not granted or revoked|not granted|revoked|consent|permission/i.test(text);const code=required?'GOOGLE_AUTH_REQUIRED':/cancel|closed|denied/i.test(text)?'GOOGLE_AUTH_CANCELLED':'GOOGLE_AUTH_UNAVAILABLE';await state({phase:'reconnect',oauthGrantState:required?'required':'unknown',code,error:required?'Google Drive authorization is required. Use Reconnect Google Drive.':'Google authorization did not complete. Navigation and previous saves are preserved.'});throw Object.assign(error instanceof Error?error:Error('Google authorization unavailable'),{code,status:'blocked',phase:'auth'});}
+
     async function authorize(interactive=false){
       const manifest=chrome.runtime.getManifest();
       if(chrome.runtime.id!=='mkadkgpekmkknfbniacdlmgikihjjepf'||!/^\d+-[\w-]+\.apps\.googleusercontent\.com$/.test(manifest.oauth2?.client_id||'')||manifest.oauth2.scopes?.length!==1||manifest.oauth2.scopes[0]!==SCOPE)throw fail('Google OAuth configuration needs attention.');
-      const r=await chrome.identity.getAuthToken({interactive,scopes:[SCOPE],enableGranularPermissions:true});
+      let r;try{r=await chrome.identity.getAuthToken({interactive,scopes:[SCOPE],enableGranularPermissions:true});}catch(error){return authFailure(error);}
       token=typeof r==='string'?r:r?.token;
-      if(!token||r.grantedScopes&&!r.grantedScopes.includes(SCOPE))throw fail('Reconnect Google Drive.');
+      if(!token||r.grantedScopes&&!r.grantedScopes.includes(SCOPE))return authFailure(Error('Google Drive permission was not granted.'));
     }
     function endpoint(path){const u=new URL(path,'https://www.googleapis.com/drive/v3/');if(u.origin!=='https://www.googleapis.com'||!/^\/(?:upload\/)?drive\/v3\//.test(u.pathname))throw fail('Invalid Google upload endpoint.');return u.href;}
     async function http(path,options={}){
       const {attemptId,...wireOptions}=options;
-      let r;try{r=await fetch(endpoint(path),{...wireOptions,headers:{...options.headers,Authorization:'Bearer '+token},credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}catch(error){globalThis.RedownForensicDiagnostics?.capture(attemptId,'error',{error,component:'unattributed'});throw fail('Google request interrupted. The saved job will be checked before retrying.','interrupted');}
+      let r;try{r=await fetch(endpoint(path),{...wireOptions,headers:{...options.headers,Authorization:'Bearer '+token},credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}catch(error){globalThis.RedownForensicDiagnostics?.capture(attemptId,'error',{error,component:'unattributed'});await state({phase:'unavailable',code:'GOOGLE_NETWORK',providerReachability:'unavailable'});throw Object.assign(fail('Google request interrupted. The saved job will be checked before retrying.','interrupted'),{code:'GOOGLE_NETWORK'});}
       globalThis.RedownForensicDiagnostics?.response(attemptId,r,'provider',options.method||'GET');
       globalThis.RedownSaveEvidence?.note(attemptId,{role:'provider',method:options.method||'GET',httpStatus:r.status,category:r.status===401?'auth':r.status===403?'permission':r.status===429?'rate-limit':r.status>=500?'server':'unknown'});
-      if(r.status===401){await chrome.identity.removeCachedAuthToken({token});token=null;await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});throw fail('Reconnect Google Drive.');}
-      if(r.status===403||r.status===429)throw fail('Google access or quota needs attention. Try again later.');
+      if(r.status===401){await chrome.identity.removeCachedAuthToken({token});token=null;await state({phase:'reconnect',code:'GOOGLE_AUTH_REQUIRED',oauthGrantState:'required'});throw Object.assign(fail('Reconnect Google Drive.'),{code:'GOOGLE_AUTH_REQUIRED'});}
+      if(r.status===403||r.status===429){const code=r.status===429?'GOOGLE_HTTP_429':'GOOGLE_PERMISSION_DENIED';await state({phase:r.status===429?'unavailable':'reconnect',code});throw Object.assign(fail('Google access or quota needs attention. Try again later.'),{code});}
       return r;
     }
-    async function json(path,options){const r=await http(path,options);if(!r.ok)throw fail('Google request failed (HTTP '+r.status+').',r.status>=500?'interrupted':'failed');return r.json();}
+    async function json(path,options){const r=await http(path,options);if(!r.ok){const code='GOOGLE_HTTP_'+r.status;if(r.status>=500)await state({phase:'unavailable',code});throw Object.assign(fail('Google request failed (HTTP '+r.status+').',r.status>=500?'interrupted':'failed'),{code});}return r.json();}
     async function identity(interactive=false,signal,attemptId){
       await authorize(interactive);
       signal?.throwIfAborted();
-      const about=await json('about?fields=user(permissionId)',{signal,attemptId});
+      const about=await json('about?fields=user(permissionId)',{signal,attemptId}).catch(e=>{e.phase='auth';throw e;});
       const accountId=about.user?.permissionId;if(!/^[\w-]+$/.test(accountId||''))throw fail('Google account could not be verified.');
       return accountId;
     }
-    async function connect(interactive=false){try{const accountId=await identity(interactive);await chrome.storage.local.set({googleDriveState:{phase:'connected',accountId,destination:'root'}});return accountId;}catch(e){await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});throw e;}}
+    async function connect(interactive=false){const old=(await chrome.storage.local.get('googleDriveState')).googleDriveState||{};if(!old.accountId){const jobs=(await chrome.storage.local.get('googleDriveJobs')).googleDriveJobs||[];old.accountId=[...jobs].reverse().find(j=>j.accountId&&j.status==='completed'&&j.result?.fileId)?.accountId;}try{const accountId=await identity(interactive);if(old.accountId&&old.accountId!==accountId)throw Object.assign(fail('Reconnect the original Google account. Pending saves were not replayed.'),{code:'GOOGLE_ACCOUNT_CHANGED'});await state({phase:'connected',accountId,destination:'root',checkedAt:Date.now(),oauthGrantState:'verified',code:'',error:''});return accountId;}catch(e){await state({phase:'reconnect',code:e.code||'GOOGLE_AUTH_UNAVAILABLE',oauthGrantState:e.code==='GOOGLE_AUTH_REQUIRED'?'required':'unknown'});throw e;}}
+    async function check(){const old=(await chrome.storage.local.get('googleDriveState')).googleDriveState;if(!old?.accountId)return;return connect(false);}
     async function proof(job,signal){
       const r=await http('files/'+encodeURIComponent(job.fileId)+'?fields=id,name,size,trashed,parents',{signal,attemptId:job.source?.attemptId});
       if(r.status===404)return null;
@@ -49,7 +53,7 @@
       if(signal?.aborted)throw fail('Google save cancelled.','cancelled');
       const accountId=await identity(false,signal,job.source?.attemptId);
       if(signal?.aborted)throw fail('Google save cancelled.','cancelled');
-      if(accountId!==job.accountId)throw fail('Google account changed. Reconnect and start a new save.');
+      if(accountId!==job.accountId)throw Object.assign(fail('Google account changed. Reconnect the original account; existing saves were not replayed.'),{code:'GOOGLE_ACCOUNT_CHANGED'});
       // A final PUT may have completed before the worker checkpoint. Reconcile
       // the preallocated ID, never allocate another file or replay a create.
       if(job.phase==='verifying'||job.phase==='committing'){
@@ -126,7 +130,7 @@
       // Provider-issued short-lived URL only, with no token forwarded to its host.
       return fetch(url.href,{signal,credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',cache:'no-store'});
     }
-    return {connect,upload,proof,preview};
+    return {connect,check,upload,proof,preview};
   }
   globalThis.RedownGoogleDriveStream={create,sourceURL,CHUNK,MAX,SCOPE};
 })();

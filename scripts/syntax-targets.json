@@ -136,5 +136,8 @@
   "extension/capless-controls.js",
   "scripts/capless-stress.mjs",
   "scripts/capless-browser.mjs",
-  "scripts/flight-build.mjs"
+  "scripts/flight-build.mjs",
+  "extension/provider-connection.js",
+  "extension/provider-reconnect.js",
+  "scripts/reconnect-browser.mjs"
 ]

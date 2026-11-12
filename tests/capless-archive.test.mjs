@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { webcrypto } from "node:crypto";
 import { IDBFactory, IDBKeyRange } from "fake-indexeddb";
@@ -88,7 +89,16 @@ function fixture({
     "capless-archive.js",
     "flight-recorder.js",
   ])
-    vm.runInContext(readFileSync("extension/" + file, "utf8"), c);
+    vm.runInContext(
+      process.env.REDOWN_FOLLOWUP_BASELINE && file === "flight-recorder.js"
+        ? execFileSync(
+            "git",
+            ["show", "f9f6d0d:extension/flight-recorder.js"],
+            { encoding: "utf8" },
+          )
+        : readFileSync("extension/" + file, "utf8"),
+      c,
+    );
   const make = () => c.RedownCaplessArchive.create({ database, locks, fault });
   const archive = make();
   const flight = c.RedownFlightRecorderAPI.create({
@@ -523,7 +533,7 @@ test("pre-import checkpoint persists without the core; pinned fault envelopes re
   assert.equal((await f.flight.listIncidents()).length, 0);
 });
 
-test("pinned incident capacity reports incomplete instead of evicting older envelopes", async () => {
+test("bounded fast index never caps durable incident history or falsely stalls the archive", async () => {
   const f = fixture();
   let clock = Date.now();
   const flight = f.c.RedownFlightRecorderAPI.create({
@@ -548,6 +558,122 @@ test("pinned incident capacity reports incomplete instead of evicting older enve
   }
   const rows = await flight.listIncidents();
   assert.equal(rows.length, 16);
-  assert.ok(rows.some((r) => r.id === oldest));
-  assert.equal((await flight.status()).captureIncomplete, true);
+  assert.ok((await flight.incidentPage()).rows.some((r) => r.id === oldest));
+  assert.equal((await flight.incidentStats()).durableIncidents, 17);
+  assert.equal((await flight.status()).captureIncomplete, false);
+});
+
+test("legacy 16/16 pinned evidence migrates without deletion; a real new fault persists while archive stays healthy", async () => {
+  const f = fixture();
+  await f.flight.setConsent(true, { confirmed: true });
+  const ids = Array.from({ length: 16 }, () => webcrypto.randomUUID());
+  await new Promise((resolve, reject) => {
+    const r = f.database.open("redown-flight-incidents-v1", 1);
+    r.onupgradeneeded = () =>
+      r.result.createObjectStore("incidents", { keyPath: "id" });
+    r.onerror = () => reject(r.error);
+    r.onsuccess = () => {
+      const db = r.result,
+        tx = db.transaction("incidents", "readwrite");
+      for (const id of ids)
+        tx.objectStore("incidents").add({
+          schemaVersion: 1,
+          id,
+          at: "2026-11-12T10:00:00.000Z",
+          trigger: { code: "PREVIOUS_EPOCH_STOPPED_REASON_UNKNOWN" },
+          before: [],
+        });
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+    };
+  });
+  f.flight.startup({
+    code: "CORE_IMPORT_FAILED",
+    component: "core",
+    status: "rejected",
+    at: new Date().toISOString(),
+  });
+  for (let i = 0; i < 20; i++) await tick();
+  await f.flight.flush();
+  const status = await f.flight.status();
+  assert.equal(status.health.incidentFailure, false);
+  assert.equal(status.health.stalled, false);
+  assert.equal(status.captureIncomplete, false);
+  const meta = await f.flight.incidentStats();
+  assert.equal(meta.legacyPinned, 16);
+  assert.equal(meta.durableIncidents, 17);
+  assert.equal(meta.fastIndex, 16);
+  assert.ok(
+    (await f.flight.incidentPage()).rows.filter((r) => ids.includes(r.id))
+      .length === 16,
+  );
+  assert.equal(
+    (await (await f.flight.reader()).verify()).manifestMatches,
+    true,
+  );
+  await f.flight.deleteIncidents(true);
+  assert.equal((await f.flight.incidentStats()).durableIncidents, 17);
+  assert.equal((await f.flight.incidentStats()).legacyPinned, 16);
+});
+test("routine worker epochs never produce pinned faults; historical incomplete is distinct from an active archive stall", async () => {
+  const f = fixture({
+    local: {
+      redownCaplessStatusV1: {
+        health: { incomplete: true, incidentFailure: true, stalled: false },
+      },
+    },
+  });
+  await f.flight.ready;
+  for (let i = 0; i < 20; i++) {
+    const r = f.c.RedownFlightRecorderAPI.create({
+      chrome: f.chrome,
+      database: f.database,
+      locks: f.locks,
+    });
+    await r.ready;
+    r.install();
+    for (let n = 0; n < 4; n++) await tick();
+  }
+  assert.equal((await f.flight.incidentStats()).durableIncidents, 0);
+  const status = await f.flight.status();
+  assert.equal(status.archiveStalled, false);
+  assert.equal(status.historicCaptureIncomplete, true);
+  assert.ok(status.signals.includes("HISTORIC_CAPTURE_INCOMPLETE"));
+});
+test("incident history pages remain complete beyond fast-index capacity, including explicit fast-index clear", async () => {
+  const f = fixture();
+  let clock = Date.now();
+  const r = f.c.RedownFlightRecorderAPI.create({
+    chrome: f.chrome,
+    database: f.database,
+    locks: f.locks,
+    now: () => clock,
+  });
+  await r.ready;
+  for (let n = 0; n < 70; n++) {
+    clock += 1001;
+    r.startup({
+      code: "WORKER_ERROR",
+      component: "worker",
+      status: "rejected",
+      at: new Date(clock).toISOString(),
+    });
+    for (let k = 0; k < 4; k++) await tick();
+  }
+  let after = 0,
+    boundary,
+    count = 0;
+  do {
+    const p = await r.incidentPage(after, boundary);
+    boundary = p.boundary;
+    count += p.rows.length;
+    after = p.nextAfter;
+    if (!p.more) break;
+  } while (true);
+  assert.equal(count, 70);
+  assert.equal((await r.listIncidents()).length, 16);
+  await r.deleteIncidents(true);
+  assert.equal((await r.incidentStats()).durableIncidents, 70);
 });

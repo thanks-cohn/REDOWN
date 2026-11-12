@@ -231,6 +231,10 @@ try {
       'document.getElementById("capless-state").textContent==="ON"',
     ),
   );
+  check('legacy-full-cache-preserved-and-new-fault-durable',await evaluate(`(async()=>{
+    const ids=Array.from({length:16},()=>crypto.randomUUID());await new Promise((resolve,reject)=>{const q=indexedDB.open('redown-flight-incidents-v1',1);q.onupgradeneeded=()=>q.result.createObjectStore('incidents',{keyPath:'id'});q.onerror=()=>reject(q.error);q.onsuccess=()=>{const db=q.result,tx=db.transaction('incidents','readwrite');for(const id of ids)tx.objectStore('incidents').add({schemaVersion:1,id,at:new Date().toISOString(),trigger:{code:'PREVIOUS_EPOCH_STOPPED_REASON_UNKNOWN'},before:[]});tx.oncomplete=()=>{db.close();resolve();};};});
+    RedownFlightRecorder.startup({code:'CORE_IMPORT_FAILED',component:'core',status:'rejected',at:new Date().toISOString()});for(let n=0;n<30;n++){await new Promise(r=>setTimeout(r,10));const m=await RedownFlightRecorder.incidentStats();if(m.durableIncidents===17)break;}await RedownFlightRecorder.flush();const m=await RedownFlightRecorder.incidentStats(),p=await RedownFlightRecorder.incidentPage(),st=await RedownFlightRecorder.status();return m.legacyPinned===16&&m.durableIncidents===17&&ids.every(id=>p.rows.some(row=>row.id===id))&&!st.archiveStalled&&!st.health.incidentFailure;
+  })()`));
   const memory = async (at) => {
     await call("HeapProfiler.collectGarbage", {}, sessionId);
     const m = await call("Performance.getMetrics", {}, sessionId);

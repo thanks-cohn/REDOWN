@@ -680,7 +680,7 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
     <label>Account correlation (optional) <input id="capless-account" type="text" autocomplete="off"></label><label>From UTC date <input id="capless-from" type="date"></label><label>Through UTC date <input id="capless-to" type="date"></label>
     <button id="capless-inspect" type="button" class="ghost">Inspect archive integrity and observed-attempt counts</button>
     <button id="capless-export" type="button" class="ghost">Export complete CAPLESS archive</button><button id="capless-next-part" type="button" class="ghost" hidden>Export next archive part</button>
-    <button id="flight-inspect" type="button" class="ghost">Inspect pinned incidents and flight checkpoints</button><button id="flight-delete-incidents" type="button" class="ghost">Delete pinned incidents…</button>
+    <button id="flight-inspect" type="button" class="ghost">Inspect pinned incidents and flight checkpoints</button><button id="flight-delete-incidents" type="button" class="ghost">Clear fast incident index…</button>
     <pre id="capless-output" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow:auto" role="status"></pre>
   </details>
 </section>
@@ -765,5 +765,5 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
 <script src="toolbar-preferences.js"></script>
 <script src="explorer-diagnostics-ui.js"></script>
 <script src="history-archive.js"></script><script src="save-evidence.js"></script><script src="transfer-queue.js"></script><script src="vendor/fflate.js"></script><script src="diagnostic-bundle.js"></script><script src="diagnostic-download.js"></script><script src="forensic-diagnostics.js"></script><script src="forensic-download.js"></script><script src="capless-controls.js"></script>
-</body>
+<section aria-label="Cloud authorization recovery"><p>Refresh extension authorization independently of provider website login. Existing uncertain saves are not retried.</p><button type="button" data-provider-reconnect="google" aria-describedby="recover-google" aria-label="Reconnect Google Drive">↻ Google Drive</button><small id="recover-google" role="status" aria-live="polite"></small><button type="button" data-provider-reconnect="dropbox" aria-describedby="recover-dropbox" aria-label="Reconnect Dropbox">↻ Dropbox</button><small id="recover-dropbox" role="status" aria-live="polite"></small><button type="button" data-provider-reconnect="onedrive" aria-describedby="recover-onedrive" aria-label="Reconnect OneDrive">↻ OneDrive</button><small id="recover-onedrive" role="status" aria-live="polite"></small></section><script src="provider-connection.js"></script><script src="provider-reconnect.js"></script></body>
 </html>

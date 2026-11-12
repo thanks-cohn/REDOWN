@@ -1,0 +1,271 @@
+{
+  "base": "f9f6d0d50fa7a9b75e7c48dd9a37d58812d879cf",
+  "branch": "codex/p0-auth-reconnect-incidents-2026-11-12",
+  "initialWorkingTree": "clean",
+  "build": "87890e8ab432291d744acbb2877e2385aa204ea25d131b8b1acd2170db618751",
+  "changed": [
+    {
+      "path": "extension/background.js",
+      "sha256": "b16892663c4135d5170b54782e598ccc8d127fcb1a460838e6ef844b96476b6c"
+    },
+    {
+      "path": "extension/capless-controls.js",
+      "sha256": "1a00e69dd870561db20eb6ea6b4f2c345545b5a8ad11775aa027d8ff1f5165ee"
+    },
+    {
+      "path": "extension/dropbox-auth.js",
+      "sha256": "3e06e701b5d52528b3291faff0432485bc9a0eebc52402dc878bed7c33ced4f2"
+    },
+    {
+      "path": "extension/dropbox-provider.js",
+      "sha256": "98ecc413f0493d3f6a5221d151c76cf36c5285f7a4b8ef8cf385ac878e659f2b"
+    },
+    {
+      "path": "extension/flight-recorder.js",
+      "sha256": "3abdbdfb973f33221ca33f1dcd206f6f85759423fd134adc58c724adb93addbf"
+    },
+    {
+      "path": "extension/google-drive-provider.js",
+      "sha256": "44367c0f2751c95ae2d625a58042e813b36e37aa3895d3075b30b057059140e8"
+    },
+    {
+      "path": "extension/google-drive-stream.js",
+      "sha256": "bd3f9c472a917a4e06a4c1f81755e38a729c7f34d19cee44937569a686c6bfd9"
+    },
+    {
+      "path": "extension/onedrive-auth.js",
+      "sha256": "535d916d3eca9f4c92ddc1af4476a23dbc3cc6833f38abf08a5502395e6d1d80"
+    },
+    {
+      "path": "extension/onedrive-provider.js",
+      "sha256": "47ec1c1d9c20f17e276b60971665692a83ea2ec7f3d86829bd6eb36e7ee9b818"
+    },
+    {
+      "path": "extension/options.html",
+      "sha256": "78b72c1076563451ba153a5b9bc143cb6b43099d0991bb67f0f541dc94946e43"
+    },
+    {
+      "path": "extension/popup.html",
+      "sha256": "2d2ec6ee1dc6f08e73c3f059c030c23348329415a1db86edfdd686dd9d634c3c"
+    },
+    {
+      "path": "extension/provider-connection.js",
+      "sha256": "3d7805e3134e5055e74b4a3991fb61f0902828cd99ce9baed7a8587ed73f85f6"
+    },
+    {
+      "path": "extension/provider-reconnect.js",
+      "sha256": "03bd08fc51d5c200306eb9664a336a53bc16f33ca5ad743ca2aed41be0e01dbe"
+    },
+    {
+      "path": "extension/runtime-diagnostics.js",
+      "sha256": "468b31f55009b16b88efe805bd5fe085373585428a32115546ab43b6a18548fc"
+    },
+    {
+      "path": "extension/save-evidence.js",
+      "sha256": "43cacb4a4f1d464d2c6d3d296b10b94f3207df58673a75b1607741b009d40026"
+    },
+    {
+      "path": "extension/shelf-dropbox.js",
+      "sha256": "7f1190b6764a9ad5e90f9260ba2c335e7e7d4aa62a321bd449c5907c92002b74"
+    },
+    {
+      "path": "extension/shelf-google-drive.js",
+      "sha256": "a15ae52505ff4b8e79bd5ca02f48ed2f2a10107dab5f56b63ac5e69a494fcf6f"
+    },
+    {
+      "path": "extension/shelf-onedrive.js",
+      "sha256": "fb0d27c8264f5331df50fcb633975b86a4a9cf1fd122c52795273f1b3f59c9ac"
+    },
+    {
+      "path": "extension/shelf-queue.js",
+      "sha256": "ed8608c4d4d8a7546d6fda718af2a327e74c31fe8b1a2a2a17453db632547438"
+    },
+    {
+      "path": "extension/shelf.css",
+      "sha256": "9e57e539f276cf51e5887d5a8a2730f707ffa743bb180a923adc4a3be020537b"
+    },
+    {
+      "path": "extension/shelf.html",
+      "sha256": "bc8b88ecfd580387b9f41575a40d73ac242a2118fb62ac372d776da4e34dadfe"
+    },
+    {
+      "path": "extension/startup-crash-trace.js",
+      "sha256": "9cf18e7fba30b3421efa17ea6043eca24ff0ee519cbbc2811fda4e8e16dba051"
+    },
+    {
+      "path": "extension/transfer-queue.js",
+      "sha256": "9f779247bd8eea183fd61792d7d9792cc7cc2f960ff22b27600f490bb53a8b5a"
+    },
+    {
+      "path": "scripts/capless-browser.mjs",
+      "sha256": "b052a01a60b7c33eb998aba3dc5969c0a4fea143a535cf7c67f131758f7c232e"
+    },
+    {
+      "path": "scripts/flight-build.mjs",
+      "sha256": "097907219f0fdf40809459ec9b238164681268a1da84c1648b31f58fb30c35b8"
+    },
+    {
+      "path": "scripts/reconnect-browser.mjs",
+      "sha256": "230eed34b84dc24a791bcd23a09ae89ef9a38bf7713acc222e1d3a1088f6624a"
+    },
+    {
+      "path": "scripts/syntax-targets.json",
+      "sha256": "f94d8d7a28e243fc73f74d4f5c65b6b95fbb75c94510c640978473b99ec9e911"
+    },
+    {
+      "path": "tests/capless-archive.test.mjs",
+      "sha256": "8c80faf99e4158da0f327a3710d9638088c4063d8d65f7255e4652c58f3da4a6"
+    },
+    {
+      "path": "tests/capless-controls.test.mjs",
+      "sha256": "bacd41f1caeb5cb1f0427e58dc712a3b77a8c86e43ed51a838df6e30b62c6fcd"
+    },
+    {
+      "path": "tests/consolidated-dropbox-login.test.mjs",
+      "sha256": "55d01935f12b3c04cf6d6c26f5882228aabf835598fff5005c2a4705e77be824"
+    },
+    {
+      "path": "tests/flight-native-saves.test.mjs",
+      "sha256": "781160fa2e8f383f738e7fe87bf69928ccb1f8ebd2fbc441a9fd2d792d41692d"
+    },
+    {
+      "path": "tests/flight-recorder-storage.test.mjs",
+      "sha256": "71ad7446ef92acdc2eac470b2783ecfce6f510eb3f9079e2ce4d582954c48bc4"
+    },
+    {
+      "path": "tests/forensic-diagnostics.test.mjs",
+      "sha256": "26bbe669552e0756780fccdabd83239b47e5ca8de31613d30882f5f6f5f2a390"
+    },
+    {
+      "path": "tests/onedrive-connected.test.mjs",
+      "sha256": "b6901e086e93d92aae78a86a0e8df99dcd8fae04a69d4f9ba636d3cbadbcc88e"
+    },
+    {
+      "path": "tests/onedrive.test.mjs",
+      "sha256": "2fd76438759badc5a1fac6fb035a07b535e91b7f338e09b82b9394fcc7c37870"
+    },
+    {
+      "path": "tests/provider-reconnect.test.mjs",
+      "sha256": "09d26c2e57986f969012e69548a2c35321b3d52916f1da008cb6e6f575301580"
+    },
+    {
+      "path": "tests/shelf-destinations.test.mjs",
+      "sha256": "178e3747897a4f3d3e7e8d910968015fd288c3aac1ef8c4fbd1167edfef01a5a"
+    }
+  ],
+  "protectedUnchanged": [
+    {
+      "path": "extension/manifest.json",
+      "baseSha256": "6a4ea8181fd9a3db9d20ca2cdf81e4827c1f44785af0fa73842c6ca026a0a7ad",
+      "currentSha256": "6a4ea8181fd9a3db9d20ca2cdf81e4827c1f44785af0fa73842c6ca026a0a7ad",
+      "unchanged": true
+    },
+    {
+      "path": "extension/cloudflare-api.js",
+      "baseSha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "currentSha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "unchanged": true
+    },
+    {
+      "path": "extension/cloudflare-auth.js",
+      "baseSha256": "4e94c0da43c839574c03809cc0e94611ad1fe545fba3588d7be8ad607e78c0a7",
+      "currentSha256": "4e94c0da43c839574c03809cc0e94611ad1fe545fba3588d7be8ad607e78c0a7",
+      "unchanged": true
+    },
+    {
+      "path": "extension/capless-archive.js",
+      "baseSha256": "b201f45653a27b241bc46f446acd87e47fcd0fe5cee3422af27b853bd988dba7",
+      "currentSha256": "b201f45653a27b241bc46f446acd87e47fcd0fe5cee3422af27b853bd988dba7",
+      "unchanged": true
+    },
+    {
+      "path": "extension/transfer-counter.js",
+      "baseSha256": "8c52d5a0bcf83a5f587fc2f90e001beaea5c5443568cece812e19a0b8e3fe439",
+      "currentSha256": "8c52d5a0bcf83a5f587fc2f90e001beaea5c5443568cece812e19a0b8e3fe439",
+      "unchanged": true
+    },
+    {
+      "path": "extension/history-archive.js",
+      "baseSha256": "6381aa34becd132c6e07d3b18314b4932fcdaf4b8392eef2ba9ab7fb43659acc",
+      "currentSha256": "6381aa34becd132c6e07d3b18314b4932fcdaf4b8392eef2ba9ab7fb43659acc",
+      "unchanged": true
+    },
+    {
+      "path": "extension/diagnostic-bundle.js",
+      "baseSha256": "4169f9be4dd6526fc9bacba514cef5d4e6b23bf22ed4d7f11e1196e1c75bdd99",
+      "currentSha256": "4169f9be4dd6526fc9bacba514cef5d4e6b23bf22ed4d7f11e1196e1c75bdd99",
+      "unchanged": true
+    },
+    {
+      "path": "extension/diagnostic-download.js",
+      "baseSha256": "78bdb81f480823595c1833fb2d72abc3f6acbc7502e34a953ab716830adf4cc3",
+      "currentSha256": "78bdb81f480823595c1833fb2d72abc3f6acbc7502e34a953ab716830adf4cc3",
+      "unchanged": true
+    },
+    {
+      "path": "extension/entry-bootstrap.js",
+      "baseSha256": "6179fb513088049f1a3ce4c2a7ef5289e844859a1f8bc9a0ea5b1e5a83889eb3",
+      "currentSha256": "6179fb513088049f1a3ce4c2a7ef5289e844859a1f8bc9a0ea5b1e5a83889eb3",
+      "unchanged": true
+    },
+    {
+      "path": "extension/service-worker.js",
+      "baseSha256": "5d1f56117a72b955d5d7854e0435d497c13ad82777a64edb1cd4caec9e104da4",
+      "currentSha256": "5d1f56117a72b955d5d7854e0435d497c13ad82777a64edb1cd4caec9e104da4",
+      "unchanged": true
+    },
+    {
+      "path": "extension/onedrive-api.js",
+      "baseSha256": "80328040cc8de122dbb84c797857bcb06f78fac23374fcb3fc63a94b61acb1d9",
+      "currentSha256": "80328040cc8de122dbb84c797857bcb06f78fac23374fcb3fc63a94b61acb1d9",
+      "unchanged": true
+    },
+    {
+      "path": "extension/dropbox-api.js",
+      "baseSha256": "1416180f27e157306a77188efc173ded9494f789ad49324de328dde4a0362922",
+      "currentSha256": "1416180f27e157306a77188efc173ded9494f789ad49324de328dde4a0362922",
+      "unchanged": true
+    },
+    {
+      "path": "extension/google-drive-api.mjs",
+      "baseSha256": "71aba1768de6c69e419c72d12691b16d5fb8fe2cf65cb46d2effbfa337a2ff45",
+      "currentSha256": "71aba1768de6c69e419c72d12691b16d5fb8fe2cf65cb46d2effbfa337a2ff45",
+      "unchanged": true
+    },
+    {
+      "path": "extension/right-click-v3.js",
+      "baseSha256": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+      "currentSha256": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+      "unchanged": true
+    },
+    {
+      "path": "extension/right-click-current.js",
+      "baseSha256": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+      "currentSha256": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+      "unchanged": true
+    },
+    {
+      "path": "extension/shelf-save-feedback.js",
+      "baseSha256": "99ee4e9b219c50f8556451fec53c9d96c355951a7a81672b74358fa668ee407e",
+      "currentSha256": "99ee4e9b219c50f8556451fec53c9d96c355951a7a81672b74358fa668ee407e",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "baseSha256": "0865e595b772b9dad2267790d99f9db40cbe8f4348f824178c17183c25079a75",
+      "currentSha256": "0865e595b772b9dad2267790d99f9db40cbe8f4348f824178c17183c25079a75",
+      "unchanged": true
+    },
+    {
+      "path": "package-lock.json",
+      "baseSha256": "0c8d4d0d6b7f9f0a392ffc2694d0cb488d90d416dd71acd503097e616dfb6895",
+      "currentSha256": "0c8d4d0d6b7f9f0a392ffc2694d0cb488d90d416dd71acd503097e616dfb6895",
+      "unchanged": true
+    }
+  ],
+  "scope": "Public repository source/test hashes; no Chrome profile, credentials or RAW diagnostics read/exported",
+  "embeddedCloudflareWorker": {
+    "unchanged": true,
+    "sha256": "417f22e712e25442e8c42d33305622f596474eacb573645f35983bdd4bc18356"
+  }
+}
