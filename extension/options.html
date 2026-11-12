@@ -686,6 +686,10 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
   <button id="runtime-diagnostics-status" class="ghost">Inspect runtime</button>
   <button id="runtime-diagnostics-export" class="ghost" data-diagnostic-export>Export Diagnostic Bundle</button>
   <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>
+  <p class="meta" id="forensic-privacy-warning"><strong>RAW exports contain private data: complete URLs (possibly signed secrets), filenames, account/destination identifiers and original errors. Review locally before sharing.</strong> Save forensics record automatically, even with Debug Mode off. Retention: up to 4,000 events / 4 MiB / seven days; individual events over 64 KiB are counted as dropped. Existing Clear traces does not erase this ledger.</p>
+  <button id="forensic-export-raw" class="ghost" type="button" aria-describedby="forensic-privacy-warning">Export All Diagnostic Data (RAW)</button>
+  <button id="forensic-export-secure" class="ghost" type="button">Export Secure Diagnostic Data</button>
+  <p id="forensic-export-status" class="meta" role="status" aria-live="polite"></p>
   <details id="explorer-diagnostics-panel" style="margin-top:18px">
     <summary>File Explorer diagnostics</summary>
     <p class="meta">Redacted, bounded observations. Review the generated bundle before sharing. Read-only cloud probes run only when requested. Probes never copy, delete, deploy, or repair.</p>
@@ -741,6 +745,6 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
 <script src="history-navigation.js"></script><script src="options.js"></script>
 <script src="toolbar-preferences.js"></script>
 <script src="explorer-diagnostics-ui.js"></script>
-<script src="history-archive.js"></script><script src="save-evidence.js"></script><script src="transfer-queue.js"></script><script src="vendor/fflate.js"></script><script src="diagnostic-bundle.js"></script><script src="diagnostic-download.js"></script>
+<script src="history-archive.js"></script><script src="save-evidence.js"></script><script src="transfer-queue.js"></script><script src="vendor/fflate.js"></script><script src="diagnostic-bundle.js"></script><script src="diagnostic-download.js"></script><script src="forensic-diagnostics.js"></script><script src="forensic-download.js"></script>
 </body>
 </html>

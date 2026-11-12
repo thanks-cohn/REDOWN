@@ -11,7 +11,7 @@
     const jobs=async()=>(await chrome.storage.local.get(KEY))[KEY]||[];
     async function save(job){
       job.updatedAt=Date.now();
-      globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase);
+      globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase,job);
       return serial(async()=>{
       const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;
       const done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24),pending=all.filter(j=>!terminal.has(j.status)||!j.reported);

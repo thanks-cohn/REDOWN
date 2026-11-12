@@ -177,14 +177,15 @@
     return u;
   }
   function create({chrome=globalThis.chrome,fetch=globalThis.fetch}={}){
-    async function request(url,options,timeout=60000){
+    async function request(url,options,timeout=60000,attemptId,role='provider'){
       const controller=new AbortController();
       const timer=setTimeout(()=>controller.abort(),timeout);
       if(options?.signal?.aborted){clearTimeout(timer);throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');}
       const abort=()=>controller.abort();
       options?.signal?.addEventListener('abort',abort,{once:true});
-      try{return await fetch(url,{...options,signal:controller.signal,redirect:'error',credentials:'omit',referrerPolicy:'no-referrer'});}
-      catch{
+      try{const response=await fetch(url,{...options,signal:controller.signal,redirect:'error',credentials:'omit',referrerPolicy:'no-referrer'});globalThis.RedownForensicDiagnostics?.response(attemptId,response,role,options?.method||'GET');return response;}
+      catch(error){
+        globalThis.RedownForensicDiagnostics?.capture(attemptId,'error',{error,component:'unattributed'});
         if(options?.signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
         throw fail('ONEDRIVE_NETWORK','A OneDrive or source network request was interrupted.','interrupted');
       }finally{clearTimeout(timer);options?.signal?.removeEventListener('abort',abort);}
@@ -193,7 +194,7 @@
       const {attemptId,...wireOptions}=options;
       const response=await request(GRAPH+path,{...wireOptions,headers:{
         Authorization:'Bearer '+token,Accept:'application/json',...(options.headers||{})
-      }},30000);
+      }},30000,attemptId);
       globalThis.RedownSaveEvidence?.note(attemptId,{role:'provider',httpStatus:response.status,method:wireOptions.method||'GET',category:response.status===401?'auth':response.status===403?'permission':response.status===429?'rate-limit':response.status>=500?'server':'unknown'});
       if(!response.ok)
         throw fail('ONEDRIVE_GRAPH_'+response.status,'Microsoft Graph request failed (HTTP '+response.status+').',
@@ -212,7 +213,7 @@
         if(source.kind==='inline-data'){
           if(typeof source.url!=='string'||!source.url.toLowerCase().startsWith('data:'))
             throw fail('ONEDRIVE_INLINE_INVALID','Inline source is invalid.');
-          const response=await request(source.url,{method:'GET',signal},60000);
+          const response=await request(source.url,{method:'GET',signal},60000,source.attemptId,'source');
           sourceHeaders=response.headers;
           if(!response.ok)throw fail('ONEDRIVE_INLINE_INVALID','Chrome could not read this inline data.');
           // A data: URL is itself already materialized by Chrome. Blob supplies
@@ -224,7 +225,7 @@
           reader=blob.stream().getReader();
         }else{
           const u=sourceURL(source.url);
-          const response=await request(u.href,{method:'GET',signal,headers:{Accept:'*/*'}},60000);
+          const response=await request(u.href,{method:'GET',signal,headers:{Accept:'*/*'}},60000,source.attemptId,'source');
           sourceHeaders=response.headers;
           evidence({...globalThis.RedownSaveEvidence?.response(response),phase:'source'});
           if(!response.ok||!response.body)
@@ -318,7 +319,7 @@
           const result=await request(uploadUrl.href,{method:'PUT',headers:{
             'Content-Range':'bytes '+sent+'-'+(sent+used-1)+'/'+total,
             'Content-Type':'application/octet-stream'
-          },body:buffer,signal},90000);
+          },body:buffer,signal},90000,source.attemptId);
           if(last){
             if(![200,201].includes(result.status))
               throw fail('ONEDRIVE_COMMIT_UNCERTAIN','Final OneDrive upload response was not confirmed. Check OneDrive before retrying.','uncertain');

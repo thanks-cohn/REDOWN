@@ -40,8 +40,8 @@
     const raw=response.headers?.get('content-length'),n=Number(raw),type=(response.headers?.get('content-type')||'').split(';')[0].trim().toLowerCase(),encoding=(response.headers?.get('content-encoding')||'').toLowerCase();
     return sanitize({role,method,httpStatus:response.status,contentType:!type?'absent':mimes.has(type)?type:'other',contentLength:raw===null||raw===undefined?'absent':/^\d+$/.test(raw)&&Number.isSafeInteger(n)?'present':'invalid',contentEncoding:!encoding?'absent':['identity','gzip','br','deflate'].includes(encoding)?encoding:'other',redirectPolicy:'error',redirectOutcome:response.redirected?'followed':'not-followed'});
   }
-  function note(attemptId,input){try{globalThis.redownSaveAttempts?.observe(attemptId,sanitize(input));}catch{}}
-  function failure(attemptId,error,phase){note(attemptId,{code:classify(error),phase,exceptionName:error?.name,decision:error?.status,httpStatus:error?.http,role:phase==='source'?'source':'provider'});}
+  function note(attemptId,input){try{globalThis.RedownForensicDiagnostics?.capture(attemptId,'observation',input);globalThis.redownSaveAttempts?.observe(attemptId,sanitize(input),true);}catch{}}
+  function failure(attemptId,error,phase){globalThis.RedownForensicDiagnostics?.capture(attemptId,'error',{error,phase,component:phase==='source'?'source':'unattributed'});note(attemptId,{code:classify(error),phase,exceptionName:error?.name,decision:error?.status,httpStatus:error?.http,role:phase==='source'?'source':'provider'});}
   const fail=(c,message,status='blocked')=>Object.assign(Error(message),{code:c,status});
   async function read(reader,signal){
     let timer,abort;
@@ -54,6 +54,7 @@
     }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
   }
   async function open(response,{attemptId,signal,expectedMedia='unknown'}={}){
+    globalThis.RedownForensicDiagnostics?.response(attemptId,response,'source','GET');
     note(attemptId,{...globalThis.RedownSaveEvidence.response(response),phase:'source'});
     const reader=response.body?.getReader();
     try{

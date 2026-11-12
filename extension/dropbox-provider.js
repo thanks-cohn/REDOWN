@@ -7,7 +7,7 @@
     const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
     const get=async key=>(await chrome.storage.local.get(key))[key];
     const jobs=async()=>await get(KEY)||[];
-    async function save(job){job.updatedAt=Date.now();globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
+    async function save(job){job.updatedAt=Date.now();globalThis.redownSaveAttempts?.phase(job.source?.attemptId,job.phase,job);await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
     async function receipt(job){
       const r=job.result;
       if(job.status==='completed'&&!(r?.proofVersion===1&&/^dbid:[\w-]+$/.test(job.accountId||'')&&!!job.connectionId&&/^\d+$/.test(job.namespace||'')&&r.accountId===job.accountId&&r.connectionId===job.connectionId&&r.namespace===job.namespace&&r.root==='/'&&r.path==='/'+r.name&&/^id:[\w-]+$/.test(r.fileId||'')&&r.revision&&/^[a-f0-9]{64}$/.test(r.contentHash||'')&&r.bytes===job.offset)){
@@ -110,9 +110,9 @@
           const identity=await login;if((await jobs()).find(j=>j.id===job.id)?.status!=='awaiting-auth')return;if(old?.accountId&&old.accountId!==identity.accountId)throw RedownDropboxAuth.fail('Dropbox account changed. Click the file again to save to this account.');
           if(Date.now()-job.at>10*60*1000)throw RedownDropboxAuth.fail('Pending save expired. Click the file again.');
           Object.assign(job,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace,status:'queued'});await save(job);await receipt(job);globalThis.redownSaveAttempts?.stage(source.attemptId,'AUTH_CHECKED');globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');void wake().catch(()=>{});
-        }catch(e){job.status='blocked';job.error=e.status?e.message:'Dropbox login could not be completed.';await save(job);await receipt(job);}
+        }catch(e){globalThis.RedownForensicDiagnostics?.capture(source.attemptId,'error',{error:e,phase:'auth',component:'unattributed'});job.status='blocked';job.error=e.status?e.message:'Dropbox login could not be completed.';await save(job);await receipt(job);}
         finally{pendingAuth.delete(job.id);}
-      }catch(e){const job={id:crypto.randomUUID(),source,status:'blocked',error:e.status?e.message:'Dropbox could not start saving.'};await save(job);await receipt(job);}
+      }catch(e){globalThis.RedownForensicDiagnostics?.capture(source.attemptId,'error',{error:e,component:'unattributed'});const job={id:crypto.randomUUID(),source,status:'blocked',error:e.status?e.message:'Dropbox could not start saving.'};await save(job);await receipt(job);}
     }
     async function wake(){
       for(const job of await jobs())if(!terminal.has(job.status))globalThis.RedownSaveEvidence?.note(job.source?.attemptId,{phase:'wake',wakeRequested:true});

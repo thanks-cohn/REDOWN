@@ -57,7 +57,8 @@
         if(arg)headers['Dropbox-API-Arg']=JSON.stringify(arg).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
         let r;
         try{r=await fetch('https://'+(binary?'content':'api')+'.dropboxapi.com/2/'+path,{method:'POST',headers,body:binary?body:JSON.stringify(body),credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}
-        catch{throw fail(signal?.aborted?'Dropbox save cancelled.':'Dropbox request interrupted. Check Dropbox before retrying.',signal?.aborted?'cancelled':'uncertain');}
+        catch(error){globalThis.RedownForensicDiagnostics?.capture(identity?.source?.attemptId,'error',{error,component:'unattributed'});throw fail(signal?.aborted?'Dropbox save cancelled.':'Dropbox request interrupted. Check Dropbox before retrying.',signal?.aborted?'cancelled':'uncertain');}
+        globalThis.RedownForensicDiagnostics?.response(identity?.source?.attemptId,r,'provider','POST');
         globalThis.RedownSaveEvidence?.note(identity?.source?.attemptId,{role:'provider',httpStatus:r.status,method:'POST',phase:identity?.phase,category:r.status===401?'auth':r.status===403?'permission':r.status===429?'rate-limit':r.status>=500?'server':'unknown'});
         const data=await r.json().catch(()=>null);
         if(r.ok)return data;

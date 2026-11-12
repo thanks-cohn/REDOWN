@@ -55,12 +55,13 @@
       active=job;controller=new AbortController();
       running=(async()=>{
         try{
+          globalThis.RedownForensicDiagnostics?.capture(source.attemptId,'provider-checkpoint',job);
           globalThis.redownSaveAttempts?.stage(source.attemptId,'ADMITTED');
           await setTransfer({status:'active',phase:'source',id:job.id,attemptId:source.attemptId,at:job.at,name:job.name,bytes:0,total:null});
           globalThis.redownSaveAttempts?.stage(source.attemptId,'SOURCE_REQUEST');
           job.item=await api.upload(source,identity,async p=>{
             job.phase=p.phase;job.bytes=p.sent;job.total=p.total;job.sourceBytes=p.acquired??job.sourceBytes??null;
-            globalThis.redownSaveAttempts?.phase(source.attemptId,p.phase);
+            globalThis.redownSaveAttempts?.phase(source.attemptId,p.phase,{...job,...p});
             await setTransfer({status:'active',phase:p.phase,id:job.id,attemptId:source.attemptId,name:job.name,bytes:p.sent,total:p.total,sourceBytes:job.sourceBytes});
           },controller.signal);
           if(ticket!==epoch)throw RedownOneDriveAPI.fail('ONEDRIVE_INTERRUPTED','OneDrive was disconnected.','uncertain');
@@ -68,6 +69,7 @@
           await setTransfer({status:'completed',verified:true,phase:'verifying',id:job.id,attemptId:source.attemptId,name:job.item.name,bytes:job.item.bytes,total:job.item.bytes,
             itemId:job.item.itemId,webUrl:job.item.webUrl||''}).catch(()=>{});
         }catch(e){
+          globalThis.RedownForensicDiagnostics?.capture(source.attemptId,'error',{error:e,phase:job.phase,component:'unattributed'});
           const p=problem(e);
           if(ticket!==epoch&&['committing','verifying'].includes(job.phase)){
             p.code='ONEDRIVE_COMMIT_UNCERTAIN';p.status='uncertain';
@@ -112,6 +114,7 @@
         await replayVerifiedReceipt();
         await begin(source,identity);
       }catch(e){
+        globalThis.RedownForensicDiagnostics?.capture(globalThis.redownSaveAttempts?.forClick(info),'error',{error:e,phase:'auth',component:'unattributed'});
         const p=problem(e);globalThis.RedownSaveEvidence?.failure(globalThis.redownSaveAttempts?.forClick(info),e,'auth');await setTransfer({...p,attemptId:globalThis.redownSaveAttempts?.forClick(info)});
         await record({provider:'OneDrive',providerKind:'onedrive',status:p.status,ok:false,
           attemptId:globalThis.redownSaveAttempts?.forClick(info),code:p.code,error:p.error});

@@ -72,6 +72,7 @@
       return {daily:validDaily(stored,today)?stored:freshDaily(today),reset:!validDaily(stored,today)};
     }
     const storageFailure=(error,entry,operation)=>{
+      globalThis.RedownForensicDiagnostics?.capture(entry?.attemptId,'error',{error,component:'runtime',phase:'history',storageArea:'local',storageOperation:operation});
       const names=['QuotaExceededError','AbortError','InvalidStateError','UnknownError','NotFoundError','VersionError','SecurityError','DataError','ConstraintError','TransactionInactiveError','TypeError'];
       const exceptionName=names.includes(error?.name)?error.name:/quota|QUOTA_BYTES|disk.*full/i.test(String(error?.message||''))?'QuotaExceededError':'Error';
       globalThis.RedownSaveEvidence?.note(entry?.attemptId,{phase:'history',code:'HISTORY_UNAVAILABLE',storageArea:'local',storageOperation:operation,exceptionName});
@@ -129,6 +130,7 @@
         // Archival failure must not misreport a completed upload as a failure;
         // the visible window and lifetime count still persist as before.
         if(archive)try{await archive.append(saved);}catch(error){
+          globalThis.RedownForensicDiagnostics?.capture(entry?.attemptId,'error',{error,component:'runtime',phase:'history',storageArea:'indexedDB',storageOperation:'archive-write'});
           globalThis.RedownSaveEvidence?.note(entry?.attemptId,{phase:'history',code:'HISTORY_UNAVAILABLE',storageArea:'indexedDB',storageOperation:'archive-write',exceptionName:['QuotaExceededError','AbortError','InvalidStateError','UnknownError','VersionError','SecurityError'].includes(error?.name)?error.name:'Error'});
           console.warn('REDOWN archive unavailable; recent transfer retained:',error?.message||String(error));
         }

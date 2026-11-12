@@ -16,7 +16,8 @@
     function endpoint(path){const u=new URL(path,'https://www.googleapis.com/drive/v3/');if(u.origin!=='https://www.googleapis.com'||!/^\/(?:upload\/)?drive\/v3\//.test(u.pathname))throw fail('Invalid Google upload endpoint.');return u.href;}
     async function http(path,options={}){
       const {attemptId,...wireOptions}=options;
-      let r;try{r=await fetch(endpoint(path),{...wireOptions,headers:{...options.headers,Authorization:'Bearer '+token},credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}catch{throw fail('Google request interrupted. The saved job will be checked before retrying.','interrupted');}
+      let r;try{r=await fetch(endpoint(path),{...wireOptions,headers:{...options.headers,Authorization:'Bearer '+token},credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:options.signal?AbortSignal.any([options.signal,AbortSignal.timeout(25000)]):AbortSignal.timeout(25000)});}catch(error){globalThis.RedownForensicDiagnostics?.capture(attemptId,'error',{error,component:'unattributed'});throw fail('Google request interrupted. The saved job will be checked before retrying.','interrupted');}
+      globalThis.RedownForensicDiagnostics?.response(attemptId,r,'provider',options.method||'GET');
       globalThis.RedownSaveEvidence?.note(attemptId,{role:'provider',method:options.method||'GET',httpStatus:r.status,category:r.status===401?'auth':r.status===403?'permission':r.status===429?'rate-limit':r.status>=500?'server':'unknown'});
       if(r.status===401){await chrome.identity.removeCachedAuthToken({token});token=null;await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});throw fail('Reconnect Google Drive.');}
       if(r.status===403||r.status===429)throw fail('Google access or quota needs attention. Try again later.');

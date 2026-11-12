@@ -63,7 +63,7 @@
       try{
         const saved=await bounded(storage.get(key));
         const old=(Array.isArray(saved[key])?saved[key]:[]).slice(-100).map(clean).filter(Boolean);
-        for(const a of old)if(a.events.at(-1)?.stage!=='TERMINAL')a.events.push({stage:'TERMINAL',at:now(),outcome:'INTERRUPTED',reason:'WORKER_RESTART'});
+        for(const a of old)if(a.events.at(-1)?.stage!=='TERMINAL'){globalThis.RedownForensicDiagnostics?.capture(a.id,'restart',{component:'runtime',interruption:'observer-restart',reason:'WORKER_RESTART'});a.events.push({stage:'TERMINAL',at:now(),outcome:'INTERRUPTED',reason:'WORKER_RESTART'});}
         attempts=[...old.filter(a=>!attempts.some(b=>b.id===a.id)),...attempts].slice(-100);
       }catch{signal();}
     })();
@@ -73,6 +73,7 @@
         .catch(()=>{dirty=false;signal();}).finally(()=>{writing=false;if(dirty)persist();});
     }
     function stage(attemptId,stage,extra={}){
+      if(stages.has(stage))globalThis.RedownForensicDiagnostics?.capture(attemptId,'stage',{stage,...extra});
       const a=attempts.find(a=>a.id===attemptId);
       if(!a||!stages.has(stage)||a.events.at(-1)?.stage==='TERMINAL')return;
       if(a.events.at(-1)?.stage===stage)return;
@@ -91,7 +92,8 @@
       const key=await sourceKey,result=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(u.origin+u.pathname+u.search));
       return Array.from(new Uint8Array(result),b=>b.toString(16).padStart(2,'0')).join('');
     };
-    function observe(attemptId,input){
+    function observe(attemptId,input,captured=false){
+      if(!captured)globalThis.RedownForensicDiagnostics?.capture(attemptId,'observation',input);
       try{const a=attempts.find(a=>a.id===attemptId),safe=globalThis.RedownSaveEvidence?.sanitize(input);if(!a||!safe||!Object.keys(safe).length)return;
         if(safe.sourceId)a.sourceId=safe.sourceId;
         if(safe.role==='source'||safe.phase==='source')a.sourceEvidence={...(a.sourceEvidence||{}),...safe};
@@ -103,13 +105,14 @@
         if(clicks.has(info))return clicks.get(info);
         const attemptId=id(),menu=String(info?.menuItemId||'');
         const provider=menu.startsWith('provider:google-drive')?'google':menu.startsWith('provider:dropbox')?'dropbox':menu.startsWith('provider:onedrive')?'onedrive':/^(v3:|quick:|simple-option:|nested:|tree:)/.test(menu)?'cloudflare':'unknown';
+        globalThis.RedownForensicDiagnostics?.capture(attemptId,'click',{provider,sourceUrl:info.srcUrl||info.linkUrl||info.pageUrl,srcUrl:info.srcUrl,linkUrl:info.linkUrl,pageUrl:info.pageUrl,frameUrl:info.frameUrl,mediaType:info.mediaType,sourceKind:info.mediaType||'context-menu',filename:info.downloadFilename,menuItemId:menu,stage:'CLICK_RECEIVED'});
         clicks.set(info,attemptId);attempts.push({id:attemptId,provider,events:[{stage:'CLICK_RECEIVED',at:now()}]});attempts=attempts.slice(-100);persist();
         void fingerprint(info.srcUrl||info.linkUrl||info.pageUrl||'').then(sourceId=>{if(sourceId)observe(attemptId,{sourceId});}).catch(()=>{});return attemptId;
       },
       forClick:info=>clicks.get(info),stage,
       dispatched:attemptId=>attempts.find(a=>a.id===attemptId)?.events.some(e=>e.stage==='PROVIDER_WRITE')===true,
-      phase(attemptId,phase){const step={source:'SOURCE_REQUEST',uploading:'PROVIDER_WRITE',committing:'PROVIDER_WRITE',verifying:'REMOTE_VERIFY'}[phase];if(step)stage(attemptId,step);},
-      reconcile(attemptId){const a=attempts.find(a=>a.id===attemptId),last=a?.events.at(-1);if(last?.stage==='TERMINAL'&&last.outcome==='COMPLETED'&&last.reason==='HISTORY_UNAVAILABLE'){a.events.pop();persist();}},
+      phase(attemptId,phase,details){globalThis.RedownForensicDiagnostics?.capture(attemptId,'provider-checkpoint',{phase,...details});const step={source:'SOURCE_REQUEST',uploading:'PROVIDER_WRITE',committing:'PROVIDER_WRITE',verifying:'REMOTE_VERIFY'}[phase];if(step)stage(attemptId,step);},
+      reconcile(attemptId){globalThis.RedownForensicDiagnostics?.capture(attemptId,'reconcile',{component:'runtime',phase:'history'});const a=attempts.find(a=>a.id===attemptId),last=a?.events.at(-1);if(last?.stage==='TERMINAL'&&last.outcome==='COMPLETED'&&last.reason==='HISTORY_UNAVAILABLE'){a.events.pop();persist();}},
       finish(attemptId,outcome,reason='UNCONFIRMED'){stage(attemptId,'TERMINAL',{outcome,reason});},
       async snapshot(){await ready;return {schemaVersion:1,scope:'save-attempt-observations',persistence:unavailable?'unavailable':'available',fallback:unavailable?'Inspect extension Errors; saving remains independent.':null,attempts:structuredClone(attempts),limitations:['Stage entry is not remote completion proof.','Interrupted means the observer restarted; inspect provider receipts before retrying.','No native event can be observed when Chrome does not deliver it.']};},
       async flush(){await lane;}
