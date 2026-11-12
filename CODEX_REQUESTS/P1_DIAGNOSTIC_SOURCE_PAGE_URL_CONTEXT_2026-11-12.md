@@ -71,3 +71,27 @@ Example sanitized attempt (illustrative, not owner data):
 8. No extra network requests, no OAuth/permission changes, no History/counter overwrite, no new upload, and no site-wide scraping. Run existing suites and add focused tests.
 
 **Definition of Done:** Implement + test the setting, recorder, sanitized export, bounded retention and plain-language interpretation; provide the owner a diff, focused test results, Windows manual test steps and updated README. Do not claim it is active until code is merged, pulled locally and installed Chrome extension reloaded.
+
+
+---
+
+## Final owner UI requirement: two export buttons, raw versus secure
+
+**This section overrides the earlier export-mode instructions wherever they conflict.** The user wants **exactly two extra diagnostic export buttons** in REDOWN's Developer Tools, not a confusing mode selector:
+
+1. **Export All Diagnostic Data (RAW)** — user-controlled comprehensive forensic ZIP. It must export **every diagnostic field that REDOWN legitimately captured**, without silently redacting source/page URLs, paths, query strings, observed redirect URLs, original failure/error messages, source and provider HTTP status, timestamps, stage durations, filename, attempted destination/account/bucket/folder identity, relevant routing context, and diagnostic request/receipt IDs. Preserve original values and field provenance so the user can determine what, where, when, how, and which component failed. Preserve data in a versioned machine-readable schema and clear timeline. Where a value was never captured or observed, show \`not_observed\`, not a fabricated value. Do not replace full URLs with hostnames. Show a conspicuous warning: **"RAW: May include private URLs, signed links, filenames, account identifiers, and sensitive error details. Review before sharing."** Never automatically upload this ZIP.
+2. **Export Secure Diagnostic Data** — same attempt window and correlation IDs, but with URLs and sensitive fields redacted or anonymized. Retain stage timings, provider labels, safe host/domain context, type and failure categories, and reproducible issue patterns.
+
+The two buttons must operate on **the same underlying captured diagnostic evidence**, so the owner can export both formats after a failure without reproducing it. The existing **Export Diagnostic Bundle** can remain for compatibility or be renamed/mapped to the secure format, avoiding redundant three-button clutter. The feature must not depend on clicking Inspect Runtime or Inspect Save Attempts before saving; those remain read-only views.
+
+### Important differentiation
+
+- **RAW means unredacted recorded diagnostic evidence, not a covert browser-history dump.** Do not expand capture to unrelated web browsing or fabricate data not observed during a REDOWN action.
+- Raw URL strings can contain embedded tokens and signed credentials. Do not strip those strings from the RAW forensic export if they were actually captured; clearly warn and keep the ZIP local and explicitly user-initiated.
+- Do not intentionally collect passwords, OAuth tokens, authorization headers, browser cookies, or unrelated credentials just to populate this export. REDOWN's existing required secret-handling/transport boundaries remain intact; the export should contain a full forensic record of **operations**, not a credential backup.
+- Because post-failure switching between export formats is essential, an explicitly consented **Enhanced Diagnostic Capture** setting may be needed **before** attempts to keep exact URLs and errors. Raw and secure formats should be derived from the same bounded private local records, with clear retention/capacity policy. If historic attempts predate capture, label raw fields unavailable and do not assert they are recoverable.
+- Use two separate filenames, e.g. \`REDOWN-DIAGNOSTICS-ALL-RAW-2026-11-12.zip\` and \`REDOWN-DIAGNOSTICS-SECURE-2026-11-12.zip\`, and a disclosure-level manifest in each.
+- Capture both **sourceUrl** (the actual candidate asset URL) and **pageUrl** (the hosting webpage) independently; preserve \`srcUrl\`, \`linkUrl\`, \`pageUrl\`, and observed redirects with correct provenance, including selected destination and distinct source/provider failures. Domain aggregates are additions, not replacements.
+- Add focused tests that **RAW retains exact URL strings and diagnostic errors**, while SECURE leaks none of the sensitive raw fields. Both must preserve attempt correlation, stage timelines, failures, and truthfully missing fields; downloads must not trigger network transfers, background repair, or clearing browser data.
+
+**Implementation status:** proposed specification only. No functional extension code changed by this document.
