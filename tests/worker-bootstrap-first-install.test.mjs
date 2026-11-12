@@ -25,13 +25,14 @@ test('manifest uses guarded classic entry, normal worker has exactly one toolbar
 
 test('fresh worker with failing heavy core still registers the original toolbar opener', async () => {
   const h=worker(undefined,{backgroundSource:entry,import:'background.js'});
-  await h.ready();
+  // A failed core has no menu queue; wait for the surviving entry journal instead.
   await evidence(h);
   assert.equal(h.context.RedownWorkerCoreStatus,'failed');
   assert.equal(h.chrome.action.onClicked.listeners.length,1);
   assert.equal(h.chrome.runtime.onInstalled.listeners.length,1);
   assert.equal(h.chrome.contextMenus.onClicked.listeners.length,0);
-  assert.equal(h.chrome.runtime.onMessage.listeners.length,1);
+  // The isolated Chute interoperability listener also survives the core failure.
+  assert.equal(h.chrome.runtime.onMessage.listeners.length,2);
   const status=await h.context.RedownBoot.status();
   assert.equal(status.components.worker.state,'failed');
   assert.equal(status.overall,'blocked');
@@ -54,7 +55,7 @@ test('fresh worker with failing heavy core still registers the original toolbar 
 
 test('late core import failure does not register a second toolbar listener', async () => {
   const h=worker(undefined,{backgroundSource:entry,import:'cloudflare-api.js'});
-  await h.ready();
+  // A failed core has no menu queue; wait for the surviving entry journal instead.
   await evidence(h);
   assert.equal(h.context.RedownWorkerCoreStatus,'failed');
   assert.equal(h.context.RedownEntryListenerRegistered,true);

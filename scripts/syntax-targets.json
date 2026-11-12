@@ -129,5 +129,6 @@
   "scripts/compare-owner-windows.mjs",
   "scripts/windows-storage-browser.mjs",
   "extension/forensic-diagnostics.js",
-  "extension/forensic-download.js"
+  "extension/forensic-download.js",
+  "extension/startup-crash-trace.js"
 ]

@@ -2,10 +2,10 @@
  * retain ownership. No provider requests, surface opening, or independent log. */
 (() => {
   'use strict';
-  const workerEpoch=crypto.randomUUID(),startedAt=new Date().toISOString();
+  const workerEpoch=globalThis.RedownStartupTrace?.epoch||crypto.randomUUID(),startedAt=new Date().toISOString();
   let adapters=null,repairing=null,lastRepair=0,repairAttempts=0;
   const keys=['entryPointEvidence','rightClickMenuStatus','toolbarOpenMode','cloudflareAuth','profiles','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory'];
-  const timed=operation=>boundedEntry(operation,8000);
+  const timed=operation=>boundedEntry(operation,8000,'boot.local-operation');
   const generation=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value)?value:null;
   const safeEvent=e=>({schemaVersion:1,at:e.at,component:e.component,operation:e.operation,stage:e.stage,code:e.code,
     status:e.status||'unknown',attemptId:e.attemptId,workerEpoch:e.workerEpoch||null,version:e.version,recovery:e.recovery,

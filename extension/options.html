@@ -2,6 +2,7 @@
 <html class="onboarding-pending storage-pending">
 <head>
   <meta charset="utf-8">
+  <script src="startup-crash-trace.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon32.png">
   <title>REDOWN Dashboard</title>
@@ -679,6 +680,7 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
         <p class="training-note">Practice only. These controls never contact Cloudflare or change your files.</p>
       </section>
 
+  <details id="startup-crash-trace"><summary>Startup/reload trace (read-only)</summary><pre id="startup-crash-trace-output" role="status" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto">Open to read persisted startup evidence. Missing epoch endings have unknown reasons.</pre></details>
   <button id="boot-status" class="ghost">Inspect startup</button>
   <button id="boot-repair" class="ghost">Repair entrypoints</button>
   <button id="boot-export" class="ghost">Export startup receipts</button>
@@ -733,7 +735,7 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
   </div>
 </dialog>
 <script src="settings-mascot.js"></script>
-<script type="module" src="model-viewer.min.js"></script>
+<!-- model-viewer.min.js retained on disk; disabled under Chrome extension CSP. -->
 <script src="cloudflare-auth.js"></script>
 <script src="cloudflare-api.js"></script>
 <script src="explorer-destination-menu.js"></script>
