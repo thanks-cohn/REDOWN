@@ -119,3 +119,21 @@ Minimum focused testing and reporting:
 6. A short change summary, security/privacy notes, test results, limitations, and review-ready PR into `main`. **Stop if a required safety condition cannot be met**; report blocker and safe partial work rather than quietly weakening requirements.
 
 **Reminder:** The owner invested substantial time testing and lost historical forensic events due to the old retention policy. Their evidence is not disposable. Do not erase or silently rotate it again.
+
+---
+
+## OWNER POST-CAPLESS FOLLOW-UP — 2026-11-12 live failures and CRITICAL GO TO + refresh UX (new P0 Codex request)
+
+**Important chronology:** This original P0 crash/CAPLESS brief has already led to implementation work; do not reuse its old baseline or reapply the old build. The owner's later **real Windows Chrome** tests produced a new, independent set of failures. The **authoritative new comprehensive implementation and regression request** is:
+
+**[`CODEX_REQUESTS/P0_2026_11_12_LIVE_AUTH_RECONNECT_GRAPH_503_CAPLESS_INCIDENTS_GO_TO_REFRESH.md`](../CODEX_REQUESTS/P0_2026_11_12_LIVE_AUTH_RECONNECT_GRAPH_503_CAPLESS_INCIDENTS_GO_TO_REFRESH.md).**
+
+**Mandatory P0 GUI change:** The provider tile should retain **GO TO** as the primary action while a known account/website is meaningfully accessible; add an **independent refresh/reconnect icon beside GO TO** which is ALWAYS reachable even when the stored state says `connected`. **LOGIN** is for genuinely unconnected/positively signed-out providers, not a misleading catch-all for OAuth revocation, a temporary 503, a status-check timeout or stale state. Website navigation != valid extension OAuth != upload-ready. Do not infer website cookie state from an extension token. Keep compact layout, keyboard/accessibility support, official user-triggered OAuth, no surprise popups, saved jobs/History/account preservation, verified remote receipts and no duplicate transfer replay.
+
+**New owner evidence to preserve and investigate:**
+- **Google:** native save `interrupted · PROVIDER_FAILED`; `googleDriveTransfer` **uncertain**, `OAuth2 not granted or revoked.`, **0 bytes**; two recent uncertain jobs each `phase:source`, `attempts:3`, `reported:true` after three older completed jobs. Shelf misleadingly showed **GO TO** and offered no visible reconnect. The existing `googleDriveOpen` message triggered Google's real consent form; after authorization **Google Drive saving worked again**. Why OAuth was unavailable remains unproven.
+- **OneDrive:** native `blocked · PROVIDER_FAILED`, `onedrive:state.phase=reconnect`, `ONEDRIVE_NETWORK`; `onedrive:transfer.code=ONEDRIVE_GRAPH_503`, HTTP 503 on Graph verification. The user also saw **503 SERVICE UNAVAILABLE** when signing in directly to Microsoft in the browser. A temporary API/provider/network failure is NOT proof of credential revocation; don't endlessly rerun OAuth or reclassify it as LOGIN.
+- **CAPLESS:** owner's append-only archive grew to **2,473 records / 670 segments / 1,116 RAW records**, with **0 pending segments, 0 write failures, 0 dropped, 0 unconfirmed, stalled:false**, yet `captureIncomplete:true`. The independent pinned incident index reached **16/16** (mostly ambiguous normal-capable MV3 worker epoch ends), causing repeated `flight-recorder.js:526` warnings and historical incomplete flags. Fix pinned-incident capacity without deleting user evidence and distinguish archive stalled vs incident cache full vs historical incomplete. RAW captures are sensitive; never put full exports on public GitHub.
+- **Original Chrome issue remains open:** one prior extension state required manual Reload to regain Options; startup had ~5s `sidePanel.setPanelBehavior` / `storage.local.get` timeout-then-late-accepted observations. Do not claim a proven crash cause or that the new recorder fixed it.
+
+**Next-run rule:** Inspect latest `origin/main` and current source, preserve untracked private evidence, and implement/test the NEW P0 request in a reviewable branch. Distinguish actual owner-reproduced behaviors from hypotheses. No new user test is required just to begin Codex's work. No REDOWN or Click2Cloud runtime changes were made by this documentation addendum.
