@@ -18,3 +18,5 @@ Validation and blockers:
 - Incident schema migration is additive but older v1 incident readers cannot open the v2 DB after rollback. Keep reviewed local exports; never erase it to downgrade. Browser quota and hard termination still limit capture.
 
 The working branch starts from latest main at f9f6d0d and is prepared for review. **Do not merge or deploy from this handoff.** Windows verification steps and the remaining root-cause evidence needed are in the report.
+
+Implementation commit: `4f03d9e`. The branch was pushed successfully. Draft PR creation was blocked by `Post https://api.github.com/graphql: Forbidden`; no PR was created and no network/security policy was bypassed. [Review the branch comparison](https://github.com/thanks-cohn/REDOWN/compare/main...codex/p0-auth-reconnect-incidents-2026-11-12).
