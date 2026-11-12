@@ -1,3 +1,13 @@
+# Latest owner-reported REDOWN P0/P1 issues — November 12, 2026
+
+**Important differential:** The owner reports **Cloudflare R2 continues working normally** after the latest main pull. Problems are concentrated in **Google Drive, Dropbox and OneDrive** recovery/status controls, with a separate Dropbox layout defect. Do not assert the entire extension is broken or change the known-working Cloudflare pipeline without evidence.
+
+- **P0 — Google Drive, Dropbox and OneDrive ↻ reconnect behavior:** Clicking recovery controls is not producing the OAuth prompts the owner expects; Google says `Authorization checked · website session unverified`, Dropbox says temporarily unavailable, OneDrive reports `ONEDRIVE_NETWORK` and `ONEDRIVE_GRAPH_503`. A prompt is not required when an already valid grant can be reused or when there is a provider outage; verify whether interactive consent was genuinely needed and whether the provider handler ran. **Status: OPEN; no fix/installed-auth verification claimed.** [Full source-grounded investigation](CRITICAL/2026-11-12_P0_ALL_PROVIDER_RECONNECT_CONTROLS_FAIL_TO_OPEN_EXPECTED_OAUTH_RECOVERY.md).
+- **P1 — Dropbox card changes height repeatedly:** The temporarily unavailable warning flashes, making the Dropbox card expand/retract and other cards jump. Disconnect stops the jitter, refreshing/reconnecting restarts it. **Status: OPEN, live CSS/state cause not proven.** [Full reproduction/acceptance](2026-11-12_P1_DROPBOX_SHELF_CARD_LAYOUT_JITTER_TEMPORARY_UNAVAILABLE.md).
+- **P1 — Google Drive ··· menu missing Disconnect:** Source inspection confirms the Google provider menu has no Disconnect control/message route, unlike Dropbox and OneDrive. **Status: OPEN, actual missing feature confirmed in source.** [Full issue and preservation safeguards](2026-11-12_P1_GOOGLE_DRIVE_THREE_DOT_MENU_MISSING_DISCONNECT.md).
+
+---
+
 ## P2 — Onboarding tour omits the Activate Buckets button (2026-11-03)
 
 **Status:** OPEN — owner-reported tour omission; not independently reproduced in installed Chrome. **Priority:** P2 onboarding / discoverability. No implementation or fix claimed.
