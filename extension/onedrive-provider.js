@@ -138,7 +138,7 @@
       try{
         if(m.type==='onedriveConnect'){
           if(busy)return result('ONEDRIVE_BUSY','Finish the current OneDrive save first.');
-          const state=await connect();return {ok:true,phase:state.phase,rootReady:state.rootReady};
+          const state=await connect();return {ok:true,authorization:'verified',phase:state.phase,rootReady:state.rootReady};
         }
         if(m.type==='onedriveStatus'){
           const a=await get('onedrive:auth'),s=await get('onedrive:state');

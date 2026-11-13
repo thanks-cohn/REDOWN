@@ -123,7 +123,7 @@
     async function message(m,sender){
       if(sender.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false};
       try{
-        if(m.type==='dropboxConnect'){await auth.connect();return {ok:true};}
+        if(m.type==='dropboxConnect'){await auth.connect();return {ok:true,authorization:'verified'};}
         if(m.type==='dropboxDisconnect'){
           stopping=true;controller?.abort();await running?.catch(()=>{});
           for(const job of await jobs())if(!terminal.has(job.status)){job.status='cancelled';job.error='Dropbox disconnected.';await save(job);await receipt(job);}
@@ -144,7 +144,7 @@
           else if(['connecting','connected'].includes((await get('dropbox:state'))?.phase))await chrome.storage.local.set({'dropbox:state':{phase:'reconnect',error:'Reconnect Dropbox to verify your account.'}});
           void wake();return {ok:true};
         }
-      }catch(e){return {ok:false,error:e.status?e.message:'Dropbox connection needs attention. Reconnect or try again.'};}
+      }catch(e){return {ok:false,http:e.http,error:e.status?e.message:'Dropbox connection needs attention. Reconnect or try again.'};}
       return {ok:false};
     }
     function install(){

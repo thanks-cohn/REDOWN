@@ -76,10 +76,10 @@ test('P0 native Dropbox login can start even if clicked source lacks permission,
   assert.equal(f.records.some(x=>x.ok===true),false);
 });
 
-test('P0 Shelf LOGIN does not remain disabled in a stale connecting state',async()=>{
+test("P0 Shelf Re-O'Auth does not remain disabled in a stale connecting state",async()=>{
   const dom=new JSDOM(`<div class="destination-tile">
     <button id="shelf-dropbox"><span id="shelf-dropbox-label"></span></button>
-    <a id="shelf-dropbox-open"></a><button id="shelf-dropbox-disconnect"></button>
+    <button id="shelf-dropbox-reauth">Re-O'Auth</button><a id="shelf-dropbox-open"></a><button id="shelf-dropbox-disconnect"></button>
     <button id="shelf-dropbox-cancel"></button><small id="shelf-dropbox-status"></small>
     </div>`,{url:'https://example.invalid/',runScripts:'outside-only'});
   const sent=[];
@@ -88,7 +88,7 @@ test('P0 Shelf LOGIN does not remain disabled in a stale connecting state',async
   dom.window.chrome=chrome;
   dom.window.eval(await read('shelf-dropbox.js'));
   await Promise.resolve();await Promise.resolve();
-  const button=dom.window.document.getElementById('shelf-dropbox');
+  const button=dom.window.document.getElementById('shelf-dropbox-reauth');
   assert.equal(button.disabled,false);
   button.click();
   await Promise.resolve();await Promise.resolve();
@@ -111,7 +111,7 @@ test('P0 PKCE failure cannot leave Dropbox forever connecting',async()=>{
   assert.equal(data['dropbox:state'].phase,'reconnect');
 });
 
-test('P0 Shelf RETRY visibly explains authorization failure in the provider card',async()=>{
+test('P0 Shelf LOGIN navigation retains visible authorization failure in the provider card',async()=>{
   const dom=new JSDOM(`<div class="destination-tile">
     <button id="shelf-dropbox"><span class="destination-action-copy"><span id="shelf-dropbox-label"></span></span></button>
     <a id="shelf-dropbox-open"></a><button id="shelf-dropbox-disconnect"></button>
@@ -123,7 +123,7 @@ test('P0 Shelf RETRY visibly explains authorization failure in the provider card
   const button=dom.window.document.getElementById('shelf-dropbox');
   const error=dom.window.document.querySelector('.dropbox-inline-login-error');
   assert.equal(button.disabled,false);
-  assert.equal(dom.window.document.getElementById('shelf-dropbox-label').textContent,'RETRY');
+  assert.equal(dom.window.document.getElementById('shelf-dropbox-label').textContent,'LOGIN');
   assert.equal(error.hidden,false);
   assert.match(error.textContent,/root could not be verified/);
   dom.window.close();

@@ -82,12 +82,12 @@
     async function message(m,sender){
       if(sender.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false};
       try{
-        if(m.type==='googleDriveOpen'){await connect();return {ok:true};}
+        if(m.type==='googleDriveOpen'){await connect();return {ok:true,authorization:'verified'};}
         if(m.type==='googleDriveStatus'){void wake().catch(()=>{});return {ok:true};}
         if(m.type==='googleDriveCancel'){
           controller?.abort();for(const j of await jobs())if(['queued','interrupted'].includes(j.status)){j.status='cancelled';j.error='Save cancelled.';await save(j);await receipt(j);}return {ok:true};
         }
-      }catch{return {ok:false,error:'Google Drive needs attention. Reconnect and try again.'};}return {ok:false};
+      }catch(e){return {ok:false,error:e.message||'Google Drive needs attention. Reconnect and try again.'};}return {ok:false};
     }
     function install(){
       chrome.alarms.onAlarm.addListener(a=>{if(a.name==='google-drive:resume')void pump().catch(()=>{});});

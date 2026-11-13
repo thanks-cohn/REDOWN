@@ -16,13 +16,13 @@
     async function token(params){
       const r=await request('https://api.dropboxapi.com/oauth2/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({...params,client_id:APP_KEY})});
       const t=await r.json().catch(()=>({}));
-      if(!r.ok||typeof t.access_token!=='string'||!Number.isFinite(t.expires_in)||t.expires_in<=0)throw fail('Dropbox authorization expired or was denied. Reconnect Dropbox.');
+      if(!r.ok||typeof t.access_token!=='string'||!Number.isFinite(t.expires_in)||t.expires_in<=0)throw Object.assign(fail('Dropbox authorization expired or was denied. Reconnect Dropbox.'),{http:r.status});
       if(t.scope&&!SCOPES.every(s=>t.scope.split(' ').includes(s)))throw fail('Dropbox has not granted the required file permissions.');
       return t;
     }
     async function rpcWith(t,path,body,namespace){
       const r=await request('https://api.dropboxapi.com/2/'+path,{method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json',...(namespace?{'Dropbox-API-Path-Root':JSON.stringify({'.tag':'root',root:namespace})}:{})},body:JSON.stringify(body)});
-      if(!r.ok)throw fail(r.status===401?'Reconnect Dropbox.':'Dropbox root could not be verified.');return r.json();
+      if(!r.ok)throw Object.assign(fail(r.status===401?'Reconnect Dropbox.':'Dropbox root could not be verified.'),{http:r.status});return r.json();
     }
     async function verify(t,expected){
       const a=await rpcWith(t,'users/get_current_account',null);
