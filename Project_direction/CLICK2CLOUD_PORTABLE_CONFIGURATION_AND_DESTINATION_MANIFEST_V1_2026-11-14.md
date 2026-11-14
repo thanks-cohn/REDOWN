@@ -53,6 +53,27 @@ Import must reconcile three separate states: (1) location exists and is accessib
 
 **Acceptance tests:** Same-account export → extension reinstall → import with all locations still present should cause **zero provider writes** and restore existing paths. A confirmed missing location should trigger a clear opt-in prompt; declining creates nothing. Selecting one missing prefix/bucket should create only that selection and verify it; partial permission failures should preserve all other working destinations. An inaccessible account or timeout must never be mistaken for missing infrastructure.
 
+### Depth Hierarchy Snapshot — optional export through the selected depth
+
+**Owner-approved project direction (2026-11-14):** In addition to storing the Depth mode's selected bucket(s) and numeric depth, **Export Configuration** should optionally export the discovered folder hierarchy **from each participating bucket root down to that user's selected maximum depth**, including all encountered sibling branches and ancestor/parent-child relationships. Example: selected `Depth 5` on `click2cloud-qa-2` can describe `Level-1/Level-2/Level-3/Level-4/Level-5/` and its 2/4/3/5 sibling test branches. This is a *structural inventory snapshot*, not a backup of the files themselves.
+
+**Export semantics:**
+- Provide an explicit option, e.g. **Include Depth Hierarchy Snapshot**; the ordinary configuration export must still work without scanning entire R2 buckets.
+- Record account and bucket identity, depth used, normalized prefix per discovered virtual folder, parent prefix, per-bucket scan timestamps, snapshot schema/algorithm version, counts and completeness/error/truncation metadata. Include enough stable identity to distinguish same-named prefixes in different buckets and to reconnect safely; never embed OAuth tokens, provider secrets, file contents or arbitrary object-key listings.
+- Traverse real authorized R2 listings and paginate properly (including delimiter/common-prefix enumeration). Discover siblings and deeper prefixes only through the configured depth; don't confuse a folder displayed in the extension UI with an independently stored directory.
+- **Do not silently equate the current bounded Depth menu inventory with a full export.** The live menu path has limits (e.g., nodes, pages, time, native menu entries). Snapshot export may require a separately bounded, cancellable, permission-aware discovery with progress and explicit completeness. If the scan is partial, timed out, unauthorized, truncated, or cancelled, label affected subtree(s) **partial/unknown**; do not claim a complete hierarchy backup.
+- A large bucket must have safeguards for pagination, volume, runtime/memory, rate limiting and user privacy. Allow a partial file with prominent warning, or safely abort. No requirement to enumerate object contents or include their filenames beyond what is necessary to establish folder prefixes.
+- Do not overwrite or mutate cloud resources while exporting.
+
+**Import/restore semantics:**
+1. On the same authorized/reconnected account, restore the selected Depth setting and participating buckets, then rediscover the current live hierarchy. Current live R2 data, not the saved snapshot, drives the right-click menu.
+2. If a snapshot was included, compare **within the known exported scan scope**: found paths, positively missing paths, new live paths and unknown/inaccessible paths. Never classify a path missing if current scan of its parent is incomplete, access denied, stale or unreliable. A partial old snapshot never proves that unlisted branches did not exist.
+3. Show a clear hierarchy diff, including bucket and depth, and ask **“Create missing locations?”** with **No / Skip** selected by default. Allow per-bucket and per-prefix selection, plus the option to restore only the Depth menu settings.
+4. If approved, materialize selected missing *virtual prefixes* only when needed to make the empty structure appear (e.g., a safe, non-overwriting marker object); new bucket creation needs **separate explicit confirmation**. For a selected child path, infer required missing ancestors but preview those actions individually. Do not recreate image/file contents, rename paths, delete anything, or overwrite existing objects.
+5. Independently verify each authorized creation, handle concurrent changes/idempotent retries honestly, and rebuild the Depth menu from the current discovered R2 structure. Treat “configuration restored,” “prefix marker created,” “menu registered,” and “test save verified” as distinct results.
+
+**Acceptance:** Export a complete Depth 5 hierarchy from `click2cloud-qa-2`, confirming all main path ancestors and 14 sibling paths (2/4/3/5 distribution). Import into a new Click2Cloud installation against the same cloud account: with all paths present, zero R2 writes; with a confirmed missing marker-backed prefix, preview and optionally recreate **only** the selected missing structure; with incomplete listing or insufficient permissions, report unknown and perform no automatic recreation. Confirm subsequent real Chrome right-click menu parity and verified saves to selected destinations.
+
 ### Destination Manifest v1: bulk management
 
 A human-readable, versioned JSON **Click2Cloud Destination Manifest** should support four first-class operations:
