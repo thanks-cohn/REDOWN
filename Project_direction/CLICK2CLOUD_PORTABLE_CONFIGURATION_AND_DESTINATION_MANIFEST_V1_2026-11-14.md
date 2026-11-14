@@ -38,6 +38,21 @@ The same portable configuration format should be a foundation for bulk destinati
 - Other relevant user preferences where safe, with an explicit inclusion list and exclusions (e.g., do not bundle sensitive browsing history, diagnostics/RAW, saved URLs, arbitrary site contents, cache, jobs, private file metadata or provider secrets by default).
 - An optional machine-readable compatibility report so incompatible fields can be migrated or clearly skipped.
 
+### Optional recreation of genuinely missing cloud locations
+
+**Owner clarification (2026-11-14):** Normal configuration import assumes the user is returning to **the same cloud account** after an extension loss, reinstall, browser-profile change or version upgrade. Under that assumption the original buckets and folders may still exist even if the extension's local destination records have vanished. **Reusing existing cloud locations is the default.**
+
+Import must reconcile three separate states: (1) location exists and is accessible in the reconnected account, (2) location is confirmed missing, or (3) location cannot be established because account mapping, authorization, listing or network access is incomplete. Never label (3) as missing, and do not provision anything based on an unknown result.
+
+- If a referenced destination **already exists**, relink its account/bucket/key-prefix mapping and reconstitute the intended right-click configuration without touching its cloud objects.
+- If it is **positively confirmed missing**, explicitly ask: **"Some saved locations don't exist in this cloud account. Create the missing locations?"** Default is **No / Skip**. Show a clear review of each proposed bucket and folder prefix, target account, actions and potential consequences before an opt-in.
+- Allow **Create selected** (rather than all-or-nothing), with a separate, explicit confirmation for creating entirely new R2 buckets versus folder prefixes in an existing bucket. Check provider permissions and expected naming/limits. Creation uses the user's own authorized cloud account, not any privileged shortcut.
+- In **Cloudflare R2**, a "folder" is generally an **object-key prefix**, not an independently stored directory. Merely importing a prefix into Click2Cloud can make a legitimate save destination without writing a placeholder object. If visible folder materialization is requested, explain that this may require a zero-byte/marker object or equivalent supported representation and let the user opt in to that write. Do not create marker files silently or overwrite a preexisting marker/object.
+- On a successful opt-in, create only confirmed absent, selected resources, retry safely, independently verify the new bucket/prefix representation and then register/reconcile the destination. Report **created**, **already existed**, **skipped**, **failed**, **unknown / needs reconnect** separately. On a failure, preserve the imported desired configuration in a reviewable/unavailable state; never falsely report a working destination.
+- No automatic bucket provisioning, folder markers, account transfer, object copying, deletion, cleanup, credentials import, forced replacement, or repeated retries with ambiguous outcomes. A later import must be idempotent and must not recreate locations unnecessarily.
+
+**Acceptance tests:** Same-account export → extension reinstall → import with all locations still present should cause **zero provider writes** and restore existing paths. A confirmed missing location should trigger a clear opt-in prompt; declining creates nothing. Selecting one missing prefix/bucket should create only that selection and verify it; partial permission failures should preserve all other working destinations. An inaccessible account or timeout must never be mistaken for missing infrastructure.
+
 ### Destination Manifest v1: bulk management
 
 A human-readable, versioned JSON **Click2Cloud Destination Manifest** should support four first-class operations:
