@@ -1,0 +1,2 @@
+# Preserve intentional Markdown hard line breaks in immutable copied specifications.
+codex/*.md whitespace=-blank-at-eol

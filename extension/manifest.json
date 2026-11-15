@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "REDOWN Basic",
+  "version": "0.1.0",
+  "description": "Save downloadable resources to Google Drive, Dropbox, or OneDrive with verified outcomes.",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "identity",
+    "downloads",
+    "sidePanel"
+  ],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Open REDOWN Basic"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  },
+  "side_panel": {
+    "default_path": "shelf.html"
+  }
+}

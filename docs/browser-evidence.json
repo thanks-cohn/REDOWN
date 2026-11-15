@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-11-15T12:51:26.678Z",
+  "scope": "Local browser UI fixture with mocked extension API; no live provider calls.",
+  "liveRightClick": "UNVERIFIED — RELEASE BLOCKED",
+  "screenshots": [
+    "providers-light.png",
+    "providers-dark.png",
+    "providers-mobile.png",
+    "history.png",
+    "settings.png",
+    "diagnostics.png"
+  ],
+  "checks": [
+    "Three consistent cards, mocked readiness states and confirmed counter rendered in Chromium.",
+    "History statuses and independent URL disclosure rendered; local data only.",
+    "Light/dark, responsive layout, Settings and Diagnostics rendered without horizontal overflow."
+  ],
+  "installedExtension": {
+    "status": "BLOCKED_BY_ADMINISTRATOR_POLICY",
+    "reason": "Managed ExtensionInstallBlocklist contains *. No policy changes or bypass attempted."
+  },
+  "nativeBrowserProbe": {
+    "status": "PASS",
+    "provider": "Mock adapter only; no cloud calls.",
+    "checks": [
+      "Actual browser IndexedDB: coordinator completion, durable confirmation ledger and replay exactly once.",
+      "Actual browser IndexedDB: deletion/counter independence and close/reopen interruption becomes UNCERTAIN.",
+      "Actual browser IndexedDB: arbitrary finite cap, OFF, ZIP fields/JSONL/README, re-enable and Unlimited."
+    ]
+  },
+  "browser": "Chromium 156.0.8078.79 built on Debian GNU/Linux 13 (trixie)"
+}

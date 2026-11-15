@@ -1,0 +1,20 @@
+name: Test
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  local-validation:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        profile: [standalone, redown-hosted]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm test
+      - run: npm run package -- --profile ${{ matrix.profile }}

@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/thanks-cohn/redown-basic",
+  "baseline": "75bc22c5a466fb83467d2202a68cbba2ff6b80ff",
+  "files": {
+    "extension/lib/coordinator.js": "cb6347702fef1c5839d5146cda8ae17ee59b51c1f2a539f460d240efbcb6b974",
+    "extension/providers/index.js": "de6707955d886e0cdf224937c865c2bb78e0d481864f65adbe6a9e759c8525ad",
+    "extension/lib/source.js": "5704bede20034f1eefa5fb17433a382a6e1c23be0cafd17071d701ddb3999a2d",
+    "extension/lib/common.js": "cfa25347ebbe3cdf3421033b6d23d13aa12c87e20cbb3ab846dfbcd1c7a97e09",
+    "extension/lib/zip.js": "98be5eef6e07f99357cf28d1966aa299b9a00f6bdbeafff0ab677ecb4059dac9",
+    "extension/vendor/fflate.js": "8cc1f687e0159e977addb6b85e274dbd11e622cf151f4fcb7b85d49622ea43e7"
+  }
+}
